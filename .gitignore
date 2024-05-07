@@ -1,0 +1,19 @@
+# Temporary / Build Files
+*.tmp
+*.log
+/build/
+/dist/
+/Backup/
+
+# Python Cache Files
+**/__pycache__/
+
+# Virtual Environment
+.venv/
+
+# Operating System Files
+Thumbs.db
+.DS_Store
+
+# IDE Specific (Uncomment and Adapt if Necessary)
+.idea/
