@@ -18,12 +18,8 @@ NAME
 	zmac - Z80 macro cross-assembler
 
 VERSION
-	1.3
+	1.3 - (Abridged Documentation)
 
-
-SYNOPSIS
-       zmac [--help] [--version] [-AbcdefghilLmnOpsStTz] [-o out-
-       file] [-x listfile] [filename]
 
 DESCRIPTION
        zmac is a Z80 macro cross-assembler. It has all  the  fea-
@@ -38,101 +34,72 @@ DESCRIPTION
        As  well  as normal Z80 programs, zmac lets you write 8080
        programs in Z80 assembly. (See the `-z' option below.)
 
+SYNTAX
+
+       zmac [-fhimsSz] [-o output_file] [-x list_file] [source_file]
+
+       Example: zmac -f -i -m -o program.bin -x program.lst program.asm
+
 OPTIONS
-       Most of the options control aspects of the listing.
 
-       --help Display a list of options and a  terse  description
-              of what the options do.
+Output Control
 
-       --version
-              Print version number.
+	-h: Output Intel hex format (.hex) instead of a raw binary (.bin).
+	-o [outfile]: Specify the name of the output file for the assembled code.
+	-x [listfile]: Specify the name of the output file for the listing.
 
-       -A     Add  an  AMSDOS header to the generated binary file
-              (this option automatically disables  generation  of
-              hex output).
+Listing Control
 
-       -b     Don't generate the m/c output at all.
+	-f: Include instructions omitted from assembly due to if conditions.
+	-i: Omit listing any files included using the include directive.
+	-m: Show detailed macro expansions within the listing.
+	-s: Don't include the symbol table in the listing.
+	-S: Show source code lines causing errors, not just canonical error format.
 
-       -c     Make  the  listing  continuous, i.e. don't generate
-              any page breaks or page headers.  Can  make  things
-              less confusing if you're going to consult the list-
-              ing online rather than printing it.   This  is  the
-              default.
+Information:
 
-       -d     Make the listing discontinuous.
-
-       -e     Omit the `error report' section in the listing.
-
-       -f     List instructions not assembled due to `if' expres-
-              sions being false. (Normally these are not shown in
-              the listing.)
-
-       -g     List  only  the  first line of equivalent hex for a
-              source line.
-
-       -h     Output CP/M-ish Intel hex format  (using  extension
-              `.hex')  rather than the default of a simple binary
+	--help: Display a summary of all available options.
+	--version: Print the version of zmac.
 
 
-
-Version 1.3                 2000-07-02                          1
-
+==========================================================
 
 
-
-
-zmac(1)                 Development Tools                 zmac(1)
-
-
-              file (extension `.bin').
-
-       -i     Don't list files included with `include'.
-
-       -l     Don't generate a listing at all.
-
-       -L     Generate listing no matter what. Overrides any con-
-              flicting options.
-
-       -m     List macro expansions.
-
-       -n     Omit line numbers from listing.
-
-       -o     Output assembled code to outfile.
-
-       -O     Suggest possible optimisations. (These are shown as
-              warnings.)
-
-       -p     Use a few  linefeeds  for  page  break  in  listing
-              rather than ^L.
-
-       -s     Omit the symbol table from the listing.
-
-       -S     When reporting an error, show the line which caused
-              it. Without this option zmac reports errors in  the
-              canonical  format,  one-per-line (but see the first
-              item in the BUGS section).
-
-       -t     Give terse (single-letter) error codes  in  listing
-              (with  a  key at the end). (Normally the full error
-              message is given.)
-
-       -T     Enable DDE throwback  for  reporting  warnings  and
-              errors.   This  option  only  exists  for  RISC  OS
-              builds.
-
-       -x     Output listing to listfile.  (It outputs to  stdout
-              if  you  specify  the  file  as  `-'.)  This has no
-              effect if used with -l.
-
-       -z     Accept 8080-compatible instructions only; flag  any
-              Z80-specific  ones  as  errors. This lets you write
-              8080 programs in Z80 assembly,  without  having  to
-              worry  about the deeply nasty 8080 assembly syntax.
-              :-)
 
 INPUT FORMAT
-       zmac uses the standard Zilog mnemonics, and the pseudo-ops
-       are also largely as you'd expect.
+       zmac uses the standard Zilog mnemonics and directives.
+
+Memory and Data Allocation
+
+ORG: Sets the origin address for the following code or data.
+DEFB: Defines a single byte of data (similar to DB).
+DEFW: Defines a word (two bytes) of data (similar to DW).
+DEFS: Reserves a block of memory (similar to DS).
+
+Symbol Definition
+
+EQU: Assigns a constant value to a symbol.
+SET: Similar to EQU, but the value of the symbol can be redefined.
+
+Conditional Assembly
+
+IF / ELSE / ENDIF: Controls whether blocks of code are assembled based on conditions.
+
+Macros
+
+MACRO / ENDM: Defines a block of code as a macro, allowing for code reuse and parameterization.
+
+Including Files
+
+INCLUDE: Inserts the content of another assembly file into the current file.
+
+Other Important Directives
+
+END: Signals the end of the assembly source code.
+TITLE: Sets the title used in the listing file.
+
+===============================================================================
+
 
        Input can be upper or lowercase.
 
