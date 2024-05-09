@@ -99,15 +99,17 @@ Adds user-specified directory (dir) to the search path for files for INCLUDE, RE
 Displays macro expansions in the assembly listing for debugging and analysis.
 
 -o filename.cmd
-Outputs only the specified file. Can be used multiple times to generate a set of files.
+Instructs zmac to generate only the file with the specified name and suffix (e.g., .hex, .bin .lst) overriding zmac's default behavior of creating multiple output formats. Example: zmac -o program.hex will only generate the .hex file and suppress all others. It can be used multiple times in a single command. Example: zmac -o program.hex -o program.bin program.asm would only generate the .hex and .bin files.
 
 -s
 Omits the symbol table from the assembly listing.
 
 -z
 
-Enables Z-80 mnemonics and instruction timings. Equivalent to the _.z80_ pseudo-op.
+Enables Z-80 mnemonics and instruction timings. 
 
+Z-80 Mnemonics:  Tells zmac to recognize and assemble the full set of Z-80 instructions, including those that are not part of the original 8080 instruction set.
+Z-80 Instruction Timings: Instructs zmac to use the correct cycle counts for all Z-80 instructions when calculating timing information for your code.
 
 
 
