@@ -25,18 +25,6 @@ OVERVIEW
 
 ZMAC is a versatile Z-80 macro cross-assembler. It takes your source code and generates executable program files in various formats. ZMAC also creates a '.lst' file, providing a well-formatted listing of your code alongside machine code and cycle counts for analysis. Undocumented Z80 instructions are supported. See http://www.z80.info/zip/z80-documented.pdf for more information.
 
-==========TEST THIS=========
-
-ZMAC automatically organizes its output files into a 'zout' subdirectory to streamline your workspace. For example, if your input file is 'file.z', you'll find the listing in 'zout/file.lst' and the TRS-80 executable in 'zout/file.cmd'. For more control over output file formats and locations, use the options '-o', '--oo', '--xo', and '--xd' when working with makefiles or development environments.
-
-============================
-
-
-
-ZMAC strives to be a powerful assembler with expressions familiar to C
-programmers while providing good backward compatibility with original
-assemblers such as Edtasm, MRAS and Macro-80.
-
 USAGE
 
 zmac
@@ -71,7 +59,7 @@ Disables output in the specified formats. Example: zmac --xo lst,hex project.asm
 All other standard output files would still be produced.
 
 --nmnv
-Disables the use of Z-80/8080 instruction mnemonics as values within expressions.  Example: defb ret  ; Error: 'ret' would be undefined.
+Disables the use of Z-80/8080 instruction mnemonics as values within expressions.  Example: DEFB ret  ; Error: 'ret' would be undefined.
 
 --doc
 Prints the full ZMAC documentation in HTML format to standard output.
@@ -147,58 +135,99 @@ Define labels using either 'label:' or simply 'label'. Indentation doesn't matte
 
 Alternate Register Notation: You can add a single quote (') to the end of register names to indicate the use of alternate registers with the exx and ex instructions but this is optional. Example: ex af, af' and ex af, af are considered equivilent. Using the single quote feature improves code readability, especially when performing many register swaps.
 
-Here is how other things work.  Numbers are used as examples, but a full
-expression@expr can be used in their place.
+
+
+[DATA]
+
+
+DEFB
+
+Purpose: Defines one or more bytes in memory.
+Usage:
+Numbers: DEFB 10, 25, 128 (Individual bytes separated by commas)
+Strings: DEFB 'Hello world!' or DEFB "Hello world!" (Enclosed in quotes)
+Mixed: DEFB 'X', 50, "more data" (Combine bytes and strings freely)
+Synonyms:  ASCII, BYTE, DB, DEFM, DM, TEXT
+
+
+DEFW
+
+Purpose: Defines one or more 16-bit words in memory.
+Example: defw 123, 0x456, 50000 (Individual words separated by commas)
+Synonyms: WORD, DW
+
+
+DEFW
+
+DEFW $123,0x456
+A word (16 bits).  word and dw are synonyms.
+
+
+
+
+DEF3
+
+Purpose: Defines a 3-byte (24-bit) word in memory.
+Usage:
+Numbers: DEF3 $123456
+Synonyms: D3
+
+
+DEFD
+
+Purpose: Defines a double word (32-bit) in memory.
+Usage:
+Numbers: DEFD $12345678
+Synonyms: DWORD
+
+DEFS
+
+Purpose: Skips ahead a specified number of bytes in the output, effectively reserving memory space.
+Usage:
+Numbers: DEFS 500
+Synonyms: DS, BLOCK, RMEM
+
+
+DC 'single_string'
+
+Purpose: Defines an ASCII string and sets the high bit of the last character.
+Usage:
+Strings: DC 'string'
+Synonyms: BYTES
+
+
+DC count, byte
+
+Purpose: Repeats a byte value a specified number of times, filling memory.
+Usage:
+Numbers: DC count, value. Example: dc 10, 50  would fill 10 consecutive memory locations with the value 50.
+
+INCBIN file
+
+Purpose: Tells the assembler to directly include the raw contents of a file into the final assembled binary program.
+Benefits:
+Simplifies including large datasets like images or sound effects.
+Avoids manually entering large amounts of data in your assembly code, which can be error-prone.
+Important Note: incbin doesn't insert the file itself into your assembly text file.  Instead, it incorporates the file's raw data (bytes) into the final binary program you create after assembly.
+
+
+
+[SYMBOLS]
+
+Symbols: General names representing values or memory locations within your assembly code.
+Labels: A specific type of symbol primarily used to mark locations in your code that you can jump or branch to.
+
+EQU
+
+Usage: symbol EQU value
+Example: loop_count EQU 5   ; Defines 'loop_count' to represent the number 5
+Notes:
+Defines a symbol with a fixed value that cannot be changed later.
+The symbol can be used before its definition in your code.
+
 
 =============================
 
-..Data
-
-defb 42
-|A byte.  ascii, byte, db, defm, dm and text are synonyms.
-
-defb 'foobar'
-|An ASCII character string (not NUL-terminated).
-|Double quotes can also be used.
-
-defb 'Who needs anything more than CP/M?',13,10,'$'
-|Strings and bytes can mix together.
-
-defw 2112
-
-defw $123,0x456
-|A word (16 bits).  word and dw are synonyms.
-
-def3 $123456
-|A 3 byte word (24 bits). d3 is a synonym.
-
-defd $12345678
-|A double word (32 bits). dword is a synonym.
-
-defs 500
-|Skip output ahead 500 bytes.  This will insert 500 zeros in the ".ams"
-|and ".cim" output files or if inside a ".phase" section.
-|block, ds and rmem are synonyms.
-
-dc 'string'
-|Like ascii but accepts only a single string and the high bit of the
-|last character will be set. bytes is a synonym.
-
-dc count,value
-|Repeat the byte value a total of count times.  Similar to defs
-|except that memory is always filled with value.
-
-incbin file
-|Inserts the raw contents of the file into the assembly.  Simpler for
-|large amounts of data.
-
-..Symbols
-
-label equ 100
-|Define a symbol to have a fixed value.  The symbol can be used before it
-|is defined.  A symbol defined with equ or as a label can be defined only
-|once, except that a symbol defined with equ may be redefined to the
-|same value.
 
 varname defl 200
 |Define a symbol to have a changeable value.  The symbol cannot be used
@@ -353,107 +382,14 @@ setocf expr
 
 ..Code Generation
 
-8080
-|Make cycle counting operators return 8080 cycle counts and
-|interpret any ambiguous assembly statements as Intel 8080 mnemonics.
-|CP will be interpreted as "call on positive" and JP as "jump on positive".
-
 z80
 |Make cycle counting operators return Z-80 cycle counts and
 |interpret any ambiguous assembly statements as Zilog Z-80 mnemonics.
 |CP will be interpreted as "compare accumulator" and JP as "jump unconditionally".
 
-z180
-|Allow assembly of Z-180 instructions.
-|Make cycle counting operators return Z-180 cycle counts and
-|interpret any ambiguous assembly statements as Zilog Z-180 mnemonics.
-|CP will be interpreted as "compare accumulator" and JP as "jump unconditionally".
-
-jperror enable
-|If enable is non-zero, turn on errors when JR instructions could be used
-|instead of JP, off otherwise.  Used to check existing code for situations
-|where shorter code could be generated.  Same as -J option.
-|No effect if in 8080 mode.
-
-jrpromote enable
-|If enable is non-zero, JR and DJNZ instructions will be promoted to
-|equivalent JP and DEC##B, JP##NZ instructions if the relative branch
-|offset is out of range.  If enable is zero, promotion is disabled.
-|Same as the -j option.
-|No effect if in 8080 mode.
-
-..Undocumented Instructions\undoc
-
-Most Z-80 chips support a number of undocumented instructions that were part of
-the original design but not made an offical part of the Zilog specification.
-These instructions may not be supported by all Z-80 chips, especially
-licensed variants, but are fairly widely available nonetheless.
-
-sl1 r
-|Same as sla r but shifts a 1 into the lower bit of r rather than a 0.
-
-in (c)
-|Inputs a byte from port c but does not store the value.  Flags are still
-|set as with the normal in r,(c) instruction.
-
-out (c),0
-|Outputs a zero to port c.
-
-bit/set/res n,(ix+d),r
-
-rlc/rrc/rl/rr/sla/sl1/sra/srl (iy+d),r
-|Same as the corresponding operation on just (ix+d) or (iy+d) but with
-|the result being stored both into (ix+d) and register r.  Except for bit
-|which has no effect on r. ZMAC supports the syntax to allow those
-|instruction patterns to be generated.
-
-The upper and lower bytes of the ix and iy can be used in a number of
-instructions much in the same way as d and e correspond to the upper and
-lower bytes of de.  ZMAC names these ixh, ixl, iyh and iyl.
-Also acceptable are xh, xl, yh, yl and hx, lx, hy, ly.
-They are referred to generically as ixylh here.
-
-inc/dec/add/adc/sub/sbc/and/xor/or/cp ixylh
-|Arithmetic or logical operation on ix or iy high or low byte.
-
-ld a/b/c/d/e,ixylh
-|Load register with ix or iy high or low byte.
-
-ld ixylh,a/b/c/d/e
-|Load ix or iy high or low byte with register.
-
-pfix
-
-pfiy
-|Output $DD and $FD prefix bytes.  The Z-80 allows multiple prefix bytes
-|for IX and IY instructions.  This allows you to specify them abstractly.
-|There is little purpose except for delaying an interrupt or confusing
-|disassemblers.
 
 ..Miscellaneous
 
-pragma str ...
-|Like C's #pragma, a generic hook for special purpose operations.  Only two
-|are currently defined.
-
-|pragma bds rest-of-line to
-|output rest-of-line to the .bds output file.
-
-|pragma mds rest-of-line to
-|output rest-of-line to the .mds output file.
-
-|The .bds output format supports setting initial values for Z-80 registers
-|and I/O ports so pragma gives you access to that.
-
-|The .mds output format is a MAME debug script thus additional initial
-|debugging commands may be output.  Of particular use on the TRS-80 Model II
-|is pragma mds ib@$ff=1 which maps page 1 of RAM into $8000 .. $FFFF
-|and thus allows programs to load into that area.
-
-name str
-|Set the name of the output module to str.  For compatibility reasons
-|str may be parenthesized (e.g., "name ('foo')").  Not all output
-|formats support an internal name and many have severe length limits.
 
 rsym and wsym
 |Read/write a symbol file. These simply load/save the currently defined
@@ -572,6 +508,8 @@ The unary operators not familiar to C programmers:
  ocf expr
   Current count of opcode fetches up to memory location expr
 ---
+
+
 .Macros
 The following defines a macro named m with zero or more formal parameters
 p1, p2, ..., pn, zero or more local symbols ?s1, ?s2, ..., ?sm,
@@ -744,539 +682,14 @@ by the original assembler.  This way you can ensure everything has been
 interpreted correctly.  Only once that has been achieved should you modify
 the code.
 ---
-.Errors and Warnings
 
-Any errors or warnings encountered during assembly are reported to standard
-error and in the listing file.  The errors output immediately give the source
-file and line number containing the error.  In listings the error letter
-and message appear just after the line containing the error.
-
- B
-  Balance error
- ##
-  A string is missing an closing quote or an if is missing an endif
- E
-  Expression error
- ##
-  An expression did not parse or attempts a divide or modulus by 0.
- F
-  Syntax error
- ##
-  General problem with the syntax on a line.  Sometimes extra explanation
-  will be printed on standard output.
- I
-  Digit error
- ##
-  A numeric constant has too many digits to be represented as a 32 bit number.
- M
-  Mult. def. error
- ##
-  A symbol has been defined more than once and those values differ.
- P
-  Phase error
- ##
-  On the second or subsequent assembly passes the assembly has changed
-  significantly.  Most commonly it means an if has changed conditions
-  but can also happen when labels or equated values do not converge to
-  a fixed value.
- U
-  Undeclared error
- ##
-  An undeclared symbol was used in an expression or public statement.
- V
-  Value error
- ##
-  An invalid value was given to a statement.  Often this means using less
-  than -128 or greater then 255 in a defb or less than -32768 or greater
-  than 65535 in a defw.  Or similar invalid values used Z-80/8080 opcodes
-  requiring an 8 or 16 bit value (and other restrictions like 0 to 7 for BIT).
-  Also if a relative jump is out of range or if a negative value is given
-  in defs or dc.
- O
-  Phase/Dephase error
- ##
-  phase was used within another phase or dephase without phase.
-  Or if org is used within phase.
- A
-  Assertion failure error
- ##
-  An assert statement evaluated to zero.
- J
-  Use JR error
- ##
-  An absolute jump instruction was used where relative jump was in range
-  of the destination address.  Only generated if -j or jrpromote is
-  in effect.
- R
-  Not relocatable error
- ##
-  An expression was used that must be generated at link time but cannot
-  be handled by the ".rel" format.  For instance, an org to a symbol in
-  the data segment when in the code segment.  Or a relative jump to a
-  different segment.  The ".rel" format can evaluate expressions at link
-  time using the high, low, not, -, +, *, / and % operators.
-  ZMAC is clever enough to use high or low in place of & $ff00 and
-  & 255.  But it won't replace a shl with a multiply.
- G
-  Register usage error
- ##
-  A invalid register was given to an instruction.  For example, LD B,(DE)
-  or ADD HL,IX.
- Z
-  Invalid instruction.
- ##
-  The instruction is not valid for the current architecture.  For example,
-  a Z-80@zmn instruction in 8080 mode (.8080 or -8 mode is in effect).
-  Or a Z-180@zzmn instruction in 8080 or Z-80 mode.
-  Or an undocumented Z-80 instruction in Z-180 mode.
-  However, use use of Z-80 mnemonics that
-  output valid 8080 instructions is always OK.
- H
-  $hex constant interpreted as symbol warning
- ##
-  A symbol such as $FCB has been defined even though it could appear to
-  be a hexadecimal constant.  ZMAC will treat $FCB as symbol for the entire
-  assembly which could be rather surprising if that were not the intent.
- N
-  Not implemented warning
- ##
-  For statements that have been added as parse rules but have no effect.
-  The only current example is subttl which sets the sub title of a listing
-  in certain assemblers.
- W
-  Generic warning
- ##
-  Higher-level warning; see text of warning for explanation.
-
----
-.Output Formats\format
-
-Except for ".rel", ZMAC writes every known output when assembling by default.
-This is no burden on modern computers and saves having to meticulously select
-the desired output format.
-
-".rel" is a special case since that format is intended for linking and
-can have undefined external symbols which would be errors in the other formats.
-Conversely, a simple "org $8000" will be an error for ".rel" output as it
-defaults to the code segment where absolute origin statements are forbidden.
-
-If ".rel" is selected for output either by --relopt or with
---oo rel or -o file.rel then all other output formats are suppressed
-(except the ".lst" source file listing).
-
- .ams
-  AMSDOS executable format for Amstrad computers.
- .bds
-  For source-level debugging and automatic memory protecttion in
-  trs80gp@http://www.48k.ca/trs80gp.html
- .1500.cas
-  TRS-80 high-speed (1500 baud) cassette SYSTEM file.  The internal name of the
-  file is the source file name shortened to 6 characters with suffixes
-  removed.  Requires an entry address.
- .250.cas
-  TRS-80 250 baud cassette Level I CLOAD file.  If your program has an
-  entry address and $41FE does not contain that entry address then the file
-  will be loaded at $41FE with relocation code added to move it to the desired
-  location.
- .500.cas
-  TRS-80 low-speed (500 baud) cassette SYSTEM file.  The internal name of the
-  file is the source file name shortened to 6 characters with suffixes removed.
-  Requires an entry address.
- .1000.cas
-  Identical to 500 baud but intended for double-speed LNW-80 which can
-  can load cassette files at double speed for an effective 1000 baud rate.
-  Requires an entry address.
- .cim
-  Core In-Memory image.  A raw binary format with the first byte corresponding
-  to the lowest generated code or data and proceeding contiguously until the
-  highest address generated.  Any gaps are filled with zeros.  Typically used
-  for CP/M where all executables start at address 256 or for ROM images.
- .cmd
-  TRS-80 DOS executable file format as used by all major DOSes on the TRS-80
-  (TRS-DOS, LDOS, MULTIDOS, NEWDOS, etc.)
- .hex
-  Intel hex record format.
- .rel
-  Relocatable object module format as produced by MACRO-80 and other assemblers.
- .tap
-  ZX Spectrum cassette tape format.
- .1500.wav
-  Same as .1500.cas but in ready-to-play audio format.
- .250.wav
-  Same as .250.cas but in ready-to-play audio format.
- .500.wav
-  Same as .500.cas but in ready-to-play audio format.
- .1000.wav
-  Same as .1000.cas but in ready-to-play audio format.
- .mds
-  MAME debug script (e.g., mame trs80 -d -debugscript zout/prog.mds)
-
----
 .Miscellaneous
+
 In the symbol table listing, the = separator is given for those symbols
 defined by equ or defl.  The / separator is shown for common blocks.
 Aliases are distinguished by their double-quoted strings.
 
-The .rel file format can store symbol names of up to 7 characters in length.
-However, MACRO-80 truncates symbols to 6 characters so that it has one
-character in reserve for extending linking operations such as subtracting
-two externals from each other.  To be compatible (and sensible), --rel
-truncates externals to 6 characters.  For MRAS compatibility, --mras
-truncates symbols to 7 characters.  This is not a problem for MRAS as it
-doesn't support extended linking.  But necessary if you want ZMAC to produce
-.rel files that will link with MRAS generated .rel files.  The --rel7
-option sets symbol truncation to 7 characters so you can assemble files
-that will link with MRAS output.  However, it will break extended linking
-on labels longer than 6 characters.
 
-The ignoring\prime of single quotes can be handy for tracking alternate
-register usage.  Consider the following code fragment:
-
- ld    a,(hl)
-
- rra
-
- exx
-
- ld    a,(hl')
-
- ex    af,af'
-
- ld    a',(hl')
-
- rra'
-
- ex    af,af'
-
- djnz' loop
-
- ld    d',e'
-
- exx
-
-Although ZMAC does nothing but ignore the single quotes they are useful for
-indicating which register is currently active.  A more advanced mode
-where ZMAC pays attention to the trailing quotes and emits exchange
-instructions as needed has been considered.
-
----
-.Official Zilog\zsyn Syntax
-
-The official Zilog syntax for Z-80 has some rather arbitrary restrictions
-that ZMAC ignores.  For instance, add a,b is the only correct form but
-sub a,b is invalid as sub b must be used.
-Here is a list of
-the official and alternate forms of the various affected instructions.
-rmn refers to a, b, c, d, e, h, l, (hl), (ix+d), (iy+d)
-or 8 bit immediate value.
-
-    Official        Accepted Variant
-
-  add   a,rmn         add   rmn
-
-  adc   a,rmn         adc   rmn
-
-  sub   rmn           sub   a,rmn
-
-  sbc   a,rmn         sbc   rmn
-
-  cp    rmn           cp    a,rmn
-
-  and   rmn           and   a,rmn
-
-  xor   rmn           xor   a,rmn
-
-  or    rmn           or    a,rmn
-
-  jp    (hl)          jp    hl
-
-  jp    (ix)          jp    ix
-
-  jp    (iy)          jp    iy
-
-  ex    de,hl         ex    hl,de
-
-  ex    hl,(sp)       ex    (sp),hl
-
-  ex    ix,(sp)       ex    (sp),ix
-
-  ex    iy,(sp)       ex    (sp),iy
-
-  in    a,(n)         in    a,n
-
-  out   (n),a         out   n,a
-
-  in    r,(c)         in    r,(bc)
-
-  out   (c),r         out   (bc),r
-
-  rst   8             rst   1
-
-  rst   16            rst   2
-
-  rst   24            rst   3
-
-  rst   32            rst   4
-
-  rst   40            rst   5
-
-  rst   48            rst   6
-
-  rst   56            rst   7
-
----
-.Mnemonic Values\mneval
-
-Values for 8080 mnemonics.  Note that cpi and jp are interpreted as
-"compare immediate" and "jump if positive" in 8080 mode.
-
-  aci $CE    dad $09   ldax $0A    rnz $C0
-
-  adc $88    dcr $05   lhld $2A     rp $F0
-
-  add $80    dcx $0B    lxi $01    rpe $E8
-
-  adi $C6    dec $01    mov $40    rpo $E0
-
-  ana $A0     di $F3    mvi $06    rrc $0F
-
-  ani $E6     ei $FB    nop $00    rst $C7
-
- call $CD    hlt $76    ora $B0     rz $C8
-
-   cc $DC     in $DB    ori $F6    sbb $98
-
-   cm $FC    inr $04    out $D3    sbi $DE
-
-  cma $2F    inx $03   pchl $E9   shld $22
-
-  cmc $3F     jc $DA    pop $C1   sphl $F9
-
-  cmp $B8     jm $FA   push $C5    sta $32
-
-  cnc $D4    jmp $C3    ral $17   stax $02
-
-  cnz $C4    jnc $D2    rar $1F    stc $37
-
-   cp $B8    jnz $C2     rc $D8    sub $90
-
-  cpe $EC     jp $F2    ret $C9    sui $D6
-
-  cpi $FE    jpe $EA    rlc $07   xchg $EB
-
-  cpo $E4    jpo $E2   rlcr $07    xra $A8
-
-   cz $CC     jz $CA     rm $F8    xri $EE
-
-  daa $27    lda $3A    rnc $D0   xthl $E3
-
-Values for Z-80\zmn mnemonics.
-Ambiguous mnemonics such as ld and inc evaluate to the 8 bit register
-operation base value.  ex is arbitrarily mapped to ex de,hl.
-Bit and shift operations on (IX+d) and (IY+d)
-evaluate to 32 bit values and the offset goes into the third byte.
-and, or and xor can be used in data statements but parsing ambiguity
-prevents their use in operations.
-
- adc      $88            otir     $B3ED
-
- adcx     $8EDD          out      $D3
-
- adcy     $8EFD          outd     $ABED
-
- add      $80            outdr    $BBED
-
- addx     $86DD          outi     $A3ED
-
- addy     $86FD          outir    $B3ED
-
- and      $A0            outp     $41ED
-
- andx     $A6DD          pcix     $E9DD
-
- andy     $A6FD          pciy     $E9FD
-
- bit      $40CB          pfix     $DD
-
- bitx     $4600CBDD      pfiy     $FD
-
- bity     $4600CBFD      pop      $C1
-
- call     $CD            popix    $E1DD
-
- ccd      $A9ED          popiy    $E1FD
-
- ccdr     $B9ED          push     $C5
-
- ccf      $3F            pushix   $E5DD
-
- cci      $A1ED          pushiy   $E5FD
-
- ccir     $B1ED          ralr     $10CB
-
- cmpx     $BEDD          ralx     $1600CBDD
-
- cmpy     $BEFD          raly     $1600CBFD
-
- cp       $B8            rarr     $18CB
-
- cpd      $A9ED          rarx     $1E00CBDD
-
- cpdr     $B9ED          rary     $1E00CBFD
-
- cpi      $A1ED          res      $80CB
-
- cpir     $B1ED          resx     $8600CBDD
-
- cpl      $2F            resy     $8600CBFD
-
- daa      $27            ret      $C9
-
- dadc     $4AED          reti     $4DED
-
- dadx     $9DD           retn     $45ED
-
- dady     $9FD           rl       $10CB
-
- dcrx     $35DD          rla      $17
-
- dcry     $35FD          rlc      $CB
-
- dcxix    $2BDD          rlca     $7
-
- dcxiy    $2BFD          rlcr     $CB
-
- dec      $5             rlcx     $600CBDD
-
- di       $F3            rlcy     $600CBFD
-
- djnz     $10            rld      $6FED
-
- dsbc     $42ED          rr       $18CB
-
- ei       $FB            rra      $1F
-
- ex       $EB            rrc      $8CB
-
- exaf     $8             rrca     $F
-
- exx      $D9            rrcr     $8CB
-
- halt     $76            rrcx     $E00CBDD
-
- im       $46ED          rrcy     $E00CBFD
-
- im0      $46ED          rrd      $67ED
-
- im1      $56ED          rst      $C7
-
- im2      $5EED          sbc      $98
-
- in       $DB            sbcd     $43ED
-
- inc      $4             sbcx     $9EDD
-
- ind      $AAED          sbcy     $9EFD
-
- indr     $BAED          scf      $37
-
- ini      $A2ED          sded     $53ED
-
- inir     $B2ED          set      $C0CB
-
- inp      $40ED          setb     $C0CB
-
- inrx     $34DD          setx     $C600CBDD
-
- inry     $34FD          sety     $C600CBFD
-
- inxix    $23DD          sixd     $22DD
-
- inxiy    $23FD          siyd     $22FD
-
- jp       $F2            sl1      $30CB
-
- jr       $18            sla      $20CB
-
- jrc      $38            slar     $20CB
-
- jrnc     $30            slax     $2600CBDD
-
- jrnz     $20            slay     $2600CBFD
-
- jrz      $28            sll      $30CB
-
- lbcd     $4BED          spix     $F9DD
-
- ld       $40            spiy     $F9FD
-
- ldai     $57ED          sra      $28CB
-
- ldar     $5FED          srar     $28CB
-
- ldd      $A8ED          srax     $2E00CBDD
-
- lddr     $B8ED          sray     $2E00CBFD
-
- lded     $5BED          srl      $38CB
-
- ldi      $A0ED          srlr     $38CB
-
- ldir     $B0ED          srlx     $3E00CBDD
-
- ldx      $46DD          srly     $3E00CBFD
-
- ldy      $46FD          sspd     $73ED
-
- lixd     $2ADD          stai     $47ED
-
- liyd     $2AFD          star     $4FED
-
- lspd     $7BED          stx      $70DD
-
- lxix     $21DD          sty      $70FD
-
- lxiy     $21FD          sub      $90
-
- mvix     $36DD          subx     $96DD
-
- mviy     $36FD          suby     $96FD
-
- neg      $44ED          xor      $A8
-
- nop      $0             xorx     $AEDD
-
- or       $B0            xory     $AEFD
-
- orx      $B6DD          xtix     $E3DD
-
- ory      $B6FD          xtiy     $E3FD
-
- otdr     $BBED
-
-Values for Z-180\zzmn mnemonics.
-
- in0      $00ED
-
- mlt      $4CED
-
- otdm     $8BED
-
- otdmr    $9BED
-
- otim     $83ED
-
- otimr    $93ED
-
- out0     $01ED
-
- slp      $76ED
-
- tst      $04ED
-
- tstio    $74ED
-
----
 .Exit Status
 
  0
