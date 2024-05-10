@@ -17,7 +17,7 @@ This updated version was of ZMAC was produced by George Phillips
 http://48k.ca/zmac.html
 For full credits, please see the end of this document.
 
-NOTE: This is a modified and abridged version for the BAPD program. With any major document change errors could creep in. If something does not behave as the documentation states, please see the original full documentation at the link above.
+NOTE: This is a modified and abridged version for the Bally Astrocade Program Development (BAPD) program. With any major document change errors could creep in. If something does not behave as the documentation states, please see the original full documentation at the link above.
 -Dave Turner 05/09/2024
 ******************************************************************************
 
@@ -164,36 +164,12 @@ A word (16 bits).  word and dw are synonyms.
 
 
 
-
-DEF3
-
-Purpose: Defines a 3-byte (24-bit) word in memory.
-Usage:
-Numbers: DEF3 $123456
-Synonyms: D3
-
-
-DEFD
-
-Purpose: Defines a double word (32-bit) in memory.
-Usage:
-Numbers: DEFD $12345678
-Synonyms: DWORD
-
 DEFS
 
 Purpose: Skips ahead a specified number of bytes in the output, effectively reserving memory space.
 Usage:
 Numbers: DEFS 500
 Synonyms: DS, BLOCK, RMEM
-
-
-DC 'single_string'
-
-Purpose: Defines an ASCII string and sets the high bit of the last character.
-Usage:
-Strings: DC 'string'
-Synonyms: BYTES
 
 
 DC count, byte

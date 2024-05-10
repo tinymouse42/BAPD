@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Dialog</class>
- <widget class="QDialog" name="Dialog">
+ <class>BAPD_Settings</class>
+ <widget class="QDialog" name="BAPD_Settings">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -13,13 +13,13 @@
   <property name="windowTitle">
    <string>Settings</string>
   </property>
-  <widget class="QGroupBox" name="groupBox">
+  <widget class="QGroupBox" name="zmacSettingsLayout">
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>60</y>
+     <y>30</y>
      <width>871</width>
-     <height>511</height>
+     <height>541</height>
     </rect>
    </property>
    <property name="font">
@@ -36,42 +36,11 @@
    <property name="flat">
     <bool>false</bool>
    </property>
-   <widget class="QLineEdit" name="lineEdit">
+   <widget class="QGroupBox" name="optionsGroupBox">
     <property name="geometry">
      <rect>
-      <x>30</x>
-      <y>51</y>
-      <width>371</width>
-      <height>31</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="pushButton">
-    <property name="geometry">
-     <rect>
-      <x>420</x>
-      <y>50</y>
-      <width>75</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>12</pointsize>
-     </font>
-    </property>
-    <property name="text">
-     <string>Browse...</string>
-    </property>
-    <property name="autoDefault">
-     <bool>true</bool>
-    </property>
-   </widget>
-   <widget class="QGroupBox" name="groupBox_2">
-    <property name="geometry">
-     <rect>
-      <x>590</x>
-      <y>50</y>
+      <x>620</x>
+      <y>90</y>
       <width>231</width>
       <height>361</height>
      </rect>
@@ -88,9 +57,9 @@
        <height>301</height>
       </rect>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout">
+     <layout class="QVBoxLayout" name="zmacOptionsVerticalLayout">
       <item>
-       <widget class="QCheckBox" name="checkBox_5">
+       <widget class="QCheckBox" name="expandIncludeFiles">
         <property name="font">
          <font>
           <pointsize>12</pointsize>
@@ -102,7 +71,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QCheckBox" name="checkBox_3">
+       <widget class="QCheckBox" name="expandMacros">
         <property name="font">
          <font>
           <pointsize>12</pointsize>
@@ -114,7 +83,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QCheckBox" name="checkBox">
+       <widget class="QCheckBox" name="useUndocumentedInstructions">
         <property name="font">
          <font>
           <pointsize>12</pointsize>
@@ -127,7 +96,7 @@ Z80 Instructions</string>
        </widget>
       </item>
       <item>
-       <widget class="QCheckBox" name="checkBox_6">
+       <widget class="QCheckBox" name="outputHexFile">
         <property name="font">
          <font>
           <pointsize>12</pointsize>
@@ -139,7 +108,7 @@ Z80 Instructions</string>
        </widget>
       </item>
       <item>
-       <widget class="QCheckBox" name="checkBox_2">
+       <widget class="QCheckBox" name="omitSymbolTable">
         <property name="font">
          <font>
           <pointsize>12</pointsize>
@@ -151,7 +120,7 @@ Z80 Instructions</string>
        </widget>
       </item>
       <item>
-       <widget class="QCheckBox" name="checkBox_4">
+       <widget class="QCheckBox" name="labelsMustHaveColons">
         <property name="font">
          <font>
           <pointsize>12</pointsize>
@@ -165,11 +134,11 @@ Z80 Instructions</string>
      </layout>
     </widget>
    </widget>
-   <widget class="QLabel" name="label">
+   <widget class="QLabel" name="zmacVersionButton">
     <property name="geometry">
      <rect>
-      <x>590</x>
-      <y>450</y>
+      <x>620</x>
+      <y>490</y>
       <width>231</width>
       <height>31</height>
      </rect>
@@ -189,7 +158,7 @@ Z80 Instructions</string>
      <enum>QFrame::Shape::Box</enum>
     </property>
     <property name="text">
-     <string>ZMAC Version 18oct2022</string>
+     <string>ZMAC Version 3.1</string>
     </property>
     <property name="scaledContents">
      <bool>false</bool>
@@ -197,6 +166,59 @@ Z80 Instructions</string>
     <property name="alignment">
      <set>Qt::AlignmentFlag::AlignCenter</set>
     </property>
+   </widget>
+   <widget class="QGroupBox" name="zmacFilePathLayout">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>90</y>
+      <width>571</width>
+      <height>161</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>File Locations</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
+    </property>
+    <widget class="QWidget" name="horizontalLayoutWidget">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>30</y>
+       <width>551</width>
+       <height>111</height>
+      </rect>
+     </property>
+     <layout class="QHBoxLayout" name="zmacPathInputLayout">
+      <item>
+       <widget class="QLabel" name="zmacPathLabel">
+        <property name="text">
+         <string>ZMAC Path:</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="zmacPathLineEdit"/>
+      </item>
+      <item>
+       <widget class="QPushButton" name="browseZmacButton">
+        <property name="font">
+         <font>
+          <pointsize>12</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>Browse...</string>
+        </property>
+        <property name="autoDefault">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
    </widget>
   </widget>
  </widget>
