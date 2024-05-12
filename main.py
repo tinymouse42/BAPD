@@ -7,8 +7,7 @@ from PySide6.QtGui import QAction  # Import QAction from QtGui
 from PySide6.QtCore import QDir
 from PySide6 import QtGui
 
-from BAPD_Main_GUI import Ui_MainWindow
-from BAPD_Settings_Dialog import Ui_BAPD_Settings
+
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):

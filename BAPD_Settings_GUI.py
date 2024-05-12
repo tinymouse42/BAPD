@@ -9,16 +9,15 @@
 ################################################################################
 
 from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
-                            QMetaObject, QObject, QPoint, QRect,
-                            QSize, QTime, QUrl, Qt)
+    QMetaObject, QObject, QPoint, QRect,
+    QSize, QTime, QUrl, Qt)
 from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
-                           QFont, QFontDatabase, QGradient, QIcon,
-                           QImage, QKeySequence, QLinearGradient, QPainter,
-                           QPalette, QPixmap, QRadialGradient, QTransform)
+    QFont, QFontDatabase, QGradient, QIcon,
+    QImage, QKeySequence, QLinearGradient, QPainter,
+    QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QCheckBox, QDialog, QFrame,
-                               QGroupBox, QHBoxLayout, QLabel, QLineEdit,
-                               QPushButton, QSizePolicy, QVBoxLayout, QWidget)
-
+    QGroupBox, QHBoxLayout, QLabel, QLineEdit,
+    QPushButton, QSizePolicy, QVBoxLayout, QWidget)
 
 class Ui_BAPD_Settings(object):
     def setupUi(self, BAPD_Settings):
@@ -97,8 +96,7 @@ class Ui_BAPD_Settings(object):
         self.zmacFilePathLayout = QGroupBox(self.zmacSettingsLayout)
         self.zmacFilePathLayout.setObjectName(u"zmacFilePathLayout")
         self.zmacFilePathLayout.setGeometry(QRect(10, 90, 571, 161))
-        self.zmacFilePathLayout.setAlignment(
-            Qt.AlignmentFlag.AlignLeading | Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter)
+        self.zmacFilePathLayout.setAlignment(Qt.AlignmentFlag.AlignLeading|Qt.AlignmentFlag.AlignLeft|Qt.AlignmentFlag.AlignVCenter)
         self.horizontalLayoutWidget = QWidget(self.zmacFilePathLayout)
         self.horizontalLayoutWidget.setObjectName(u"horizontalLayoutWidget")
         self.horizontalLayoutWidget.setGeometry(QRect(10, 30, 551, 111))
@@ -122,10 +120,10 @@ class Ui_BAPD_Settings(object):
 
         self.zmacPathInputLayout.addWidget(self.browseZmacButton)
 
+
         self.retranslateUi(BAPD_Settings)
 
         QMetaObject.connectSlotsByName(BAPD_Settings)
-
     # setupUi
 
     def retranslateUi(self, BAPD_Settings):
@@ -135,7 +133,7 @@ class Ui_BAPD_Settings(object):
         self.expandIncludeFiles.setText(QCoreApplication.translate("BAPD_Settings", u"Expand Include Files", None))
         self.expandMacros.setText(QCoreApplication.translate("BAPD_Settings", u"Expand Macros", None))
         self.useUndocumentedInstructions.setText(QCoreApplication.translate("BAPD_Settings", u"Use Undocumented \n"
-                                                                                             "Z80 Instructions", None))
+"Z80 Instructions", None))
         self.outputHexFile.setText(QCoreApplication.translate("BAPD_Settings", u"Output .hex File", None))
         self.omitSymbolTable.setText(QCoreApplication.translate("BAPD_Settings", u"Omit Symbol Table", None))
         self.labelsMustHaveColons.setText(QCoreApplication.translate("BAPD_Settings", u"Labels Must Have Colons", None))
@@ -144,3 +142,4 @@ class Ui_BAPD_Settings(object):
         self.zmacPathLabel.setText(QCoreApplication.translate("BAPD_Settings", u"ZMAC Path:", None))
         self.browseZmacButton.setText(QCoreApplication.translate("BAPD_Settings", u"Browse...", None))
     # retranslateUi
+
