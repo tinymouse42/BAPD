@@ -1,11 +1,18 @@
+# Imports for UI classes
+from ui.BAPD_Main_GUI import Ui_MainWindow
+from src.settings import SettingsDialog
+
+# Other imports
+import sys
 import os
 import subprocess
-import sys
-
-from PySide6.QtWidgets import QApplication, QMainWindow, QFileDialog
+import toml
+from PySide6.QtWidgets import QApplication, QMainWindow, QDialog, QFileDialog, QMessageBox
+from PySide6.QtGui import QAction, QtGui
 from PySide6.QtCore import QDir
 
-from BAPD_GUI import Ui_MainWindow  # Assuming your Qt Designer file remains the same
+# Imports for settings functions
+from src.settings import load_toml_settings, save_toml_settings
 
 USER_PROFILE_PATH = os.environ['USERPROFILE']
 
