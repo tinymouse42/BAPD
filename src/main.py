@@ -1,124 +1,145 @@
-import sys
 import os
 import subprocess
-import toml
-from PySide6.QtWidgets import QApplication, QMainWindow, QDialog, QFileDialog, QMessageBox
-from PySide6.QtGui import QAction  # Import QAction from QtGui
+import sys
+
+from PySide6.QtWidgets import QApplication, QMainWindow, QFileDialog
 from PySide6.QtCore import QDir
-from PySide6 import QtGui
 
-from BAPD_Main_GUI import Ui_MainWindow
-from BAPD_Settings_Dialog import Ui_BAPD_Settings
+from BAPD_GUI import Ui_MainWindow  # Assuming your Qt Designer file remains the same
+
+USER_PROFILE_PATH = os.environ['USERPROFILE']
 
 
-class MainWindow(QMainWindow, Ui_MainWindow):
+class MainWindow(QMainWindow):
     def __init__(self):
-        super(MainWindow, self).__init__()
-        self.setupUi(self)
-        self.settings = self.load_toml_settings()
-
-        # ... (Your existing signal connections for buttons in main window) ...
-
-        # Create Settings action
-        settings_action = QAction("Settings", self)
-        settings_action.triggered.connect(self.open_settings_dialog)
-        self.menuSettings.addAction(settings_action)  # Add to the Settings menu
-
-        # Set the icon for the Settings menu item
-        icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(":/icons/icons/gear.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
-        settings_action.setIcon(icon)
-
-    def open_settings_dialog(self):
-        dialog = SettingsDialog(self.settings)  # Pass the current settings to the dialog
-
-        if dialog.exec() == QDialog.Accepted:
-            self.settings = dialog.save_settings()  # Update settings after dialog closes
-            print("Settings saved successfully.")
-            # ... You can update any UI elements here based on new settings ...
-
-        else:
-            print("Dialog canceled.")
-
-    def load_toml_settings(self):
-        settings_path = os.path.join(
-            os.environ['USERPROFILE'],
-            "BAPD",
-            "_Programs",
-            "config",
-            "settings.toml",
-        )
-        try:
-            with open(settings_path, 'r') as f:
-                return toml.load(f)
-        except FileNotFoundError:
-            return {}
-
-    def save_toml_settings(self, settings):
-        settings_path = os.path.join(
-            os.environ['USERPROFILE'],
-            "BAPD",
-            "_Programs",
-            "config",
-            "settings.toml",
-        )
-        with open(settings_path, 'w') as f:
-            toml.dump(settings, f)
-    # ... (Your other existing methods in MainWindow) ...
-
-
-class SettingsDialog(QDialog, Ui_BAPD_Settings):
-    def __init__(self, settings):
         super().__init__()
-        self.setupUi(self)
+        self.ui = Ui_MainWindow()
+        self.ui.setupUi(self)
 
-        # Load zmac_exe path from settings or use default
-        self.load_settings(settings)
+        # Connect button signals
+        self.ui.selectProjectButton.clicked.connect(self.select_project_directory)
+        self.ui.editSourceButton.clicked.connect(self.print_button_label)
+        self.ui.viewListingButton.clicked.connect(self.print_button_label)
+        self.ui.compileButton.clicked.connect(self.compile)
+        self.ui.runCurrentButton.clicked.connect(self.run_current_program)
+        self.ui.runStandardMameButton.clicked.connect(self.print_button_label)
+        self.ui.clearScreenButton.clicked.connect(self.clear_output_screen)  # Connect clear button
+        self.ui.openProjectFolderButton.clicked.connect(self.open_project_folder)
+        self.ui.versionPushButton.clicked.connect(self.print_version)
 
-        # Connect browse button 
-        self.browseZmacButton.clicked.connect(self.browse_zmac_path)
+        self.current_project_path = None
+        self.ui.fileNameLabel.setText("No Project Selected")
 
-        # Connect checkbox signals (stub implementations)
-        # ... (Same as before, in SettingsDialog class) ...
+        # Disable Buttons Initially
+        self.ui.openProjectFolderButton.setEnabled(False)
+        self.ui.editSourceButton.setEnabled(False)
+        self.ui.viewListingButton.setEnabled(False)
+        self.ui.compileButton.setEnabled(False)
+        self.ui.runCurrentButton.setEnabled(False)
 
-    def load_settings(self, settings):
-        self.zmacPathLineEdit.setText(settings.get('paths', {}).get('zmac_exe', ''))
-        self.expandIncludeFiles.setChecked(settings.get('options', {}).get('expand_include_files', False))
-        self.expandMacros.setChecked(settings.get('options', {}).get('expand_macros', False))
-        self.useUndocumentedInstructions.setChecked(
-            settings.get('options', {}).get('use_undocumented_instructions', False))
-        self.outputHexFile.setChecked(settings.get('options', {}).get('output_hex_file', False))
-        self.omitSymbolTable.setChecked(settings.get('options', {}).get('omit_symbol_table', False))
-        self.labelsMustHaveColons.setChecked(settings.get('options', {}).get('labels_must_have_colons', False))
+    def print_button_label(self):
+        button = self.sender()
+        print(button.text())
 
-    def save_settings(self):
-        settings = {}
-        settings['paths'] = {
-            'zmac_exe': self.zmacPathLineEdit.text(),
-            # ... other paths ...
-        }
-        settings['options'] = {
-            'expand_include_files': self.expandIncludeFiles.isChecked(),
-            'expand_macros': self.expandMacros.isChecked(),
-            'use_undocumented_instructions': self.useUndocumentedInstructions.isChecked(),
-            'output_hex_file': self.outputHexFile.isChecked(),
-            'omit_symbol_table': self.omitSymbolTable.isChecked(),
-            'labels_must_have_colons': self.labelsMustHaveColons.isChecked(),
-        }
+    def print_version(self):
+        print("Version Information")
 
-        save_toml_settings(settings)
-        return settings  # Return the updated settings to the main window
+    def open_project_folder(self):
+        # Project must already be selected or option in GUI disabled
+        if self.current_project_path:
+            os.startfile(self.current_project_path)
 
-    def browse_zmac_path(self):
-        options = QFileDialog.Options()
-        fileName, _ = QFileDialog.getOpenFileName(
-            self, "Select Zmac Executable", "", "Executable Files (*.exe);;All Files (*)", options=options
+    def select_project_directory(self):
+        start_dir = os.path.join(USER_PROFILE_PATH, "BAPD", "Projects")
+        directory = QFileDialog.getExistingDirectory(
+            self,
+            "Select Astrocade Project Directory",
+            QDir.toNativeSeparators(start_dir)
         )
-        if fileName:
-            self.zmacPathLineEdit.setText(fileName)
+        directory = os.path.normpath(directory)
+        if directory:
+            self.current_project_path = directory
+            self.ui.fileNameLabel.setText(os.path.basename(directory))
 
-    def checkbox_toggled(self, checkbox_name):
-        print(f"{checkbox_name} toggled")
+            # Enable Buttons
+            self.ui.openProjectFolderButton.setEnabled(True)
+            self.ui.editSourceButton.setEnabled(True)
+            self.ui.viewListingButton.setEnabled(True)
+            self.ui.compileButton.setEnabled(True)
+            self.ui.runCurrentButton.setEnabled(True)
+        else:
+            # No directory selected
+            self.current_project_path = None
+            self.ui.fileNameLabel.setText("No Project Selected")
+
+            # Disable Buttons
+            self.ui.openProjectFolderButton.setEnabled(False)
+            self.ui.editSourceButton.setEnabled(False)
+            self.ui.viewListingButton.setEnabled(False)
+            self.ui.compileButton.setEnabled(False)
+            self.ui.runCurrentButton.setEnabled(False)
+
+    def compile(self):
+
+        # Construct paths and filenames
+        project_name = os.path.basename(self.current_project_path)
+        source_file = os.path.join(self.current_project_path, f"{project_name}.asm")
+        output_file = os.path.join(self.current_project_path, f"{project_name}.bin")
+        listing_file = os.path.join(self.current_project_path, f"{project_name}.lst")
+
+        # Change working directory to project path for Zmac
+        os.chdir(self.current_project_path)
+
+        # Build the Zmac command
+        zmac_path = os.path.join(USER_PROFILE_PATH, "BAPD", "_Programs", "Zmac", "zmac.exe")
+        zmac_command = [zmac_path, "-i", "-m", "-o", output_file, "-x", listing_file, source_file]
+
+        # Execute Zmac
+        try:
+            completed_process = subprocess.run(zmac_command, capture_output=True, text=True)
+            if completed_process.returncode == 0:
+                self.ui.plainTextEdit.appendPlainText("Zmac Output:\nCompilation Successful!")
+            else:
+                self.ui.plainTextEdit.appendPlainText(f"Zmac Error:\n{completed_process.stderr}")
+        except FileNotFoundError:
+            self.ui.plainTextEdit.appendPlainText("Error: Zmac.exe not found.")
+
+    def clear_output_screen(self):
+        self.ui.plainTextEdit.clear()
+        self.ui.plainTextEdit.appendPlainText("[Screen Cleared]")
+
+    def run_current_program(self):
+        # Get the project name
+        project_name = os.path.basename(self.current_project_path)
+
+        # Get the path to the current project's .bin file
+        bin_file_path = os.path.normpath(os.path.join(self.current_project_path, f"{project_name}.bin"))
+
+        # Build the path to the MAME executable
+        mame_path = os.path.join(USER_PROFILE_PATH, "BAPD", "_Programs", "MAME", "mame64.exe")
+        mame_dir = os.path.dirname(mame_path)  # Get the directory containing MAME
+
+        # Build the MAME command
+        mame_command = [
+            mame_path,
+            "astrocde",
+            "-cart", bin_file_path,
+            "-nofilter",
+            "-window"
+
+        ]
+        # Add -debug if the checkbox is checked
+        if self.ui.mameDebugCheckBox.isChecked():
+            mame_command.append("-debug")
+
+        # Change working directory to the MAME directory
+        os.chdir(mame_dir)
+
+        # Launch MAME as a separate process
+        subprocess.Popen(mame_command)
+
+        # Optional: Display a message indicating MAME has launched
+        self.ui.plainTextEdit.appendPlainText("MAME has been launched.")
 
 
 if __name__ == "__main__":
