@@ -1,13 +1,13 @@
 BAPD/
-+-- main.py
-+-- ui/
-�   +-- BAPD_Main_GUI.py
-�   +-- BAPD_Settings_GUI.py
-+-- config/
-�   +-- settings.toml
-+-- src/
-�   +-- __init__.py
-�   +-- settings.py
-+-- icons/
-�   +-- gear.png
-+-- README.md
+├── ui/
+│   ├── BAPD_Main_GUI.py
+│   └── BAPD_Settings_GUI.py
+├── config/
+│   └── settings.toml
+├── src/
+│   ├── __init__.py
+│   ├── settings.py
+│   └── main.py
+├── icons/
+│   └── gear.png
+└── README.md
