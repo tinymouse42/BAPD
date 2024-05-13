@@ -1,58 +1,69 @@
-# Imports for UI classes
-from ui.BAPD_Main_GUI import Ui_MainWindow
-from src.settings import SettingsDialog
-
-# Other imports
 import sys
 import os
 import subprocess
 import toml
 from PySide6.QtWidgets import QApplication, QMainWindow, QDialog, QFileDialog, QMessageBox
-from PySide6.QtGui import QAction, QtGui
+from PySide6.QtGui import QIcon, QAction
 from PySide6.QtCore import QDir
 
-# Imports for settings functions
-from src.settings import load_toml_settings, save_toml_settings
+from ui.BAPD_Main_GUI import Ui_MainWindow
 
 USER_PROFILE_PATH = os.environ['USERPROFILE']
+DEFAULT_PROJECT_PATH = os.path.join(USER_PROFILE_PATH, "BAPD", "Projects", "Astrocade_Program")
 
 
-class MainWindow(QMainWindow):
+class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self):
-        super().__init__()
-        self.ui = Ui_MainWindow()
-        self.ui.setupUi(self)
+        super(MainWindow, self).__init__()
+        self.setupUi(self)
+
+        # Set default project path
+        self.current_project_path = DEFAULT_PROJECT_PATH
+        self.fileNameLabel.setText("Astrocade_Program")
 
         # Connect button signals
-        self.ui.selectProjectButton.clicked.connect(self.select_project_directory)
-        self.ui.editSourceButton.clicked.connect(self.print_button_label)
-        self.ui.viewListingButton.clicked.connect(self.print_button_label)
-        self.ui.compileButton.clicked.connect(self.compile)
-        self.ui.runCurrentButton.clicked.connect(self.run_current_program)
-        self.ui.runStandardMameButton.clicked.connect(self.print_button_label)
-        self.ui.clearScreenButton.clicked.connect(self.clear_output_screen)  # Connect clear button
-        self.ui.openProjectFolderButton.clicked.connect(self.open_project_folder)
-        self.ui.versionPushButton.clicked.connect(self.print_version)
+        self.selectProjectButton.clicked.connect(self.select_project_directory)
+        self.editSourceButton.clicked.connect(self.edit_source)
+        self.viewListingButton.clicked.connect(self.view_listing)
+        self.compileButton.clicked.connect(self.compile)
+        self.runCurrentButton.clicked.connect(self.run_current_program)
+        self.runStandardMameButton.clicked.connect(self.run_standard_mame)
+        self.clearScreenButton.clicked.connect(self.clear_output_screen)
+        self.openProjectFolderButton.clicked.connect(self.open_project_folder)
+        self.versionPushButton.clicked.connect(self.print_version)
 
-        self.current_project_path = None
-        self.ui.fileNameLabel.setText("No Project Selected")
+        # Enable Buttons Initially
+        self.openProjectFolderButton.setEnabled(True)
+        self.editSourceButton.setEnabled(True)
+        self.viewListingButton.setEnabled(True)
+        self.compileButton.setEnabled(True)
+        self.runCurrentButton.setEnabled(True)
 
-        # Disable Buttons Initially
-        self.ui.openProjectFolderButton.setEnabled(False)
-        self.ui.editSourceButton.setEnabled(False)
-        self.ui.viewListingButton.setEnabled(False)
-        self.ui.compileButton.setEnabled(False)
-        self.ui.runCurrentButton.setEnabled(False)
+        # Create Settings action
+        settings_action = QAction("Settings", self)
+        settings_action.triggered.connect(self.open_settings_dialog)
+        self.menuSettings.addAction(settings_action)
 
-    def print_button_label(self):
-        button = self.sender()
-        print(button.text())
+        # Set the icon for the Settings menu item
+        icon = QIcon(":/icons/icons/gear.png")
+        settings_action.setIcon(icon)
+
+    def open_settings_dialog(self):
+        print("Settings pressed")
+
+    def edit_source(self):
+        print("Edit Source button clicked")
+
+    def view_listing(self):
+        print("View Listing button clicked")
+
+    def run_standard_mame(self):
+        print("Run Standard MAME button clicked")
 
     def print_version(self):
         print("Version Information")
 
     def open_project_folder(self):
-        # Project must already be selected or option in GUI disabled
         if self.current_project_path:
             os.startfile(self.current_project_path)
 
@@ -66,87 +77,70 @@ class MainWindow(QMainWindow):
         directory = os.path.normpath(directory)
         if directory:
             self.current_project_path = directory
-            self.ui.fileNameLabel.setText(os.path.basename(directory))
+            self.fileNameLabel.setText(os.path.basename(directory))
 
             # Enable Buttons
-            self.ui.openProjectFolderButton.setEnabled(True)
-            self.ui.editSourceButton.setEnabled(True)
-            self.ui.viewListingButton.setEnabled(True)
-            self.ui.compileButton.setEnabled(True)
-            self.ui.runCurrentButton.setEnabled(True)
+            self.openProjectFolderButton.setEnabled(True)
+            self.editSourceButton.setEnabled(True)
+            self.viewListingButton.setEnabled(True)
+            self.compileButton.setEnabled(True)
+            self.runCurrentButton.setEnabled(True)
         else:
-            # No directory selected
             self.current_project_path = None
-            self.ui.fileNameLabel.setText("No Project Selected")
+            self.fileNameLabel.setText("No Project Selected")
 
             # Disable Buttons
-            self.ui.openProjectFolderButton.setEnabled(False)
-            self.ui.editSourceButton.setEnabled(False)
-            self.ui.viewListingButton.setEnabled(False)
-            self.ui.compileButton.setEnabled(False)
-            self.ui.runCurrentButton.setEnabled(False)
+            self.openProjectFolderButton.setEnabled(False)
+            self.editSourceButton.setEnabled(False)
+            self.viewListingButton.setEnabled(False)
+            self.compileButton.setEnabled(False)
+            self.runCurrentButton.setEnabled(False)
 
     def compile(self):
-
-        # Construct paths and filenames
         project_name = os.path.basename(self.current_project_path)
         source_file = os.path.join(self.current_project_path, f"{project_name}.asm")
         output_file = os.path.join(self.current_project_path, f"{project_name}.bin")
         listing_file = os.path.join(self.current_project_path, f"{project_name}.lst")
 
-        # Change working directory to project path for Zmac
         os.chdir(self.current_project_path)
 
-        # Build the Zmac command
         zmac_path = os.path.join(USER_PROFILE_PATH, "BAPD", "_Programs", "Zmac", "zmac.exe")
         zmac_command = [zmac_path, "-i", "-m", "-o", output_file, "-x", listing_file, source_file]
 
-        # Execute Zmac
         try:
             completed_process = subprocess.run(zmac_command, capture_output=True, text=True)
             if completed_process.returncode == 0:
-                self.ui.plainTextEdit.appendPlainText("Zmac Output:\nCompilation Successful!")
+                self.plainTextEdit.appendPlainText("Zmac Output:\nCompilation Successful!")
             else:
-                self.ui.plainTextEdit.appendPlainText(f"Zmac Error:\n{completed_process.stderr}")
+                self.plainTextEdit.appendPlainText(f"Zmac Error:\n{completed_process.stderr}")
         except FileNotFoundError:
-            self.ui.plainTextEdit.appendPlainText("Error: Zmac.exe not found.")
+            self.plainTextEdit.appendPlainText("Error: Zmac.exe not found.")
 
     def clear_output_screen(self):
-        self.ui.plainTextEdit.clear()
-        self.ui.plainTextEdit.appendPlainText("[Screen Cleared]")
+        self.plainTextEdit.clear()
+        self.plainTextEdit.appendPlainText("[Screen Cleared]")
 
     def run_current_program(self):
-        # Get the project name
         project_name = os.path.basename(self.current_project_path)
-
-        # Get the path to the current project's .bin file
         bin_file_path = os.path.normpath(os.path.join(self.current_project_path, f"{project_name}.bin"))
 
-        # Build the path to the MAME executable
         mame_path = os.path.join(USER_PROFILE_PATH, "BAPD", "_Programs", "MAME", "mame64.exe")
-        mame_dir = os.path.dirname(mame_path)  # Get the directory containing MAME
+        mame_dir = os.path.dirname(mame_path)
 
-        # Build the MAME command
         mame_command = [
             mame_path,
             "astrocde",
             "-cart", bin_file_path,
             "-nofilter",
             "-window"
-
         ]
-        # Add -debug if the checkbox is checked
-        if self.ui.mameDebugCheckBox.isChecked():
+
+        if self.mameDebugCheckBox.isChecked():
             mame_command.append("-debug")
 
-        # Change working directory to the MAME directory
         os.chdir(mame_dir)
-
-        # Launch MAME as a separate process
         subprocess.Popen(mame_command)
-
-        # Optional: Display a message indicating MAME has launched
-        self.ui.plainTextEdit.appendPlainText("MAME has been launched.")
+        self.plainTextEdit.appendPlainText("MAME has been launched.")
 
 
 if __name__ == "__main__":
