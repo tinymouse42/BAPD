@@ -75,26 +75,28 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             QDir.toNativeSeparators(start_dir)
         )
         directory = os.path.normpath(directory)
-        if directory:
+
+        # Since the normpath function returns "." if it tries to normalize an
+        # empty variable, we have to consider "." as path not chosen.
+        if directory and directory != ".":
+            print("Entered if directory", directory)
             self.current_project_path = directory
+            # Enable Buttons
+
             self.fileNameLabel.setText(os.path.basename(directory))
 
             # Enable Buttons
+
             self.openProjectFolderButton.setEnabled(True)
             self.editSourceButton.setEnabled(True)
             self.viewListingButton.setEnabled(True)
             self.compileButton.setEnabled(True)
             self.runCurrentButton.setEnabled(True)
-        else:
-            self.current_project_path = None
-            self.fileNameLabel.setText("No Project Selected")
 
-            # Disable Buttons
-            self.openProjectFolderButton.setEnabled(False)
-            self.editSourceButton.setEnabled(False)
-            self.viewListingButton.setEnabled(False)
-            self.compileButton.setEnabled(False)
-            self.runCurrentButton.setEnabled(False)
+        else:
+            # Dialog was canceled or invalid selection
+            print("No directory selected or invalid directory.")
+            return
 
     def compile(self):
         project_name = os.path.basename(self.current_project_path)
