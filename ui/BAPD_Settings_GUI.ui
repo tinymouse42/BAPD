@@ -17,7 +17,7 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>30</y>
+     <y>50</y>
      <width>871</width>
      <height>541</height>
     </rect>
@@ -219,6 +219,44 @@ Z80 Instructions</string>
       </item>
      </layout>
     </widget>
+   </widget>
+  </widget>
+  <widget class="QTabWidget" name="tabWidget">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>40</y>
+     <width>251</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>12</pointsize>
+     <bold>false</bold>
+    </font>
+   </property>
+   <property name="tabPosition">
+    <enum>QTabWidget::TabPosition::South</enum>
+   </property>
+   <property name="tabShape">
+    <enum>QTabWidget::TabShape::Rounded</enum>
+   </property>
+   <property name="currentIndex">
+    <number>0</number>
+   </property>
+   <property name="usesScrollButtons">
+    <bool>true</bool>
+   </property>
+   <widget class="QWidget" name="zmac_Tab">
+    <attribute name="title">
+     <string>ZMAC</string>
+    </attribute>
+   </widget>
+   <widget class="QWidget" name="mame_Tab">
+    <attribute name="title">
+     <string>MAME</string>
+    </attribute>
    </widget>
   </widget>
  </widget>
