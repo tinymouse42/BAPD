@@ -17,16 +17,27 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QCheckBox, QDialog, QFrame,
     QGroupBox, QHBoxLayout, QLabel, QLineEdit,
-    QPushButton, QSizePolicy, QVBoxLayout, QWidget)
+    QPushButton, QSizePolicy, QTabWidget, QVBoxLayout,
+    QWidget)
 
 class Ui_BAPD_Settings(object):
     def setupUi(self, BAPD_Settings):
         if not BAPD_Settings.objectName():
             BAPD_Settings.setObjectName(u"BAPD_Settings")
-        BAPD_Settings.resize(912, 669)
-        self.zmacSettingsLayout = QGroupBox(BAPD_Settings)
+        BAPD_Settings.resize(915, 615)
+        self.horizontalLayout = QHBoxLayout(BAPD_Settings)
+        self.horizontalLayout.setSpacing(0)
+        self.horizontalLayout.setObjectName(u"horizontalLayout")
+        self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
+        self.settingsTabWidget = QTabWidget(BAPD_Settings)
+        self.settingsTabWidget.setObjectName(u"settingsTabWidget")
+        self.settingsTabWidget.setUsesScrollButtons(False)
+        self.zmacTab = QWidget()
+        self.zmacTab.setObjectName(u"zmacTab")
+        self.zmacTab.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
+        self.zmacSettingsLayout = QGroupBox(self.zmacTab)
         self.zmacSettingsLayout.setObjectName(u"zmacSettingsLayout")
-        self.zmacSettingsLayout.setGeometry(QRect(20, 30, 871, 541))
+        self.zmacSettingsLayout.setGeometry(QRect(20, 20, 871, 541))
         font = QFont()
         font.setPointSize(14)
         self.zmacSettingsLayout.setFont(font)
@@ -120,8 +131,18 @@ class Ui_BAPD_Settings(object):
 
         self.zmacPathInputLayout.addWidget(self.browseZmacButton)
 
+        self.settingsTabWidget.addTab(self.zmacTab, "")
+        self.mameTab = QWidget()
+        self.mameTab.setObjectName(u"mameTab")
+        self.settingsTabWidget.addTab(self.mameTab, "")
+
+        self.horizontalLayout.addWidget(self.settingsTabWidget)
+
 
         self.retranslateUi(BAPD_Settings)
+
+        self.settingsTabWidget.setCurrentIndex(0)
+
 
         QMetaObject.connectSlotsByName(BAPD_Settings)
     # setupUi
@@ -141,5 +162,7 @@ class Ui_BAPD_Settings(object):
         self.zmacFilePathLayout.setTitle(QCoreApplication.translate("BAPD_Settings", u"File Locations", None))
         self.zmacPathLabel.setText(QCoreApplication.translate("BAPD_Settings", u"ZMAC Path:", None))
         self.browseZmacButton.setText(QCoreApplication.translate("BAPD_Settings", u"Browse...", None))
+        self.settingsTabWidget.setTabText(self.settingsTabWidget.indexOf(self.zmacTab), QCoreApplication.translate("BAPD_Settings", u"ZMAC", None))
+        self.settingsTabWidget.setTabText(self.settingsTabWidget.indexOf(self.mameTab), QCoreApplication.translate("BAPD_Settings", u"MAME", None))
     # retranslateUi
 
