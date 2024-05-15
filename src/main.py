@@ -1,11 +1,12 @@
-import sys
 import os
 import subprocess
-import toml
-from PySide6.QtWidgets import QApplication, QMainWindow, QDialog, QFileDialog, QMessageBox
-from PySide6.QtGui import QIcon, QAction
-from PySide6.QtCore import QDir
+import sys
 
+from PySide6.QtCore import QDir
+from PySide6.QtGui import QIcon, QAction
+from PySide6.QtWidgets import QApplication, QMainWindow, QFileDialog
+
+from settings import SettingsDialog  # Import the SettingsDialog class
 from ui.BAPD_Main_GUI import Ui_MainWindow
 
 USER_PROFILE_PATH = os.environ['USERPROFILE']
@@ -39,7 +40,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.compileButton.setEnabled(True)
         self.runCurrentButton.setEnabled(True)
 
-        # Create Settings action
         settings_action = QAction("Settings", self)
         settings_action.triggered.connect(self.open_settings_dialog)
         self.menuSettings.addAction(settings_action)
@@ -49,7 +49,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         settings_action.setIcon(icon)
 
     def open_settings_dialog(self):
-        print("Settings pressed")
+        settings_dialog = SettingsDialog(self)  # Create an instance of the SettingsDialog
+        settings_dialog.exec()  # Show the settings dialog as a modal window
+        print("Settings dialog closed")
 
     def edit_source(self):
         print("Edit Source button clicked")
