@@ -191,7 +191,7 @@ class Ui_BAPD_Settings(object):
 
         self.retranslateUi(BAPD_Settings)
 
-        self.settingsTabWidget.setCurrentIndex(0)
+        self.settingsTabWidget.setCurrentIndex(1)
 
 
         QMetaObject.connectSlotsByName(BAPD_Settings)
@@ -199,7 +199,7 @@ class Ui_BAPD_Settings(object):
 
     def retranslateUi(self, BAPD_Settings):
         BAPD_Settings.setWindowTitle(QCoreApplication.translate("BAPD_Settings", u"Settings", None))
-        self.zmacSettingsLayout.setTitle(QCoreApplication.translate("BAPD_Settings", u"MAME Settings", None))
+        self.zmacSettingsLayout.setTitle(QCoreApplication.translate("BAPD_Settings", u"ZMAC Settings", None))
         self.zmacOptionsGroupBox.setTitle(QCoreApplication.translate("BAPD_Settings", u"Options", None))
         self.expandIncludeFiles.setText(QCoreApplication.translate("BAPD_Settings", u"Expand Include Files", None))
         self.expandMacros.setText(QCoreApplication.translate("BAPD_Settings", u"Expand Macros", None))
@@ -213,7 +213,7 @@ class Ui_BAPD_Settings(object):
         self.zmacPathLabel.setText(QCoreApplication.translate("BAPD_Settings", u"ZMAC Path:", None))
         self.zmacBrowseButton.setText(QCoreApplication.translate("BAPD_Settings", u"Browse...", None))
         self.settingsTabWidget.setTabText(self.settingsTabWidget.indexOf(self.zmacTab), QCoreApplication.translate("BAPD_Settings", u"ZMAC", None))
-        self.mameSettingsLayout.setTitle(QCoreApplication.translate("BAPD_Settings", u"ZMAC Settings", None))
+        self.mameSettingsLayout.setTitle(QCoreApplication.translate("BAPD_Settings", u"MAME Settings", None))
         self.mameOptionsGroupBox.setTitle(QCoreApplication.translate("BAPD_Settings", u"Options", None))
         self.mameFilePathLayout.setTitle(QCoreApplication.translate("BAPD_Settings", u"File Locations", None))
         self.mamePathLabel.setText(QCoreApplication.translate("BAPD_Settings", u"MAME Path:", None))
