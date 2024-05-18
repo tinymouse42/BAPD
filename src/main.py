@@ -56,7 +56,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         settings_dialog = SettingsDialog(self)
         settings_dialog.accepted.connect(self.handle_settings_accepted)
         settings_dialog.rejected.connect(self.handle_settings_rejected)
-        settings_dialog.exec_()
+        settings_dialog.exec()
 
     def handle_settings_accepted(self):
         """Handles the accepted signal from the settings dialog."""
