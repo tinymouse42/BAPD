@@ -32,7 +32,7 @@
    <item>
     <widget class="QTabWidget" name="settingsTabWidget">
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <property name="usesScrollButtons">
       <bool>false</bool>
@@ -64,8 +64,8 @@
          <widget class="QGroupBox" name="zmacOptionsGroupBox">
           <property name="geometry">
            <rect>
-            <x>620</x>
-            <y>90</y>
+            <x>20</x>
+            <y>210</y>
             <width>222</width>
             <height>319</height>
            </rect>
@@ -159,8 +159,8 @@ Z80 Instructions</string>
          <widget class="QLabel" name="zmacVersionButton">
           <property name="geometry">
            <rect>
-            <x>620</x>
-            <y>490</y>
+            <x>650</x>
+            <y>40</y>
             <width>221</width>
             <height>31</height>
            </rect>
@@ -194,7 +194,7 @@ Z80 Instructions</string>
            <rect>
             <x>20</x>
             <y>90</y>
-            <width>581</width>
+            <width>851</width>
             <height>101</height>
            </rect>
           </property>
@@ -236,6 +236,27 @@ Z80 Instructions</string>
            </item>
           </layout>
          </widget>
+         <widget class="QDialogButtonBox" name="buttonBox_2">
+          <property name="geometry">
+           <rect>
+            <x>620</x>
+            <y>510</y>
+            <width>241</width>
+            <height>31</height>
+           </rect>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>13</pointsize>
+           </font>
+          </property>
+          <property name="standardButtons">
+           <set>QDialogButtonBox::StandardButton::Apply|QDialogButtonBox::StandardButton::Cancel|QDialogButtonBox::StandardButton::Ok</set>
+          </property>
+          <property name="centerButtons">
+           <bool>true</bool>
+          </property>
+         </widget>
         </widget>
        </item>
       </layout>
@@ -264,8 +285,8 @@ Z80 Instructions</string>
          <widget class="QGroupBox" name="mameOptionsGroupBox">
           <property name="geometry">
            <rect>
-            <x>620</x>
-            <y>90</y>
+            <x>20</x>
+            <y>210</y>
             <width>222</width>
             <height>319</height>
            </rect>
@@ -280,7 +301,7 @@ Z80 Instructions</string>
            <rect>
             <x>20</x>
             <y>90</y>
-            <width>581</width>
+            <width>851</width>
             <height>101</height>
            </rect>
           </property>
@@ -321,6 +342,27 @@ Z80 Instructions</string>
             </layout>
            </item>
           </layout>
+         </widget>
+         <widget class="QDialogButtonBox" name="buttonBox_3">
+          <property name="geometry">
+           <rect>
+            <x>620</x>
+            <y>510</y>
+            <width>241</width>
+            <height>31</height>
+           </rect>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>13</pointsize>
+           </font>
+          </property>
+          <property name="standardButtons">
+           <set>QDialogButtonBox::StandardButton::Apply|QDialogButtonBox::StandardButton::Cancel|QDialogButtonBox::StandardButton::Ok</set>
+          </property>
+          <property name="centerButtons">
+           <bool>true</bool>
+          </property>
          </widget>
         </widget>
        </item>

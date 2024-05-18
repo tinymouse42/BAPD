@@ -15,10 +15,10 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QCheckBox, QDialog, QFrame,
-    QGridLayout, QGroupBox, QHBoxLayout, QLabel,
-    QLineEdit, QPushButton, QSizePolicy, QTabWidget,
-    QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QAbstractButton, QApplication, QCheckBox, QDialog,
+    QDialogButtonBox, QFrame, QGridLayout, QGroupBox,
+    QHBoxLayout, QLabel, QLineEdit, QPushButton,
+    QSizePolicy, QTabWidget, QVBoxLayout, QWidget)
 
 class Ui_BAPD_Settings(object):
     def setupUi(self, BAPD_Settings):
@@ -46,7 +46,7 @@ class Ui_BAPD_Settings(object):
         self.zmacSettingsLayout.setFlat(False)
         self.zmacOptionsGroupBox = QGroupBox(self.zmacSettingsLayout)
         self.zmacOptionsGroupBox.setObjectName(u"zmacOptionsGroupBox")
-        self.zmacOptionsGroupBox.setGeometry(QRect(620, 90, 222, 319))
+        self.zmacOptionsGroupBox.setGeometry(QRect(20, 210, 222, 319))
         self.gridLayout_2 = QGridLayout(self.zmacOptionsGroupBox)
         self.gridLayout_2.setObjectName(u"gridLayout_2")
         self.zmacOptionsVerticalLayout = QVBoxLayout()
@@ -95,7 +95,7 @@ class Ui_BAPD_Settings(object):
 
         self.zmacVersionButton = QLabel(self.zmacSettingsLayout)
         self.zmacVersionButton.setObjectName(u"zmacVersionButton")
-        self.zmacVersionButton.setGeometry(QRect(620, 490, 221, 31))
+        self.zmacVersionButton.setGeometry(QRect(650, 40, 221, 31))
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -109,7 +109,7 @@ class Ui_BAPD_Settings(object):
         self.zmacVersionButton.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.zmacFilePathLayout = QGroupBox(self.zmacSettingsLayout)
         self.zmacFilePathLayout.setObjectName(u"zmacFilePathLayout")
-        self.zmacFilePathLayout.setGeometry(QRect(20, 90, 581, 101))
+        self.zmacFilePathLayout.setGeometry(QRect(20, 90, 851, 101))
         self.zmacFilePathLayout.setAlignment(Qt.AlignmentFlag.AlignLeading|Qt.AlignmentFlag.AlignLeft|Qt.AlignmentFlag.AlignVCenter)
         self.gridLayout_3 = QGridLayout(self.zmacFilePathLayout)
         self.gridLayout_3.setObjectName(u"gridLayout_3")
@@ -135,6 +135,14 @@ class Ui_BAPD_Settings(object):
 
         self.gridLayout_3.addLayout(self.zmacPathInputLayout, 0, 0, 1, 1)
 
+        self.buttonBox_2 = QDialogButtonBox(self.zmacSettingsLayout)
+        self.buttonBox_2.setObjectName(u"buttonBox_2")
+        self.buttonBox_2.setGeometry(QRect(620, 510, 241, 31))
+        font3 = QFont()
+        font3.setPointSize(13)
+        self.buttonBox_2.setFont(font3)
+        self.buttonBox_2.setStandardButtons(QDialogButtonBox.StandardButton.Apply|QDialogButtonBox.StandardButton.Cancel|QDialogButtonBox.StandardButton.Ok)
+        self.buttonBox_2.setCenterButtons(True)
 
         self.gridLayout.addWidget(self.zmacSettingsLayout, 0, 0, 1, 1)
 
@@ -150,12 +158,12 @@ class Ui_BAPD_Settings(object):
         self.mameSettingsLayout.setFlat(False)
         self.mameOptionsGroupBox = QGroupBox(self.mameSettingsLayout)
         self.mameOptionsGroupBox.setObjectName(u"mameOptionsGroupBox")
-        self.mameOptionsGroupBox.setGeometry(QRect(620, 90, 222, 319))
+        self.mameOptionsGroupBox.setGeometry(QRect(20, 210, 222, 319))
         self.gridLayout_4 = QGridLayout(self.mameOptionsGroupBox)
         self.gridLayout_4.setObjectName(u"gridLayout_4")
         self.mameFilePathLayout = QGroupBox(self.mameSettingsLayout)
         self.mameFilePathLayout.setObjectName(u"mameFilePathLayout")
-        self.mameFilePathLayout.setGeometry(QRect(20, 90, 581, 101))
+        self.mameFilePathLayout.setGeometry(QRect(20, 90, 851, 101))
         self.mameFilePathLayout.setAlignment(Qt.AlignmentFlag.AlignLeading|Qt.AlignmentFlag.AlignLeft|Qt.AlignmentFlag.AlignVCenter)
         self.gridLayout_5 = QGridLayout(self.mameFilePathLayout)
         self.gridLayout_5.setObjectName(u"gridLayout_5")
@@ -181,6 +189,12 @@ class Ui_BAPD_Settings(object):
 
         self.gridLayout_5.addLayout(self.mamePathInputLayout, 0, 0, 1, 1)
 
+        self.buttonBox_3 = QDialogButtonBox(self.mameSettingsLayout)
+        self.buttonBox_3.setObjectName(u"buttonBox_3")
+        self.buttonBox_3.setGeometry(QRect(620, 510, 241, 31))
+        self.buttonBox_3.setFont(font3)
+        self.buttonBox_3.setStandardButtons(QDialogButtonBox.StandardButton.Apply|QDialogButtonBox.StandardButton.Cancel|QDialogButtonBox.StandardButton.Ok)
+        self.buttonBox_3.setCenterButtons(True)
 
         self.gridLayout_6.addWidget(self.mameSettingsLayout, 0, 0, 1, 1)
 
@@ -191,7 +205,7 @@ class Ui_BAPD_Settings(object):
 
         self.retranslateUi(BAPD_Settings)
 
-        self.settingsTabWidget.setCurrentIndex(1)
+        self.settingsTabWidget.setCurrentIndex(0)
 
 
         QMetaObject.connectSlotsByName(BAPD_Settings)
