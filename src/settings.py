@@ -40,7 +40,7 @@ class SettingsDialog(QDialog, Ui_BAPD_Settings):
         # ==========================================================================
         # ===> THIS IS NOT WORKING
         # It is because I didn't have the DialogButtonBox in the Designer file.
-        # I have fixed that and now just need to implement it. For now I just
+        # I have fixed that and now just need to implement it. For now, I just
         # commented out the non-working lines of code.
         # ==========================================================================
         # self.buttonBox.accepted.connect(self.accept)  # Connect to built-in accept method
