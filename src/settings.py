@@ -68,8 +68,28 @@ class SettingsDialog(QDialog, Ui_BAPD_Settings):
 # EVALUATE THIS AND RENAME FOR CLARITY ???
 # ==========================================================================
 def save_settings(self):
-    self.settings["zmac"]["path"] = self.zmacPathLineEdit.text()
-    save_toml_settings(self.settings)
+    """Saves the current settings to the TOML file."""
+
+    try:
+        # Gather settings from the UI elements
+        self.settings["zmac"]["path"] = self.zmacPathLineEdit.text()
+        self.settings["zmac"]["output_hex_file"] = self.outputHexFile.isChecked()
+        self.settings["zmac"]["expand_include_files"] = self.expandIncludeFiles.isChecked()
+        self.settings["zmac"]["expand_macros"] = self.expandMacros.isChecked()
+        self.settings["zmac"]["omit_symbol_table"] = self.omitSymbolTable.isChecked()
+
+        # ... (Gather settings for other tabs - MAME, etc.)
+
+        # Save to TOML file
+        with open(TOML_PATH, "w") as f:
+            toml.dump(self.settings, f)
+
+        # Optionally, provide user feedback (e.g., status bar message)
+        print("Settings saved successfully!")  # Or use a logging mechanism
+
+    except Exception as e:  # Catch any potential errors during saving
+        # Handle the error (e.g., log it, show an error message to the user)
+        print(f"Error saving settings: {e}")  # Or use a logging mechanism
 
 
 # ==========================================================================
