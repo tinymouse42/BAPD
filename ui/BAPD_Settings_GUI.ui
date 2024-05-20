@@ -80,6 +80,18 @@
               <number>17</number>
              </property>
              <item>
+              <widget class="QCheckBox" name="outputHexFile">
+               <property name="font">
+                <font>
+                 <pointsize>12</pointsize>
+                </font>
+               </property>
+               <property name="text">
+                <string>Output .hex and .bin file</string>
+               </property>
+              </widget>
+             </item>
+             <item>
               <widget class="QCheckBox" name="expandIncludeFiles">
                <property name="font">
                 <font>
@@ -87,7 +99,7 @@
                 </font>
                </property>
                <property name="text">
-                <string>Expand Include Files</string>
+                <string>Expand Include Files </string>
                </property>
               </widget>
              </item>
@@ -104,31 +116,6 @@
               </widget>
              </item>
              <item>
-              <widget class="QCheckBox" name="useUndocumentedInstructions">
-               <property name="font">
-                <font>
-                 <pointsize>12</pointsize>
-                </font>
-               </property>
-               <property name="text">
-                <string>Use Undocumented 
-Z80 Instructions</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QCheckBox" name="outputHexFile">
-               <property name="font">
-                <font>
-                 <pointsize>12</pointsize>
-                </font>
-               </property>
-               <property name="text">
-                <string>Output .hex File</string>
-               </property>
-              </widget>
-             </item>
-             <item>
               <widget class="QCheckBox" name="omitSymbolTable">
                <property name="font">
                 <font>
@@ -137,18 +124,6 @@ Z80 Instructions</string>
                </property>
                <property name="text">
                 <string>Omit Symbol Table</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QCheckBox" name="labelsMustHaveColons">
-               <property name="font">
-                <font>
-                 <pointsize>12</pointsize>
-                </font>
-               </property>
-               <property name="text">
-                <string>Labels Must Have Colons</string>
                </property>
               </widget>
              </item>
@@ -236,7 +211,7 @@ Z80 Instructions</string>
            </item>
           </layout>
          </widget>
-         <widget class="QDialogButtonBox" name="buttonBox_2">
+         <widget class="QDialogButtonBox" name="zmacButtonBox">
           <property name="geometry">
            <rect>
             <x>620</x>
@@ -343,7 +318,7 @@ Z80 Instructions</string>
            </item>
           </layout>
          </widget>
-         <widget class="QDialogButtonBox" name="buttonBox_3">
+         <widget class="QDialogButtonBox" name="mameButtonBox">
           <property name="geometry">
            <rect>
             <x>620</x>

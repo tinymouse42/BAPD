@@ -3,7 +3,6 @@
 *.log
 /build/
 /dist/
-/Backup/
 
 # Python Cache Files
 **/__pycache__/

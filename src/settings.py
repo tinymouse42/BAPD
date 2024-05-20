@@ -4,8 +4,9 @@
 # Imports:
 # *****************************************************************************
 
-import toml
 import os
+import toml
+from config.config import TOML_PATH
 from ui.BAPD_Settings_GUI import Ui_BAPD_Settings
 from PySide6.QtWidgets import QDialog, QFileDialog
 
@@ -100,7 +101,7 @@ def load_toml_settings():
 # EVALUATE THIS AND RENAME ??? FOR CLARITY ???
 # ==========================================================================
 def save_toml_settings(settings):
-    with open("config/settings.toml", "w") as f:
+    with open(os.path.join(TOML_PATH, "settings.toml"), "w") as f:
         toml.dump(settings, f)
 
 

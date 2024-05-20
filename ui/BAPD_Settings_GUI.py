@@ -52,10 +52,16 @@ class Ui_BAPD_Settings(object):
         self.zmacOptionsVerticalLayout = QVBoxLayout()
         self.zmacOptionsVerticalLayout.setSpacing(17)
         self.zmacOptionsVerticalLayout.setObjectName(u"zmacOptionsVerticalLayout")
-        self.expandIncludeFiles = QCheckBox(self.zmacOptionsGroupBox)
-        self.expandIncludeFiles.setObjectName(u"expandIncludeFiles")
+        self.outputHexFile = QCheckBox(self.zmacOptionsGroupBox)
+        self.outputHexFile.setObjectName(u"outputHexFile")
         font1 = QFont()
         font1.setPointSize(12)
+        self.outputHexFile.setFont(font1)
+
+        self.zmacOptionsVerticalLayout.addWidget(self.outputHexFile)
+
+        self.expandIncludeFiles = QCheckBox(self.zmacOptionsGroupBox)
+        self.expandIncludeFiles.setObjectName(u"expandIncludeFiles")
         self.expandIncludeFiles.setFont(font1)
 
         self.zmacOptionsVerticalLayout.addWidget(self.expandIncludeFiles)
@@ -66,29 +72,11 @@ class Ui_BAPD_Settings(object):
 
         self.zmacOptionsVerticalLayout.addWidget(self.expandMacros)
 
-        self.useUndocumentedInstructions = QCheckBox(self.zmacOptionsGroupBox)
-        self.useUndocumentedInstructions.setObjectName(u"useUndocumentedInstructions")
-        self.useUndocumentedInstructions.setFont(font1)
-
-        self.zmacOptionsVerticalLayout.addWidget(self.useUndocumentedInstructions)
-
-        self.outputHexFile = QCheckBox(self.zmacOptionsGroupBox)
-        self.outputHexFile.setObjectName(u"outputHexFile")
-        self.outputHexFile.setFont(font1)
-
-        self.zmacOptionsVerticalLayout.addWidget(self.outputHexFile)
-
         self.omitSymbolTable = QCheckBox(self.zmacOptionsGroupBox)
         self.omitSymbolTable.setObjectName(u"omitSymbolTable")
         self.omitSymbolTable.setFont(font1)
 
         self.zmacOptionsVerticalLayout.addWidget(self.omitSymbolTable)
-
-        self.labelsMustHaveColons = QCheckBox(self.zmacOptionsGroupBox)
-        self.labelsMustHaveColons.setObjectName(u"labelsMustHaveColons")
-        self.labelsMustHaveColons.setFont(font1)
-
-        self.zmacOptionsVerticalLayout.addWidget(self.labelsMustHaveColons)
 
 
         self.gridLayout_2.addLayout(self.zmacOptionsVerticalLayout, 0, 0, 1, 1)
@@ -135,14 +123,14 @@ class Ui_BAPD_Settings(object):
 
         self.gridLayout_3.addLayout(self.zmacPathInputLayout, 0, 0, 1, 1)
 
-        self.buttonBox_2 = QDialogButtonBox(self.zmacSettingsLayout)
-        self.buttonBox_2.setObjectName(u"buttonBox_2")
-        self.buttonBox_2.setGeometry(QRect(620, 510, 241, 31))
+        self.zmacButtonBox = QDialogButtonBox(self.zmacSettingsLayout)
+        self.zmacButtonBox.setObjectName(u"zmacButtonBox")
+        self.zmacButtonBox.setGeometry(QRect(620, 510, 241, 31))
         font3 = QFont()
         font3.setPointSize(13)
-        self.buttonBox_2.setFont(font3)
-        self.buttonBox_2.setStandardButtons(QDialogButtonBox.StandardButton.Apply|QDialogButtonBox.StandardButton.Cancel|QDialogButtonBox.StandardButton.Ok)
-        self.buttonBox_2.setCenterButtons(True)
+        self.zmacButtonBox.setFont(font3)
+        self.zmacButtonBox.setStandardButtons(QDialogButtonBox.StandardButton.Apply|QDialogButtonBox.StandardButton.Cancel|QDialogButtonBox.StandardButton.Ok)
+        self.zmacButtonBox.setCenterButtons(True)
 
         self.gridLayout.addWidget(self.zmacSettingsLayout, 0, 0, 1, 1)
 
@@ -189,12 +177,12 @@ class Ui_BAPD_Settings(object):
 
         self.gridLayout_5.addLayout(self.mamePathInputLayout, 0, 0, 1, 1)
 
-        self.buttonBox_3 = QDialogButtonBox(self.mameSettingsLayout)
-        self.buttonBox_3.setObjectName(u"buttonBox_3")
-        self.buttonBox_3.setGeometry(QRect(620, 510, 241, 31))
-        self.buttonBox_3.setFont(font3)
-        self.buttonBox_3.setStandardButtons(QDialogButtonBox.StandardButton.Apply|QDialogButtonBox.StandardButton.Cancel|QDialogButtonBox.StandardButton.Ok)
-        self.buttonBox_3.setCenterButtons(True)
+        self.mameButtonBox = QDialogButtonBox(self.mameSettingsLayout)
+        self.mameButtonBox.setObjectName(u"mameButtonBox")
+        self.mameButtonBox.setGeometry(QRect(620, 510, 241, 31))
+        self.mameButtonBox.setFont(font3)
+        self.mameButtonBox.setStandardButtons(QDialogButtonBox.StandardButton.Apply|QDialogButtonBox.StandardButton.Cancel|QDialogButtonBox.StandardButton.Ok)
+        self.mameButtonBox.setCenterButtons(True)
 
         self.gridLayout_6.addWidget(self.mameSettingsLayout, 0, 0, 1, 1)
 
@@ -215,13 +203,10 @@ class Ui_BAPD_Settings(object):
         BAPD_Settings.setWindowTitle(QCoreApplication.translate("BAPD_Settings", u"Settings", None))
         self.zmacSettingsLayout.setTitle(QCoreApplication.translate("BAPD_Settings", u"ZMAC Settings", None))
         self.zmacOptionsGroupBox.setTitle(QCoreApplication.translate("BAPD_Settings", u"Options", None))
-        self.expandIncludeFiles.setText(QCoreApplication.translate("BAPD_Settings", u"Expand Include Files", None))
+        self.outputHexFile.setText(QCoreApplication.translate("BAPD_Settings", u"Output .hex and .bin file", None))
+        self.expandIncludeFiles.setText(QCoreApplication.translate("BAPD_Settings", u"Expand Include Files ", None))
         self.expandMacros.setText(QCoreApplication.translate("BAPD_Settings", u"Expand Macros", None))
-        self.useUndocumentedInstructions.setText(QCoreApplication.translate("BAPD_Settings", u"Use Undocumented \n"
-"Z80 Instructions", None))
-        self.outputHexFile.setText(QCoreApplication.translate("BAPD_Settings", u"Output .hex File", None))
         self.omitSymbolTable.setText(QCoreApplication.translate("BAPD_Settings", u"Omit Symbol Table", None))
-        self.labelsMustHaveColons.setText(QCoreApplication.translate("BAPD_Settings", u"Labels Must Have Colons", None))
         self.zmacVersionButton.setText(QCoreApplication.translate("BAPD_Settings", u"ZMAC Version 3.1", None))
         self.zmacFilePathLayout.setTitle(QCoreApplication.translate("BAPD_Settings", u"File Locations", None))
         self.zmacPathLabel.setText(QCoreApplication.translate("BAPD_Settings", u"ZMAC Path:", None))
