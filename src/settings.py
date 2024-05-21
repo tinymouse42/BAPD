@@ -1,14 +1,14 @@
 # settings.py  - large comments are for learning purposes
 
-# *****************************************************************************
-# Imports:
-# *****************************************************************************
-
 import os
 import toml
-from config.config import TOML_PATH
 from ui.BAPD_Settings_GUI import Ui_BAPD_Settings
-from PySide6.QtWidgets import QDialog, QFileDialog
+from PySide6.QtWidgets import QDialog, QFileDialog, QMessageBox
+
+# Import constants defined in the config.py file
+from config.config import (TOML_FULL_PATH, DEFAULT_ZMAC_PATH, DEFAULT_MAME_PATH,
+                           DEFAULT_ORIGINAL_MAME_ROMS_PATH, DEFAULT_PROJECT_PATH,
+                           DEFAULT_SOURCE_NAME)
 
 
 # *****************************************************************************
@@ -28,7 +28,7 @@ class SettingsDialog(QDialog, Ui_BAPD_Settings):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setupUi(self)
-        self.settings = load_toml_settings()
+        self.settings = load_settings_from_toml()
 
         # ==========================================================================
         # Load ZMAC path from TOML file and update line edit display
@@ -38,12 +38,10 @@ class SettingsDialog(QDialog, Ui_BAPD_Settings):
         self.zmacBrowseButton.clicked.connect(self.browse_zmac_path)
 
         # ==========================================================================
-        # ===> THIS IS NOT WORKING
-        # It is because I didn't have the DialogButtonBox in the Designer file.
-        # I have fixed that and now just need to implement it. For now, I just
-        # commented out the non-working lines of code.
+        # Connect signals to slots (button clicks, etc.)
         # ==========================================================================
-        # self.buttonBox.accepted.connect(self.accept)  # Connect to built-in accept method
+        # self.zmacBrowseButton.clicked.connect(self.browse_zmac_path)
+        # self.buttonBox.accepted.connect(self.save_settings_to_toml)  # Connect to save settings
         # self.buttonBox.rejected.connect(self.reject)  # Connect to built-in reject method
 
         # ==========================================================================
@@ -52,12 +50,20 @@ class SettingsDialog(QDialog, Ui_BAPD_Settings):
         # ==========================================================================
 
     def browse_zmac_path(self):
+        """Opens a file dialog to select the ZMAC executable path."""
         current_path = self.settings.get("zmac", {}).get("path", "")
         zmac_path, _ = QFileDialog.getOpenFileName(
             self, "Select ZMAC Executable", os.path.dirname(current_path), "Executable Files (*.exe)"
         )
         if zmac_path:
+            # Validate the selected file (e.g., check if it's a valid Zmac executable)
+            if not zmac_path.lower().endswith(".exe"):  # Basic validation
+                # Show an error message to the user
+                QMessageBox.warning(self, "Invalid File", "Please select a valid ZMAC executable (.exe).")
+                return  # Don't update the path if it's invalid
+
             self.zmacPathLineEdit.setText(zmac_path)
+            self.settings["zmac"]["path"] = zmac_path  # Update settings immediately
 
 
 # *****************  End SettingsDialog Class  *****************************
@@ -67,7 +73,7 @@ class SettingsDialog(QDialog, Ui_BAPD_Settings):
 # Save ZMAC path.
 # EVALUATE THIS AND RENAME FOR CLARITY ???
 # ==========================================================================
-def save_settings(self):
+def save_settings_to_toml(self):
     """Saves the current settings to the TOML file."""
 
     try:
@@ -81,7 +87,7 @@ def save_settings(self):
         # ... (Gather settings for other tabs - MAME, etc.)
 
         # Save to TOML file
-        with open(TOML_PATH, "w") as f:
+        with open(TOML_FULL_PATH, "w") as f:
             toml.dump(self.settings, f)
 
         # Optionally, provide user feedback (e.g., status bar message)
@@ -96,24 +102,41 @@ def save_settings(self):
 # Loads settings from TOML file and creates default ZMAC dir.
 # EVALUATE THIS AND RENAME FOR CLARITY ???
 # ==========================================================================
-def load_toml_settings():
-    create_default_zmac_dir()
+def load_settings_from_toml():
+    """Loads settings from the TOML file, creating it with defaults if it doesn't exist."""
+
     try:
-        with open("config/BAPD_Settings.toml", "r") as f:
+        # Attempt to load settings from the TOML file
+        with open(TOML_FULL_PATH, "r") as f:
             settings = toml.load(f)
-            # If the ZMAC path isn't set or is invalid, use the default directory
-            if not settings.get("zmac", {}).get("path") or not os.path.exists(settings.get("zmac", {}).get("path")):
-                settings["zmac"]["path"] = os.path.join(create_default_zmac_dir(), "zmac.exe")
-            return settings
     except FileNotFoundError:
-        return {  # Default settings with the default directory
+        # If the file doesn't exist, create it with default settings
+        settings = {
             "zmac": {
-                "path": os.path.join(create_default_zmac_dir(), "zmac.exe"),
+                "path": DEFAULT_ZMAC_PATH,
+                "output_hex_file": True,
+                "expand_include_files": False,
+                "expand_macros": False,
+                "omit_symbol_table": False,
             },
             "mame": {
-                "path": "",
-            }
+                "path": DEFAULT_MAME_PATH,
+            },
+            "original_mame_roms_path": {
+                "path": DEFAULT_ORIGINAL_MAME_ROMS_PATH,
+            },
+            "project": {
+                "path": DEFAULT_PROJECT_PATH,
+                "source_file_name": DEFAULT_SOURCE_NAME,
+            },
         }
+
+        save_toml_settings(settings)  # Save the default settings to the file
+
+    # Ensure all expected settings are present (add missing ones with defaults)
+    add_missing_settings(settings)
+
+    return settings
 
 
 # ==========================================================================
@@ -121,15 +144,41 @@ def load_toml_settings():
 # EVALUATE THIS AND RENAME ??? FOR CLARITY ???
 # ==========================================================================
 def save_toml_settings(settings):
-    with open(os.path.join(TOML_PATH, "BAPD_Settings.toml"), "w") as f:
+    with open(TOML_FULL_PATH, "w") as f:  # Use TOML_FULL_PATH
         toml.dump(settings, f)
 
 
 # ==========================================================================
-# Creates the default ZMAC directory if it doesn't exist.
-# # EVALUATE THIS. POSSIBLE RENAME FOR CLARITY ???
+# Saves settings to the TOML file.
+# EVALUATE THIS AND RENAME ??? FOR CLARITY ???
 # ==========================================================================
-def create_default_zmac_dir():
-    zmac_dir = os.path.join(os.environ['USERPROFILE'], "BAPD", "_Programs", "ZMAC")
-    os.makedirs(zmac_dir, exist_ok=True)
-    return zmac_dir
+def add_missing_settings(settings):
+    """Adds any missing settings to the given settings dictionary with their default values."""
+
+    default_settings = {  # Define your default settings here
+        "zmac": {
+            "path": DEFAULT_ZMAC_PATH,
+            "output_hex_file": True,
+            "expand_include_files": False,
+            "expand_macros": False,
+            "omit_symbol_table": False,
+        },
+        "mame": {
+            "path": DEFAULT_MAME_PATH,
+        },
+        "original_mame_roms_path": {
+            "path": DEFAULT_ORIGINAL_MAME_ROMS_PATH,
+        },
+        "project": {
+            "path": DEFAULT_PROJECT_PATH,
+            "source_file_name": DEFAULT_SOURCE_NAME,
+        },
+    }
+
+    for section, section_defaults in default_settings.items():
+        if section not in settings:
+            settings[section] = section_defaults
+        else:
+            for key, default_value in section_defaults.items():
+                if key not in settings[section]:
+                    settings[section][key] = default_value

@@ -1,4 +1,5 @@
-BAPD Tool Settings Management Programming Plan (Updated with config.py)
+
+BAPD Tool Settings Management Programming Plan (Updated)
 
 Objective:
 
@@ -6,45 +7,57 @@ To implement a robust settings management system for the BAPD Tool that leverage
 
 Approach:
 
-1. Create and Maintain 'config.py':
-   - Place 'config.py' in the 'config' directory alongside the TOML file.
-   - Define constants for all relevant paths (TOML_PATH, ZMAC_DEFAULT_DIR, MAME_DEFAULT_DIR, etc.).
-   - Project vs. Production: Update the paths in 'config.py' to switch between development and production environments.
+Create and Maintain config.py:
 
-2. TOML File Creation and Initialization:
-   - 'load_toml_settings' Function (in 'settings.py'):
-      - Use 'config.TOML_PATH' to access the TOML file.
-      - Create the file with default settings if it doesn't exist.
-      - Add missing settings with default values if needed.
+- Place 'config.py' in the root directory of the project.
+- Define constants for all relevant paths ('TOML_FULL_PATH', 'DEFAULT_ZMAC_PATH', 'DEFAULT_MAME_PATH', etc.).
+- The paths in 'config.py' directly reference the production environment using the user's home directory.
 
-3. Enhance 'SettingsDialog' Class:
-   - 'save_settings' Method:
-      - Gather settings and write to 'config.TOML_PATH'.
-   - 'load_settings' Method:
-      - Populate the dialog with settings from 'config.TOML_PATH'.
-   - Unsaved Changes Tracking:
-      - Implement a mechanism to track changes.
-   - Dynamic Settings Addition:
-      - Create a method to add new settings to 'config.TOML_PATH' as needed.
+TOML File Creation and Initialization:
 
-4. Connect Button Actions:
-   - OK Button: Saves all settings and closes the dialog.
-   - Cancel Button: Warns about unsaved changes and closes if confirmed.
-   - Apply Button: Saves settings for the active tab.
+- 'load_settings_from_toml' Function (in 'settings.py'):
+    - Use 'config.TOML_FULL_PATH' to access the TOML file.
+    - Create the file with default settings if it doesn't exist.
+    - Add missing settings with default values if needed.
 
-5. Error Handling:
-   - Handle file operation errors and invalid TOML data.
+Enhance SettingsDialog Class:
 
-6. User Feedback:
-   - Warn about unsaved changes on cancel.
-   - Provide options to discard changes or return to the dialog.
+- 'save_settings_to_toml' Method:
+    - Gather settings from UI elements and write to 'config.TOML_FULL_PATH'.
+- 'load_settings_from_toml' Method:
+    - Populate the dialog with settings from 'config.TOML_FULL_PATH'.
+- Unsaved Changes Tracking:
+    - (Not yet implemented) Implement a mechanism to track changes.
+- Dynamic Settings Addition:
+    - (Not yet implemented) Create a method to add new settings to 'config.TOML_FULL_PATH' as needed.
+
+Connect Button Actions:
+
+- OK Button: Saves all settings and closes the dialog.
+- Cancel Button: Warns about unsaved changes and closes if confirmed.
+- Apply Button: Saves settings for the active tab.
+
+Error Handling:
+
+- Handle file operation errors (e.g., 'FileNotFoundError') and invalid TOML data.
+
+User Feedback:
+
+- (Partially implemented) Warn about invalid Zmac path in 'settings.py'.
+- (Not yet implemented) Warn about unsaved changes on cancel.
+- (Not yet implemented) Provide options to discard changes or return to the dialog.
 
 Implementation Details:
 
-* Path Management:
-   - Throughout your code, use the constants from 'config.py' to access file paths (e.g., 'with open(config.TOML_PATH, "r") as f:').
-* Default Settings:
-   - Define default settings in 'config.py' or a separate module.
-   - Ensure 'load_toml_settings' creates the file with defaults if not found.
-* Dynamic Settings:
-   - Call the 'add_setting' method whenever you introduce a new setting to ensure it's added to the TOML file with its default value.
+Path Management:
+
+- Throughout your code, use the constants from 'config.py' to access file paths (e.g., 'with open(config.TOML_FULL_PATH, "r") as f:').
+
+Default Settings:
+
+- Define default settings in 'config.py'.
+- Ensure 'load_settings_from_toml' creates the file with defaults if not found.
+
+Dynamic Settings:
+
+- (Not yet implemented) Call the 'add_setting' method whenever you introduce a new setting to ensure it's added to the TOML file with its default value.

@@ -1,0 +1,16 @@
+[zmac]
+path = "C:/BAPD/_Programs/Zmac"
+output_hex_file = true
+expand_include_files = false
+expand_macros = false
+omit_symbol_table = false
+
+[mame]
+path = "C:/BAPD/_Programs/MAME"
+
+[original_mame_roms_path]
+path = "C:/BAPD/_Programs/ROMS"
+
+[project]
+path = "C:/BAPD/Projects/Astrocade_Program"
+source_file_name = "Astrocade_Program.asm"

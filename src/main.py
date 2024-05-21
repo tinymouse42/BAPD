@@ -13,7 +13,7 @@ from PySide6.QtCore import QDir
 from PySide6.QtGui import QIcon, QAction
 from PySide6.QtWidgets import QApplication, QMainWindow, QFileDialog
 
-from settings import SettingsDialog, load_toml_settings
+from settings import SettingsDialog, load_settings_from_toml
 from ui.BAPD_Main_GUI import Ui_MainWindow
 
 # *****************************************************************************
@@ -40,7 +40,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):  # QMainWindow <- PS6
     def __init__(self):
         super(MainWindow, self).__init__()
         self.setupUi(self)
-        self.settings = load_toml_settings()
+        self.settings = load_settings_from_toml()
 
         # =====================================================================
         # Always start with the default project. There will never be a time
@@ -106,7 +106,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):  # QMainWindow <- PS6
     # =====================================================================
     def handle_settings_accepted(self):
         """Handles the accepted signal from the settings dialog."""
-        self.settings = load_toml_settings()  # Reload settings after accepting changes
+        self.settings = load_settings_from_toml()  # Reload settings after accepting changes
 
         # Check if the new ZMAC path is valid (add this error handling)
         zmac_path = self.settings.get("zmac", {}).get("path", "")
