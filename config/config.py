@@ -1,20 +1,31 @@
 # config.py
+
 """
-This file is for holding paths to different aspects of the BAPD project.
-These paths will be set to the project directory locations and later they will be
-changed to the production locations.
+This module provides configuration settings for the Bally Astrocade
+Program Development (BAPD) tool.
+
+It defines constants for file paths and default settings,
+ensuring a consistent and organized way to manage configuration
+throughout the application.
 """
 
 import os
 
-# Project Directories
-PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))  # Root of the BAPD project
-CONFIG_DIR = os.path.join(PROJECT_ROOT, "config")  # Directory for configuration files
-PROJECTS_DIR = os.path.join(PROJECT_ROOT, "projects")  # Default directory for user projects
+# BAPD Base Directory
+BASE_DIR = os.path.join(os.path.expanduser('~'), "BAPD")
+
+# Program Directories (Not changeable by user)
+PROGRAMS_DIR = os.path.join(BASE_DIR, "_Programs")
+PROJECT_DIR = os.path.join(BASE_DIR, "Projects")
+CONFIG_DIR = os.path.join(PROGRAMS_DIR, "Config")
 
 # Settings File
-TOML_PATH = os.path.join(CONFIG_DIR, "settings.toml")
+TOML_FILE_NAME = "BAPD_settings.toml"
+TOML_FULL_PATH = os.path.join(CONFIG_DIR, TOML_FILE_NAME)
 
-# Default Paths for External Tools (Update for your system)
-ZMAC_DEFAULT_PATH = "path/to/zmac"  # Replace with the actual path to Zmac
-MAME_DEFAULT_PATH = "path/to/mame"  # Replace with the actual path to MAME
+# Default Paths (Used if not specified in settings)
+DEFAULT_ZMAC_PATH = os.path.join(PROGRAMS_DIR, "Zmac")
+DEFAULT_MAME_PATH = os.path.join(PROGRAMS_DIR, "MAME")
+DEFAULT_ORIGINAL_MAME_ROMS_PATH = os.path.join(PROGRAMS_DIR, "ROMS")
+DEFAULT_PROJECT_PATH = os.path.join(PROJECT_DIR, "Astrocade_Program")
+DEFAULT_SOURCE_NAME = "Astrocade_Program.asm"
