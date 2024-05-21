@@ -99,7 +99,7 @@ def save_settings(self):
 def load_toml_settings():
     create_default_zmac_dir()
     try:
-        with open("config/settings.toml", "r") as f:
+        with open("config/BAPD_Settings.toml", "r") as f:
             settings = toml.load(f)
             # If the ZMAC path isn't set or is invalid, use the default directory
             if not settings.get("zmac", {}).get("path") or not os.path.exists(settings.get("zmac", {}).get("path")):
@@ -121,7 +121,7 @@ def load_toml_settings():
 # EVALUATE THIS AND RENAME ??? FOR CLARITY ???
 # ==========================================================================
 def save_toml_settings(settings):
-    with open(os.path.join(TOML_PATH, "settings.toml"), "w") as f:
+    with open(os.path.join(TOML_PATH, "BAPD_Settings.toml"), "w") as f:
         toml.dump(settings, f)
 
 
