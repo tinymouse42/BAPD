@@ -30,6 +30,5 @@ DEFAULT_ORIGINAL_MAME_ROMS_PATH = os.path.join(PROGRAMS_DIR, "ROMS")
 DEFAULT_PROJECT_PATH = os.path.join(PROJECT_DIR, "Astrocade_Program")
 DEFAULT_SOURCE_NAME = "Astrocade_Program.asm"
 
-
 # Other constants
 ZMAC_NOT_FOUND = 'ZMAC NOT FOUND'

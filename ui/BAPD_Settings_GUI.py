@@ -9,16 +9,17 @@
 ################################################################################
 
 from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
-    QMetaObject, QObject, QPoint, QRect,
-    QSize, QTime, QUrl, Qt)
+                            QMetaObject, QObject, QPoint, QRect,
+                            QSize, QTime, QUrl, Qt)
 from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
-    QFont, QFontDatabase, QGradient, QIcon,
-    QImage, QKeySequence, QLinearGradient, QPainter,
-    QPalette, QPixmap, QRadialGradient, QTransform)
+                           QFont, QFontDatabase, QGradient, QIcon,
+                           QImage, QKeySequence, QLinearGradient, QPainter,
+                           QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QAbstractButton, QApplication, QCheckBox, QDialog,
-    QDialogButtonBox, QFrame, QGridLayout, QGroupBox,
-    QHBoxLayout, QLabel, QLineEdit, QPushButton,
-    QSizePolicy, QTabWidget, QVBoxLayout, QWidget)
+                               QDialogButtonBox, QFrame, QGridLayout, QGroupBox,
+                               QHBoxLayout, QLabel, QLineEdit, QPushButton,
+                               QSizePolicy, QTabWidget, QVBoxLayout, QWidget)
+
 
 class Ui_BAPD_Settings(object):
     def setupUi(self, BAPD_Settings):
@@ -78,7 +79,6 @@ class Ui_BAPD_Settings(object):
 
         self.zmacOptionsVerticalLayout.addWidget(self.omitSymbolTable)
 
-
         self.gridLayout_2.addLayout(self.zmacOptionsVerticalLayout, 0, 0, 1, 1)
 
         self.zmacVersionButton = QLabel(self.zmacSettingsLayout)
@@ -98,7 +98,8 @@ class Ui_BAPD_Settings(object):
         self.zmacFilePathLayout = QGroupBox(self.zmacSettingsLayout)
         self.zmacFilePathLayout.setObjectName(u"zmacFilePathLayout")
         self.zmacFilePathLayout.setGeometry(QRect(20, 90, 851, 101))
-        self.zmacFilePathLayout.setAlignment(Qt.AlignmentFlag.AlignLeading|Qt.AlignmentFlag.AlignLeft|Qt.AlignmentFlag.AlignVCenter)
+        self.zmacFilePathLayout.setAlignment(
+            Qt.AlignmentFlag.AlignLeading | Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter)
         self.gridLayout_3 = QGridLayout(self.zmacFilePathLayout)
         self.gridLayout_3.setObjectName(u"gridLayout_3")
         self.zmacPathInputLayout = QHBoxLayout()
@@ -120,7 +121,6 @@ class Ui_BAPD_Settings(object):
 
         self.zmacPathInputLayout.addWidget(self.zmacBrowseButton)
 
-
         self.gridLayout_3.addLayout(self.zmacPathInputLayout, 0, 0, 1, 1)
 
         self.zmacButtonBox = QDialogButtonBox(self.zmacSettingsLayout)
@@ -129,7 +129,8 @@ class Ui_BAPD_Settings(object):
         font3 = QFont()
         font3.setPointSize(13)
         self.zmacButtonBox.setFont(font3)
-        self.zmacButtonBox.setStandardButtons(QDialogButtonBox.StandardButton.Apply|QDialogButtonBox.StandardButton.Cancel|QDialogButtonBox.StandardButton.Ok)
+        self.zmacButtonBox.setStandardButtons(
+            QDialogButtonBox.StandardButton.Apply | QDialogButtonBox.StandardButton.Cancel | QDialogButtonBox.StandardButton.Ok)
         self.zmacButtonBox.setCenterButtons(True)
 
         self.gridLayout.addWidget(self.zmacSettingsLayout, 0, 0, 1, 1)
@@ -152,7 +153,8 @@ class Ui_BAPD_Settings(object):
         self.mameFilePathLayout = QGroupBox(self.mameSettingsLayout)
         self.mameFilePathLayout.setObjectName(u"mameFilePathLayout")
         self.mameFilePathLayout.setGeometry(QRect(20, 90, 851, 101))
-        self.mameFilePathLayout.setAlignment(Qt.AlignmentFlag.AlignLeading|Qt.AlignmentFlag.AlignLeft|Qt.AlignmentFlag.AlignVCenter)
+        self.mameFilePathLayout.setAlignment(
+            Qt.AlignmentFlag.AlignLeading | Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter)
         self.gridLayout_5 = QGridLayout(self.mameFilePathLayout)
         self.gridLayout_5.setObjectName(u"gridLayout_5")
         self.mamePathInputLayout = QHBoxLayout()
@@ -174,14 +176,14 @@ class Ui_BAPD_Settings(object):
 
         self.mamePathInputLayout.addWidget(self.mameBrowseButton)
 
-
         self.gridLayout_5.addLayout(self.mamePathInputLayout, 0, 0, 1, 1)
 
         self.mameButtonBox = QDialogButtonBox(self.mameSettingsLayout)
         self.mameButtonBox.setObjectName(u"mameButtonBox")
         self.mameButtonBox.setGeometry(QRect(620, 510, 241, 31))
         self.mameButtonBox.setFont(font3)
-        self.mameButtonBox.setStandardButtons(QDialogButtonBox.StandardButton.Apply|QDialogButtonBox.StandardButton.Cancel|QDialogButtonBox.StandardButton.Ok)
+        self.mameButtonBox.setStandardButtons(
+            QDialogButtonBox.StandardButton.Apply | QDialogButtonBox.StandardButton.Cancel | QDialogButtonBox.StandardButton.Ok)
         self.mameButtonBox.setCenterButtons(True)
 
         self.gridLayout_6.addWidget(self.mameSettingsLayout, 0, 0, 1, 1)
@@ -190,13 +192,12 @@ class Ui_BAPD_Settings(object):
 
         self.horizontalLayout.addWidget(self.settingsTabWidget)
 
-
         self.retranslateUi(BAPD_Settings)
 
         self.settingsTabWidget.setCurrentIndex(0)
 
-
         QMetaObject.connectSlotsByName(BAPD_Settings)
+
     # setupUi
 
     def retranslateUi(self, BAPD_Settings):
@@ -211,12 +212,13 @@ class Ui_BAPD_Settings(object):
         self.zmacFilePathLayout.setTitle(QCoreApplication.translate("BAPD_Settings", u"File Locations", None))
         self.zmacPathLabel.setText(QCoreApplication.translate("BAPD_Settings", u"ZMAC Path:", None))
         self.zmacBrowseButton.setText(QCoreApplication.translate("BAPD_Settings", u"Browse...", None))
-        self.settingsTabWidget.setTabText(self.settingsTabWidget.indexOf(self.zmacTab), QCoreApplication.translate("BAPD_Settings", u"ZMAC", None))
+        self.settingsTabWidget.setTabText(self.settingsTabWidget.indexOf(self.zmacTab),
+                                          QCoreApplication.translate("BAPD_Settings", u"ZMAC", None))
         self.mameSettingsLayout.setTitle(QCoreApplication.translate("BAPD_Settings", u"MAME Settings", None))
         self.mameOptionsGroupBox.setTitle(QCoreApplication.translate("BAPD_Settings", u"Options", None))
         self.mameFilePathLayout.setTitle(QCoreApplication.translate("BAPD_Settings", u"File Locations", None))
         self.mamePathLabel.setText(QCoreApplication.translate("BAPD_Settings", u"MAME Path:", None))
         self.mameBrowseButton.setText(QCoreApplication.translate("BAPD_Settings", u"Browse...", None))
-        self.settingsTabWidget.setTabText(self.settingsTabWidget.indexOf(self.mameTab), QCoreApplication.translate("BAPD_Settings", u"MAME", None))
+        self.settingsTabWidget.setTabText(self.settingsTabWidget.indexOf(self.mameTab),
+                                          QCoreApplication.translate("BAPD_Settings", u"MAME", None))
     # retranslateUi
-

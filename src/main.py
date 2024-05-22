@@ -1,6 +1,5 @@
 # main.py - large comments are for learning purposes
 
-
 # *****************************************************************************
 # Imports:
 # *****************************************************************************
@@ -106,7 +105,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):  # QMainWindow <- PS6
     # =====================================================================
     def handle_settings_accepted(self):
         """Handles the accepted signal from the settings dialog."""
-        self.settings = load_settings_from_toml()  # Reload settings after accepting changes
 
         # Check if the new ZMAC path is valid (add this error handling)
         zmac_path = self.settings.get("zmac", {}).get("path", "")
@@ -122,6 +120,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):  # QMainWindow <- PS6
     def handle_settings_rejected(self):
         """Handles the rejected signal from the settings dialog."""
         self.plainTextEdit.appendPlainText("Settings dialog was canceled.")
+
+    # ... (rest of the methods are the same as before)
 
     # =====================================================================
     # Opens a dialog to let the user select an Astrocade project directory.

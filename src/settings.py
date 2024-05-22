@@ -29,38 +29,40 @@ class SettingsDialog(QDialog, Ui_BAPD_Settings):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setupUi(self)
+
+        # Load settings from TOML file
         self.settings = load_settings_from_toml()
 
-        # ==========================================================================
-        # Load ZMAC path from TOML file and update line edit display
-        # ==========================================================================
+        # Connect button box signals to slots
+        self.zmacButtonBox.clicked.connect(self.handle_button_click)
+        self.mameButtonBox.clicked.connect(self.handle_button_click)
+
+        # Now, set the ZMAC path in the line edit after loading settings
         zmac_path = self.settings.get("zmac", {}).get("path", "")
-        self.zmacPathLineEdit.setText(zmac_path)  # Update the line edit
-        self.zmacBrowseButton.clicked.connect(self.browse_zmac_path)
+        self.zmacPathLineEdit.setText(zmac_path)
 
         # ==========================================================================
         # Connect signals to slots (button clicks, etc.)
         # ==========================================================================
-        # Connect to accepted signal and check clicked button
-        self.zmacButtonBox.clicked.connect(self.handle_button_click)
+        self.zmacBrowseButton.clicked.connect(self.browse_zmac_path)
         self.mameButtonBox.clicked.connect(self.handle_button_click)
 
     def handle_button_click(self, button):
         role = self.zmacButtonBox.buttonRole(button)
 
-        if role == QDialogButtonBox.ButtonRole.ApplyRole:  # Qualify with ButtonRole
+        if role == QDialogButtonBox.ButtonRole.ApplyRole:
             self.save_settings_to_toml()
-        elif role == QDialogButtonBox.ButtonRole.AcceptRole:  # Qualify with ButtonRole
+        elif role == QDialogButtonBox.ButtonRole.AcceptRole:
             self.save_settings_to_toml()
             self.accept()
-        elif role == QDialogButtonBox.ButtonRole.RejectRole:  # Qualify with ButtonRole
+        elif role == QDialogButtonBox.ButtonRole.RejectRole:
             self.reject()
 
     # ==========================================================================
     # Opens a file dialog to select the ZMAC executable path.
     # ==========================================================================
     def browse_zmac_path(self):
-        """Opens a file dialog to select the ZMAC executable path."""
+
         current_path = self.settings.get("zmac", {}).get("path", "")
         zmac_path, _ = QFileDialog.getOpenFileName(
             self, "Select ZMAC Executable", os.path.dirname(current_path), "Executable Files (*.exe)"
@@ -76,12 +78,10 @@ class SettingsDialog(QDialog, Ui_BAPD_Settings):
             self.zmacPathLineEdit.setText(zmac_path)  # Update the line edit display
 
     # ==========================================================================
-    # Save ZMAC path.
-    # EVALUATE THIS AND RENAME FOR CLARITY ???
+    # Saves the current settings to the TOML file
     # ==========================================================================
     def save_settings_to_toml(self):
         """Saves the current settings to the TOML file."""
-
         try:
             # Gather settings from the UI elements
             self.settings["zmac"]["path"] = self.zmacPathLineEdit.text()
@@ -90,11 +90,8 @@ class SettingsDialog(QDialog, Ui_BAPD_Settings):
             self.settings["zmac"]["expand_macros"] = self.expandMacros.isChecked()
             self.settings["zmac"]["omit_symbol_table"] = self.omitSymbolTable.isChecked()
 
-            # ... (Gather settings for other tabs - MAME, etc.)
-
-            # Save to TOML file
-            with open(TOML_FULL_PATH, "w") as f:
-                toml.dump(self.settings, f)
+            # Save to TOML file (using the centralized function)
+            save_toml_settings(self.settings)
 
             # Optionally, provide user feedback (e.g., status bar message)
             print("Settings saved successfully!")  # Or use a logging mechanism
@@ -141,34 +138,32 @@ def load_settings_from_toml():
         save_toml_settings(settings)  # Save the default settings to the file
 
     # Ensure all expected settings are present (add missing ones with defaults)
-    add_missing_settings(settings)
+    add_missing_settings(settings)  # Reusing the same function
 
     # Search for ZMAC executable
-    zmac_pattern = os.path.join(DEFAULT_ZMAC_PATH, "ZMAC*.exe")
+    zmac_pattern = os.path.join(DEFAULT_ZMAC_PATH, "zmac*.exe")
     zmac_matches = glob.glob(zmac_pattern)
     if zmac_matches:
         settings["zmac"]["path"] = zmac_matches[0]  # Use the first match
     else:
         settings["zmac"]["path"] = ZMAC_NOT_FOUND
+
     return settings
 
 
 # ==========================================================================
 # Saves settings to the TOML file.
-# EVALUATE THIS AND RENAME ??? FOR CLARITY ???
 # ==========================================================================
 def save_toml_settings(settings):
-    with open(TOML_FULL_PATH, "w") as f:  # Use TOML_FULL_PATH
+    """Saves settings to the TOML file."""  # More descriptive name
+    with open(TOML_FULL_PATH, "w") as f:
         toml.dump(settings, f)
 
 
 # ==========================================================================
-# Saves settings to the TOML file.
-# EVALUATE THIS AND RENAME ??? FOR CLARITY ???
+# Adds any missing settings to the given settings dictionary with their default values.
 # ==========================================================================
 def add_missing_settings(settings):
-    """Adds any missing settings to the given settings dictionary with their default values."""
-
     default_settings = {  # Define your default settings here
         "zmac": {
             "path": DEFAULT_ZMAC_PATH,
