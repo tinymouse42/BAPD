@@ -32,6 +32,7 @@ class SettingsDialog(QDialog, Ui_BAPD_Settings):
 
         # Load settings from TOML file
         self.settings = load_settings_from_toml()
+        print(self.settings)
 
         # Connect button box signals to slots
         self.zmacButtonBox.clicked.connect(self.handle_button_click)
@@ -147,7 +148,7 @@ def load_settings_from_toml():
         settings["zmac"]["path"] = zmac_matches[0]  # Use the first match
     else:
         settings["zmac"]["path"] = ZMAC_NOT_FOUND
-
+    print(settings)
     return settings
 
 
