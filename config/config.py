@@ -12,7 +12,7 @@ throughout the application.
 import os
 
 # BAPD Base Directory
-BASE_DIR = os.path.join(os.path.expanduser('~'), "BAPD")
+BASE_DIR = os.path.join(os.environ['USERPROFILE'], "BAPD")
 
 # Program Directories (Not changeable by user)
 PROGRAMS_DIR = os.path.join(BASE_DIR, "_Programs")
@@ -22,10 +22,11 @@ CONFIG_DIR = os.path.join(PROGRAMS_DIR, "Config")
 # Settings File
 TOML_FILE_NAME = "BAPD_settings.toml"
 TOML_FULL_PATH = os.path.join(CONFIG_DIR, TOML_FILE_NAME)
-
+print(TOML_FULL_PATH)
 # Default Paths (Used if not specified in settings)
-DEFAULT_ZMAC_PATH = os.path.join(PROGRAMS_DIR, "Zmac")
-DEFAULT_MAME_PATH = os.path.join(PROGRAMS_DIR, "MAME")
+DEFAULT_ZMAC_PATH = os.path.join(PROGRAMS_DIR, "Zmac", "zmac.exe")
+DEFAULT_MAME_PATH = os.path.join(PROGRAMS_DIR, "MAME", "mame64.exe")
+
 DEFAULT_ORIGINAL_MAME_ROMS_PATH = os.path.join(PROGRAMS_DIR, "ROMS")
 DEFAULT_PROJECT_PATH = os.path.join(PROJECT_DIR, "Astrocade_Program")
 DEFAULT_SOURCE_NAME = "Astrocade_Program.asm"
