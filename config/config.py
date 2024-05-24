@@ -22,7 +22,7 @@ CONFIG_DIR = os.path.join(PROGRAMS_DIR, "Config")
 # Settings File
 TOML_FILE_NAME = "BAPD_settings.toml"
 TOML_FULL_PATH = os.path.join(CONFIG_DIR, TOML_FILE_NAME)
-print(TOML_FULL_PATH)
+
 # Default Paths (Used if not specified in settings)
 DEFAULT_ZMAC_PATH = os.path.join(PROGRAMS_DIR, "Zmac", "zmac.exe")
 DEFAULT_MAME_PATH = os.path.join(PROGRAMS_DIR, "MAME", "mame64.exe")
