@@ -1,15 +1,13 @@
 # settings.py  - large comments are for learning purposes
 
 import os
-import glob
+
 import toml
-from ui.BAPD_Settings_GUI import Ui_BAPD_Settings
 from PySide6.QtWidgets import QDialog, QFileDialog, QMessageBox, QDialogButtonBox
 
 # Import constants defined in the config.py file
-from config.config import (TOML_FULL_PATH, DEFAULT_ZMAC_PATH, DEFAULT_MAME_PATH,
-                           DEFAULT_ORIGINAL_MAME_ROMS_PATH, DEFAULT_PROJECT_PATH,
-                           DEFAULT_SOURCE_NAME, ZMAC_NOT_FOUND)
+from config.config import (TOML_FULL_PATH, DEFAULT_SETTINGS)
+from ui.BAPD_Settings_GUI import Ui_BAPD_Settings
 
 
 # *****************************************************************************
@@ -92,7 +90,8 @@ class SettingsDialog(QDialog, Ui_BAPD_Settings):
             self.settings["zmac"]["omit_symbol_table"] = self.omitSymbolTable.isChecked()
 
             # Save to TOML file (using the centralized function)
-            save_toml_settings(self.settings)
+            with open(TOML_FULL_PATH, "w") as f:
+                toml.dump(self.settings, f)
 
             # Optionally, provide user feedback (e.g., status bar message)
             print("Settings saved successfully!")  # Or use a logging mechanism
@@ -104,91 +103,42 @@ class SettingsDialog(QDialog, Ui_BAPD_Settings):
 
 # *****************  End SettingsDialog Class  *****************************
 
-
 # ==========================================================================
 # Loads settings from the TOML file, creating it with defaults
 # if it doesn't exist.
 # ==========================================================================
 def load_settings_from_toml():
     try:
-        # Attempt to load settings from the TOML file
         with open(TOML_FULL_PATH, "r") as f:
             settings = toml.load(f)
     except FileNotFoundError:
-        # If the file doesn't exist, create it with default settings
-        settings = {
-            "zmac": {
-                "path": DEFAULT_ZMAC_PATH,
-                "output_hex_file": True,
-                "expand_include_files": False,
-                "expand_macros": False,
-                "omit_symbol_table": False,
-            },
-            "mame": {
-                "path": DEFAULT_MAME_PATH,
-            },
-            "original_mame_roms_path": {
-                "path": DEFAULT_ORIGINAL_MAME_ROMS_PATH,
-            },
-            "project": {
-                "path": DEFAULT_PROJECT_PATH,
-                "source_file_name": DEFAULT_SOURCE_NAME,
-            },
-        }
+        settings = DEFAULT_SETTINGS.copy()
+        with open(TOML_FULL_PATH, "w") as f:
+            toml.dump(settings, f)
 
-        save_toml_settings(settings)  # Save the default settings to the file
+    settings_modified = add_missing_settings(settings)
 
-    # Ensure all expected settings are present (add missing ones with defaults)
-    add_missing_settings(settings)  # Reusing the same function
+    if settings_modified:
+        with open(TOML_FULL_PATH, "w") as f:
+            toml.dump(settings, f)
 
-    # Search for ZMAC executable
-    zmac_pattern = os.path.join(DEFAULT_ZMAC_PATH, "zmac*.exe")
-    zmac_matches = glob.glob(zmac_pattern)
-    if zmac_matches:
-        settings["zmac"]["path"] = zmac_matches[0]  # Use the first match
-    else:
-        settings["zmac"]["path"] = ZMAC_NOT_FOUND
-    print(settings)
     return settings
 
 
 # ==========================================================================
-# Saves settings to the TOML file.
-# ==========================================================================
-def save_toml_settings(settings):
-    """Saves settings to the TOML file."""  # More descriptive name
-    with open(TOML_FULL_PATH, "w") as f:
-        toml.dump(settings, f)
-
-
-# ==========================================================================
 # Adds any missing settings to the given settings dictionary with their default values.
+# Returns True if settings were modified, False otherwise.
 # ==========================================================================
 def add_missing_settings(settings):
-    default_settings = {  # Define your default settings here
-        "zmac": {
-            "path": DEFAULT_ZMAC_PATH,
-            "output_hex_file": True,
-            "expand_include_files": False,
-            "expand_macros": False,
-            "omit_symbol_table": False,
-        },
-        "mame": {
-            "path": DEFAULT_MAME_PATH,
-        },
-        "original_mame_roms_path": {
-            "path": DEFAULT_ORIGINAL_MAME_ROMS_PATH,
-        },
-        "project": {
-            "path": DEFAULT_PROJECT_PATH,
-            "source_file_name": DEFAULT_SOURCE_NAME,
-        },
-    }
-
-    for section, section_defaults in default_settings.items():
+    modified = False
+    for section, section_defaults in DEFAULT_SETTINGS.items():
         if section not in settings:
-            settings[section] = section_defaults
+            settings[section] = section_defaults.copy()
+            modified = True
         else:
             for key, default_value in section_defaults.items():
                 if key not in settings[section]:
                     settings[section][key] = default_value
+                    modified = True
+
+    return modified

@@ -33,3 +33,29 @@ DEFAULT_SOURCE_NAME = "Astrocade_Program.asm"
 
 # Other constants
 ZMAC_NOT_FOUND = 'ZMAC NOT FOUND'
+
+# Define default settings in a global variable or a separate module
+DEFAULT_SETTINGS = {
+    "project": {
+        "path": DEFAULT_PROJECT_PATH,
+        "source_file_name": DEFAULT_SOURCE_NAME,
+    },
+    "zmac": {
+        "path": "",
+        "output_hex_file": False,
+        "expand_macros": False,
+        "expand_include_files": False,
+        "expand_if": False,
+        "omit_symbol_table": False,
+        "allow_8080_instructions": False,
+    },
+    "mame": {
+        "path": "",
+        "debug_mode": False,
+        "window_mode": True,
+        "skip_game_info": True,
+        "bally_pro_arcade": True,
+        "bally_home_library_computer": False,
+        "bally_computer_system": False,
+    },
+}
