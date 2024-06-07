@@ -8,19 +8,12 @@ import os
 import subprocess
 import sys
 
-from PySide6.QtCore import QDir
 from PySide6.QtGui import QIcon, QAction
-from PySide6.QtWidgets import QApplication, QMainWindow, QFileDialog
+from PySide6.QtWidgets import QApplication, QMainWindow
 
-from settings import SettingsDialog, load_settings_from_toml
+from config.config import DEFAULT_MAME_PATH
+from settings import SettingsDialog
 from ui.BAPD_Main_GUI import Ui_MainWindow
-
-# *****************************************************************************
-# Global variables for paths. Check to see if this is the best way to do this
-# *****************************************************************************
-
-USER_PROFILE_PATH = os.environ['USERPROFILE']
-DEFAULT_PROJECT_PATH = os.path.join(USER_PROFILE_PATH, "BAPD", "Projects", "Astrocade_Program")
 
 
 # *****************************************************************************
@@ -39,15 +32,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):  # QMainWindow <- PS6
     def __init__(self):
         super(MainWindow, self).__init__()
         self.setupUi(self)
-        self.settings = load_settings_from_toml()
-
-        # =====================================================================
-        # Always start with the default project. There will never be a time
-        # when there will be no project selected. This is why it is in the
-        # init section.
-        # =====================================================================
-        self.current_project_path = DEFAULT_PROJECT_PATH
-        self.fileNameLabel.setText("Astrocade_Program")
 
         # =====================================================================
         # This is a standard way to connect the button signals to a function.
@@ -63,27 +47,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):  # QMainWindow <- PS6
         self.clearScreenButton.clicked.connect(self.clear_output_screen)
         self.openProjectFolderButton.clicked.connect(self.open_project_folder)
         self.versionPushButton.clicked.connect(self.print_version)
-
-        # =====================================================================
-        # Since there is a project selected by default, enable all the buttons
-        # =====================================================================
-        self.openProjectFolderButton.setEnabled(True)
-        self.editSourceButton.setEnabled(True)
-        self.viewListingButton.setEnabled(True)
-        self.compileButton.setEnabled(True)
-        self.runCurrentButton.setEnabled(True)
-        self.runStandardMameButton.setEnabled(True)
-
-        # =====================================================================
-        # This tells the Settings menu item what to do. It's a little more
-        # complicated than the .connect for the buttons just by being
-        # a menu item. It also sets an icon beside the settings menu item.
-        # =====================================================================
-        settings_action = QAction("Settings", self)
-        settings_action.triggered.connect(self.open_settings_dialog)
-        self.menuSettings.addAction(settings_action)
-        icon = QIcon(":/icons/icons/gear.png")
-        settings_action.setIcon(icon)
+        self.settingsButton.clicked.connect(self.open_settings_dialog)
 
     # =====================================================================
     # Creates an instance of the SettingsDialog which is the class
@@ -104,14 +68,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):  # QMainWindow <- PS6
     # the following function. Right now it is stub code. ???
     # =====================================================================
     def handle_settings_accepted(self):
-        """Handles the accepted signal from the settings dialog."""
-
-        # Check if the new ZMAC path is valid (add this error handling)
-        zmac_path = self.settings.get("zmac", {}).get("path", "")
-        if not zmac_path or not os.path.isfile(zmac_path):
-            self.plainTextEdit.appendPlainText("Zmac path is not set or invalid. Please check your settings.")
-        else:
-            self.plainTextEdit.appendPlainText("ZMAC path is valid.")
+        pass
 
     # =====================================================================
     # If the cancel button is pressed in the settings dialog, then do
@@ -121,36 +78,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):  # QMainWindow <- PS6
         """Handles the rejected signal from the settings dialog."""
         self.plainTextEdit.appendPlainText("Settings dialog was canceled.")
 
-    # ... (rest of the methods are the same as before)
-
     # =====================================================================
     # Opens a dialog to let the user select an Astrocade project directory.
     # This needs to be checked to see if this goes in settings.py ???
     # =====================================================================
     def select_project_directory(self):
-
-        start_dir = os.path.join(USER_PROFILE_PATH, "BAPD", "Projects")
-        directory = QFileDialog.getExistingDirectory(
-            self,
-            "Select Astrocade Project Directory",
-            QDir.toNativeSeparators(start_dir)
-        )
-        directory = os.path.normpath(directory)
-
-        if directory and directory != ".":
-            self.current_project_path = directory
-            self.fileNameLabel.setText(os.path.basename(directory))
-
-            # Enable Buttons (New code)
-            self.openProjectFolderButton.setEnabled(True)
-            self.editSourceButton.setEnabled(True)
-            self.viewListingButton.setEnabled(True)
-            self.compileButton.setEnabled(True)
-            self.runCurrentButton.setEnabled(True)
-            self.runStandardMameButton.setEnabled(True)
-        else:
-            # Dialog was canceled or invalid selection
-            print("No directory selected or invalid directory.")
+        pass
 
     # =====================================================================
     # Compiles the current Astrocade project using Zmac.
@@ -190,8 +123,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):  # QMainWindow <- PS6
     # NOT IMPLEMENTED YET. THIS IS STUB CODE ???
     # =====================================================================
     def edit_source(self):
-        """Opens the source file for editing (not yet implemented)."""
-        # TODO: Implement the logic to open the source file in an external editor.
         self.plainTextEdit.appendPlainText("Editing source file (not yet implemented)")
 
     # =====================================================================
@@ -199,8 +130,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):  # QMainWindow <- PS6
     # NOT IMPLEMENTED YET. THIS IS STUB CODE ???
     # =====================================================================
     def view_listing(self):
-        """Opens the listing file for viewing (not yet implemented)."""
-        # TODO: Implement the logic to open the listing file.
         self.plainTextEdit.appendPlainText("Viewing listing file (not yet implemented)")
 
     # =====================================================================
@@ -208,12 +137,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):  # QMainWindow <- PS6
     # NOT IMPLEMENTED YET. THIS IS STUB CODE ???
     # =====================================================================
     def run_standard_mame(self):
-        """ (not yet implemented)."""
-        # TODO: Implement the logic to launch MAME with default settings.
         self.plainTextEdit.appendPlainText("Running standard MAME (not yet implemented)")
 
     # =====================================================================
-    # Opens current project folder. Self explanatory.
+    # Opens current project folder in Windows Explorer file manager.
     # =====================================================================
     def open_project_folder(self):
         if self.current_project_path:
@@ -234,7 +161,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):  # QMainWindow <- PS6
         project_name = os.path.basename(self.current_project_path)
         bin_file_path = os.path.normpath(os.path.join(self.current_project_path, f"{project_name}.bin"))
 
-        mame_path = os.path.join(USER_PROFILE_PATH, "BAPD", "_Programs", "MAME", "mame64.exe")
+        mame_path = DEFAULT_MAME_PATH
         mame_dir = os.path.dirname(mame_path)
 
         mame_command = [
@@ -255,7 +182,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):  # QMainWindow <- PS6
     # =====================================================================
     # While this is a button, I do not have a use for it at this time
     # I am thinking about making it an easter egg or some extra info
-    # about zmac or both. This will probably be implemented last. ???
+    # about zmac or both. This will probably be implemented last.
     # =====================================================================
     def print_version(self):
         pass

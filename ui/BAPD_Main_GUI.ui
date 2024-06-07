@@ -129,8 +129,8 @@ Debug</string>
    <widget class="QPushButton" name="versionPushButton">
     <property name="geometry">
      <rect>
-      <x>619</x>
-      <y>700</y>
+      <x>600</x>
+      <y>760</y>
       <width>161</width>
       <height>24</height>
      </rect>
@@ -146,7 +146,7 @@ Debug</string>
      <enum>Qt::LayoutDirection::LeftToRight</enum>
     </property>
     <property name="text">
-     <string>Version: 20240427</string>
+     <string/>
     </property>
     <property name="flat">
      <bool>true</bool>
@@ -184,7 +184,7 @@ Debug</string>
    <widget class="QPushButton" name="clearScreenButton">
     <property name="geometry">
      <rect>
-      <x>310</x>
+      <x>300</x>
       <y>690</y>
       <width>191</width>
       <height>51</height>
@@ -193,13 +193,12 @@ Debug</string>
     <property name="font">
      <font>
       <family>Comic Sans MS</family>
-      <pointsize>10</pointsize>
+      <pointsize>12</pointsize>
       <bold>true</bold>
      </font>
     </property>
     <property name="text">
-     <string>Clear
-Screen</string>
+     <string>Clear Screen</string>
     </property>
     <property name="autoDefault">
      <bool>true</bool>
@@ -208,22 +207,21 @@ Screen</string>
    <widget class="QPushButton" name="runStandardMameButton">
     <property name="geometry">
      <rect>
-      <x>30</x>
+      <x>610</x>
       <y>690</y>
-      <width>75</width>
-      <height>51</height>
+      <width>140</width>
+      <height>50</height>
      </rect>
     </property>
     <property name="font">
      <font>
       <family>Comic Sans MS</family>
-      <pointsize>8</pointsize>
+      <pointsize>12</pointsize>
       <bold>true</bold>
      </font>
     </property>
     <property name="text">
-     <string>Run
-Standard
+     <string>Run Standard
 MAME</string>
     </property>
     <property name="autoDefault">
@@ -326,17 +324,15 @@ Folder</string>
      <bool>true</bool>
     </property>
    </widget>
-  </widget>
-  <widget class="QMenuBar" name="menubar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>800</width>
-     <height>33</height>
-    </rect>
-   </property>
-   <widget class="QMenu" name="menuAbout">
+   <widget class="QPushButton" name="settingsButton">
+    <property name="geometry">
+     <rect>
+      <x>40</x>
+      <y>690</y>
+      <width>140</width>
+      <height>50</height>
+     </rect>
+    </property>
     <property name="font">
      <font>
       <family>Comic Sans MS</family>
@@ -344,20 +340,13 @@ Folder</string>
       <bold>true</bold>
      </font>
     </property>
-    <property name="layoutDirection">
-     <enum>Qt::LayoutDirection::RightToLeft</enum>
-    </property>
-    <property name="title">
-     <string>About</string>
-    </property>
-   </widget>
-   <widget class="QMenu" name="menuSettings">
-    <property name="title">
+    <property name="text">
      <string>Settings</string>
     </property>
+    <property name="autoDefault">
+     <bool>true</bool>
+    </property>
    </widget>
-   <addaction name="menuAbout"/>
-   <addaction name="menuSettings"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>

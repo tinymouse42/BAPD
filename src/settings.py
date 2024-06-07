@@ -35,11 +35,11 @@ class SettingsDialog(QDialog, Ui_BAPD_Settings):
         # Connect button box signals to slots
         self.zmacButtonBox.clicked.connect(self.handle_button_click)
         self.mameButtonBox.clicked.connect(self.handle_button_click)
-
+        '''
         # Now, set the ZMAC path in the line edit after loading settings
         zmac_path = self.settings.get("zmac", {}).get("path", "")
         self.zmacPathLineEdit.setText(zmac_path)
-
+        '''
         # ==========================================================================
         # Connect signals to slots (button clicks, etc.)
         # ==========================================================================
@@ -108,6 +108,10 @@ class SettingsDialog(QDialog, Ui_BAPD_Settings):
 # if it doesn't exist.
 # ==========================================================================
 def load_settings_from_toml():
+    pass
+
+
+'''
     try:
         with open(TOML_FULL_PATH, "r") as f:
             settings = toml.load(f)
@@ -123,6 +127,7 @@ def load_settings_from_toml():
             toml.dump(settings, f)
 
     return settings
+'''
 
 
 # ==========================================================================
