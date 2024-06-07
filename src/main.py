@@ -8,7 +8,6 @@ import os
 import subprocess
 import sys
 
-from PySide6.QtGui import QIcon, QAction
 from PySide6.QtWidgets import QApplication, QMainWindow
 
 from config.config import DEFAULT_MAME_PATH

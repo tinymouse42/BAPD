@@ -31,8 +31,15 @@
    </property>
    <item>
     <widget class="QTabWidget" name="settingsTabWidget">
+     <property name="styleSheet">
+      <string notr="true">QTabBar::tab {
+    height: 30px; /* Adjust tab height */
+    width: 120px; /* Adjust tab width */
+}
+</string>
+     </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <property name="usesScrollButtons">
       <bool>false</bool>
@@ -307,6 +314,11 @@
       </layout>
      </widget>
      <widget class="QWidget" name="mameTab">
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+       </font>
+      </property>
       <attribute name="title">
        <string>MAME</string>
       </attribute>

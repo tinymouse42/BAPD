@@ -32,6 +32,11 @@ class Ui_BAPD_Settings(object):
         self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
         self.settingsTabWidget = QTabWidget(BAPD_Settings)
         self.settingsTabWidget.setObjectName(u"settingsTabWidget")
+        self.settingsTabWidget.setStyleSheet(u"QTabBar::tab {\n"
+"    height: 30px; /* Adjust tab height */\n"
+"    width: 120px; /* Adjust tab width */\n"
+"}\n"
+"")
         self.settingsTabWidget.setUsesScrollButtons(False)
         self.zmacTab = QWidget()
         self.zmacTab.setObjectName(u"zmacTab")
@@ -168,6 +173,7 @@ class Ui_BAPD_Settings(object):
         self.settingsTabWidget.addTab(self.zmacTab, "")
         self.mameTab = QWidget()
         self.mameTab.setObjectName(u"mameTab")
+        self.mameTab.setFont(font1)
         self.gridLayout_6 = QGridLayout(self.mameTab)
         self.gridLayout_6.setObjectName(u"gridLayout_6")
         self.mameSettingsLayout = QGroupBox(self.mameTab)
@@ -297,7 +303,7 @@ class Ui_BAPD_Settings(object):
 
         self.retranslateUi(BAPD_Settings)
 
-        self.settingsTabWidget.setCurrentIndex(0)
+        self.settingsTabWidget.setCurrentIndex(1)
 
 
         QMetaObject.connectSlotsByName(BAPD_Settings)
