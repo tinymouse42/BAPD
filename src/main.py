@@ -4,39 +4,18 @@
 # Imports:
 # *****************************************************************************
 
+# Standard Library Imports
 import os
 import subprocess
 import sys
 
+# Third-party library imports
 from PySide6.QtWidgets import QApplication, QMainWindow
 
+# Local module imports
 from config.config import DEFAULT_MAME_PATH
 from settings import SettingsDialog
 from ui.BAPD_Main_GUI import Ui_MainWindow
-
-from pathlib import Path
-
-
-# *****************************************************************************
-# This will be a class that handles all the directory management.
-# Right now, it only creates a directory based on the structure in config.py
-# I may expand it to handle all directory and file defaults or other stuff ???
-# Note: When called it will use the DIRECTORY_TREE structure in config.py
-# *****************************************************************************
-class DirectoryManagement:
-    def __init__(self, tree_structure):
-        self.tree_structure = tree_structure
-        self.base_dir = Path.home()
-
-    def create_directories(self):
-        self._create_directories_recursive(self.base_dir, self.tree_structure)
-
-    def _create_directories_recursive(self, base_path, node):
-        for key, value in node.items():
-            new_path = base_path / key
-            new_path.mkdir(parents=True, exist_ok=True)
-            if isinstance(value, dict):
-                self._create_directories_recursive(new_path, value)
 
 
 # *****************************************************************************
