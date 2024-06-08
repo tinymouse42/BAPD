@@ -59,3 +59,24 @@ DEFAULT_SETTINGS = {
         "bally_computer_system": False,
     },
 }
+
+# Directory tree structure that will be used to create the actual directories.
+DIRECTORY_TREE = {
+    "BAPDTest": {
+        "Projects": {},
+        "Documentation": {},
+        "Programs": {
+            "Config": {
+                "User": {},
+                "Defaults": {
+                    "ROMS": {
+                        "astrocde": {}
+                    }
+                }
+            },
+            "MAME": {},
+            "PSPad": {},
+            "Zmac": {}
+        }
+    }
+}
