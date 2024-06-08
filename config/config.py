@@ -60,7 +60,8 @@ DEFAULT_SETTINGS = {
     },
 }
 
-# Directory tree structure that will be used to create the actual directories.
+# Directory tree structure that will be used to validate the default
+# directories and files.
 DIRECTORY_TREE = {
     "BAPDTest": {
         "Projects": {},
@@ -70,11 +71,14 @@ DIRECTORY_TREE = {
                 "User": {},
                 "Defaults": {
                     "ROMS": {
-                        "astrocde": {}
+                        "astrocde": {},
+                        "files": ["b.txt", "c.txt"]
                     }
                 }
             },
-            "MAME": {},
+            "MAME": {
+                "files": ["a.txt"]
+            },
             "PSPad": {},
             "Zmac": {}
         }
