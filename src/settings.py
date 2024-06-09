@@ -1,4 +1,4 @@
-# settings.py  - large comments are for learning purposes
+# settings.py
 
 import os
 

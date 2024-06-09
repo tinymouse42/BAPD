@@ -68,7 +68,7 @@ DEFAULT_SETTINGS = {
 # *************************************************************************
 
 DIRECTORY_TREE = {
-    "BAPDTest": {       # Change this before put into production.
+    "BAPD": {       # Change this before put into production.
         "Projects": {
             "Astrocade_Program": {
                 "Version_Archive": {

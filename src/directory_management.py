@@ -1,9 +1,10 @@
 # directory_management.py
+
 import shutil
 from pathlib import Path
 from typing import TypeAlias, Dict, Union, List
 
-from config.config import DIRECTORY_TREE
+# from config.config import DIRECTORY_TREE
 
 # *****************************************************************************
 # This will be a class that handles all the directory management.
@@ -22,16 +23,17 @@ class DirectoryManagement:
         self.base_dir = Path.home()
 
     # *************************************************************************
-    # Checks the actual production directory against the expected directory
-    # tree structure (see config.py) and creates any missing directories.
-    # If a directory already exists, it is left unchanged.
+    # PUBLIC METHOD:
+    # Checks the actual production directory and files against the expected
+    # directory and file tree structure (see config.py)
+    # Creates any missing items but leaves existing or extra items alone.
     # *************************************************************************
-
     def verify_directory_structure(self) -> None:
         self._verify_directory_structure_recursive(self.base_dir, self.tree_structure)
 
     # *************************************************************************
-    # Private method to implement the public verify_directory_structure method.
+    # PRIVATE METHOD:
+    # Check for a complete directory structure adding any missing items.
     # *************************************************************************
     def _verify_directory_structure_recursive(self, base_path: Path, node: TreeStructure) -> None:
         for key, value in node.items():
@@ -45,10 +47,10 @@ class DirectoryManagement:
                     self._verify_directory_structure_recursive(new_path, value)
 
     # *************************************************************************
-    # Private method to check for and default files and copy them
-    # over if necessary. If a file exists, it is left alone.The default files
-    # are kept in the code project directory config/default_files.
+    # PRIVATE METHOD:
+    # Check that all default files exist and add any missing items.
     # *************************************************************************
+
     @classmethod
     def _verify_files(cls, directory: Path, expected_files: List[str]) -> None:
         # Get the project directory path
@@ -63,10 +65,6 @@ class DirectoryManagement:
 
             if not file_path.exists():
                 shutil.copy(source_file, file_path)
-                print(f"Copied {source_file} to {file_path}")
-            else:
-                print(f"File {file_path} already exists, skipping.")
-
 
 '''
 def main():
