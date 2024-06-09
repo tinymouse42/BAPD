@@ -60,27 +60,33 @@ DEFAULT_SETTINGS = {
     },
 }
 
-# Directory tree structure that will be used to validate the default
-# directories and files.
+# *************************************************************************
+# Directory tree structure that will be used to validate
+# the default directory and files. Files will be pulled from
+# the config/Default_Files directory. The easiest way to modify this
+# structure is to tell and AI what you need modified.
+# *************************************************************************
+
 DIRECTORY_TREE = {
-    "BAPDTest": {
-        "Projects": {},
+    "BAPDTest": {       # Change this before put into production.
+        "Projects": {
+            "Astrocade_Program": {
+                "Version_Archive": {
+                    "files": ["Astrocade_Demo_Cartridge.asm"]
+                },
+                "files": ["Astrocade_Program.asm", "HVGLIB.H"]
+            }
+        },
         "Documentation": {},
         "Programs": {
-            "Config": {
-                "User": {},
-                "Defaults": {
-                    "ROMS": {
-                        "astrocde": {},
-                        "files": ["b.txt", "c.txt"]
-                    }
-                }
+            "MAME": {},
+            "PSPad": {
+                "files": ["Z80.INI"]
             },
-            "MAME": {
-                "files": ["a.txt"]
-            },
-            "PSPad": {},
-            "Zmac": {}
+            "Zmac": {
+                "files": ["zmac.exe"]
+            }
         }
     }
 }
+

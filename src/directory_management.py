@@ -3,6 +3,8 @@ import shutil
 from pathlib import Path
 from typing import TypeAlias, Dict, Union, List
 
+from config.config import DIRECTORY_TREE
+
 # *****************************************************************************
 # This will be a class that handles all the directory management.
 # Right now, it only creates a directory based on the structure in config.py
@@ -42,30 +44,41 @@ class DirectoryManagement:
                 if isinstance(value, dict):  # If it's a subdirectory, recurse
                     self._verify_directory_structure_recursive(new_path, value)
 
-    from pathlib import Path
-
     # *************************************************************************
     # Private method to check for and default files and copy them
-    # over if necessary. If a file exists, it is left alone.
-    # PROBLEM: DEFAULT FILES DO NOT EXIST UNTIL DIRECTORY STRUCTURE IS
-    # CREATED. IT'S A CATCH 22. ???
+    # over if necessary. If a file exists, it is left alone.The default files
+    # are kept in the code project directory config/default_files.
     # *************************************************************************
-    def _verify_files(self, directory: Path, expected_files: List[str]) -> None:
-        files_dir = Path("files")
+    @classmethod
+    def _verify_files(cls, directory: Path, expected_files: List[str]) -> None:
+        # Get the project directory path
+        project_dir = Path(__file__).parent.parent
+
+        # Construct the path to the default_files directory
+        default_files_dir = project_dir / "config" / "default_files"
 
         for file_name in expected_files:
             file_path = directory / file_name
-            source_file = files_dir / file_name
+            source_file = default_files_dir / file_name
 
             if not file_path.exists():
-                if source_file.exists():
-                    shutil.copy(source_file, file_path)
-                    print(f"Copied {source_file} to {file_path}")
-                else:
-                    print(f"Missing file: {file_path}")
+                shutil.copy(source_file, file_path)
+                print(f"Copied {source_file} to {file_path}")
+            else:
+                print(f"File {file_path} already exists, skipping.")
 
 
-# Example of use
-# manager = DirectoryManagement(DIRECTORY_TREE)
-# manager.create_directories()
-pass
+'''
+def main():
+    # Create an instance of the DirectoryManagement class
+    manager = DirectoryManagement(DIRECTORY_TREE)
+
+    # Verify and create the directory structure
+    manager.verify_directory_structure()
+
+    # Optionally, you can add more tests or operations here
+
+
+if __name__ == "__main__":
+    main()
+'''
