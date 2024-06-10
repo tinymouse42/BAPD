@@ -4,7 +4,9 @@ import shutil
 from pathlib import Path
 from typing import TypeAlias, Dict, Union, List
 
-# from config.config import DIRECTORY_TREE
+import toml
+
+from config.config import DIRECTORY_TREE, TOML_FULL_PATH
 
 # *****************************************************************************
 # This will be a class that handles all the directory management.
@@ -32,6 +34,20 @@ class DirectoryManagement:
         self._verify_directory_structure_recursive(self.base_dir, self.tree_structure)
 
     # *************************************************************************
+    # PUBLIC METHOD:
+    # Loads the TOML file
+    # *************************************************************************
+    def read_toml(self):
+        return self._read_toml()
+
+    # *************************************************************************
+    # PUBLIC METHOD:
+    # Writes a modified entries to the TOML file
+    # *************************************************************************
+    def write_toml(self):
+        return self._write_toml()
+
+    # *************************************************************************
     # PRIVATE METHOD:
     # Check for a complete directory structure adding any missing items.
     # *************************************************************************
@@ -50,7 +66,6 @@ class DirectoryManagement:
     # PRIVATE METHOD:
     # Check that all default files exist and add any missing items.
     # *************************************************************************
-
     @classmethod
     def _verify_files(cls, directory: Path, expected_files: List[str]) -> None:
         # Get the project directory path
@@ -66,7 +81,33 @@ class DirectoryManagement:
             if not file_path.exists():
                 shutil.copy(source_file, file_path)
 
-'''
+    # *************************************************************************
+    # PRIVATE METHOD:
+    # Read the TOML file. Checks to see if the file is there and if it
+    # is a valid TOML file.
+    # *************************************************************************
+    @classmethod
+    def _read_toml(cls) -> dict:
+        try:
+            with open(TOML_FULL_PATH, "r") as toml_file:
+                settings = toml.load(toml_file)
+                return settings
+        except FileNotFoundError:
+            print(f"Error: TOML file not found at {TOML_FULL_PATH}")
+            return {}  # Return an empty dictionary if file is not found
+        except toml.TomlDecodeError:
+            print(f"Error: Invalid TOML format in {TOML_FULL_PATH}")
+            return {}
+
+    # *************************************************************************
+    # PRIVATE METHOD:
+    # Write the modified TOML file.
+    # *************************************************************************
+    @classmethod
+    def _write_toml(cls) -> dict:
+        return {}
+
+
 def main():
     # Create an instance of the DirectoryManagement class
     manager = DirectoryManagement(DIRECTORY_TREE)
@@ -79,4 +120,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-'''
