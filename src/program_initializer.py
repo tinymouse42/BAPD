@@ -1,4 +1,4 @@
-# directory_management.py
+# program_initializer.py
 
 import shutil
 from pathlib import Path
@@ -6,7 +6,8 @@ from typing import TypeAlias, Dict, Union, List
 
 import toml
 
-from config.config import DIRECTORY_TREE, TOML_FULL_PATH
+from config.config import DIRECTORY_TREE, DEFAULT_TOML_SETTINGS, CONFIG_DIR, TOML_FILE_NAME
+from src.file_management import FileManager
 
 # *****************************************************************************
 # This will be a class that handles all the directory management.
@@ -19,10 +20,11 @@ from config.config import DIRECTORY_TREE, TOML_FULL_PATH
 TreeStructure: TypeAlias = Dict[str, Union[Dict, List[str]]]
 
 
-class DirectoryManagement:
+class ProgramInitializer:
     def __init__(self, tree_structure: TreeStructure):
         self.tree_structure = tree_structure
         self.base_dir = Path.home()
+        self.toml_file_path = Path(CONFIG_DIR) / TOML_FILE_NAME
 
     # *************************************************************************
     # PUBLIC METHOD:
@@ -30,28 +32,14 @@ class DirectoryManagement:
     # directory and file tree structure (see config.py)
     # Creates any missing items but leaves existing or extra items alone.
     # *************************************************************************
-    def verify_directory_structure(self) -> None:
-        self._verify_directory_structure_recursive(self.base_dir, self.tree_structure)
-
-    # *************************************************************************
-    # PUBLIC METHOD:
-    # Loads the TOML file
-    # *************************************************************************
-    def read_toml(self):
-        return self._read_toml()
-
-    # *************************************************************************
-    # PUBLIC METHOD:
-    # Writes a modified entries to the TOML file
-    # *************************************************************************
-    def write_toml(self):
-        return self._write_toml()
+    def create_directory_structure(self) -> None:
+        self._create_directory_structure_recursive(self.base_dir, self.tree_structure)
 
     # *************************************************************************
     # PRIVATE METHOD:
     # Check for a complete directory structure adding any missing items.
     # *************************************************************************
-    def _verify_directory_structure_recursive(self, base_path: Path, node: TreeStructure) -> None:
+    def _create_directory_structure_recursive(self, base_path: Path, node: TreeStructure) -> None:
         for key, value in node.items():
             new_path: Path = base_path / key
 
@@ -60,7 +48,7 @@ class DirectoryManagement:
             else:
                 new_path.mkdir(parents=True, exist_ok=True)
                 if isinstance(value, dict):  # If it's a subdirectory, recurse
-                    self._verify_directory_structure_recursive(new_path, value)
+                    self._create_directory_structure_recursive(new_path, value)
 
     # *************************************************************************
     # PRIVATE METHOD:
@@ -81,41 +69,54 @@ class DirectoryManagement:
             if not file_path.exists():
                 shutil.copy(source_file, file_path)
 
-    # *************************************************************************
-    # PRIVATE METHOD:
-    # Read the TOML file. Checks to see if the file is there and if it
-    # is a valid TOML file.
-    # *************************************************************************
-    @classmethod
-    def _read_toml(cls) -> dict:
+    # *****************************************************************************
+    # Validates the TOML file format and normalizes the settings against the defaults.
+    # If the TOML file is invalid or missing, a new file is created with the defaults.
+    # If the TOML file is valid, missing settings are added from the default settings.
+    # *****************************************************************************
+    def validate_and_normalize_toml_settings(self) -> None:
         try:
-            with open(TOML_FULL_PATH, "r") as toml_file:
+            with open(self.toml_file_path, "r") as toml_file:
                 settings = toml.load(toml_file)
-                return settings
-        except FileNotFoundError:
-            print(f"Error: TOML file not found at {TOML_FULL_PATH}")
-            return {}  # Return an empty dictionary if file is not found
-        except toml.TomlDecodeError:
-            print(f"Error: Invalid TOML format in {TOML_FULL_PATH}")
-            return {}
+        except (FileNotFoundError, toml.TomlDecodeError):
+            # TOML file is missing or invalid, create a new file with default settings
+            FileManager.write_toml(self.toml_file_path, DEFAULT_TOML_SETTINGS)
+            return
 
-    # *************************************************************************
-    # PRIVATE METHOD:
-    # Write the modified TOML file.
-    # *************************************************************************
-    @classmethod
-    def _write_toml(cls) -> dict:
-        return {}
+        # Normalize settings by adding any missing keys from the default settings
+        normalized_settings = self._normalize_settings(settings, DEFAULT_TOML_SETTINGS)
+
+        # Write the normalized settings back to the TOML file
+        FileManager.write_toml(self.toml_file_path, normalized_settings)
+
+    # *****************************************************************************
+    # Normalizes the provided settings against the default settings.
+    # Missing keys from the default settings are added to the provided settings.
+    # *****************************************************************************
+    @staticmethod
+    def _normalize_settings(settings: Dict, default_settings: Dict) -> Dict:
+        normalized_settings = settings.copy()
+
+        for key, value in default_settings.items():
+            if isinstance(value, dict):
+                normalized_settings.setdefault(key, {})
+                normalized_settings[key] = ProgramInitializer._normalize_settings(
+                    normalized_settings.get(key, {}), value
+                )
+            else:
+                normalized_settings.setdefault(key, value)
+
+        return normalized_settings
 
 
 def main():
-    # Create an instance of the DirectoryManagement class
-    manager = DirectoryManagement(DIRECTORY_TREE)
+    manager = ProgramInitializer(DIRECTORY_TREE)
 
     # Verify and create the directory structure
-    manager.verify_directory_structure()
+    manager.create_directory_structure()
 
-    # Optionally, you can add more tests or operations here
+    # Validate and normalize the TOML file settings
+    manager.validate_and_normalize_toml_settings()
 
 
 if __name__ == "__main__":

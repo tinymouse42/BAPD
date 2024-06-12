@@ -6,7 +6,7 @@ import toml
 from PySide6.QtWidgets import QDialog, QFileDialog, QMessageBox, QDialogButtonBox
 
 # Import constants defined in the config.py file
-from config.config import (TOML_FULL_PATH, DEFAULT_SETTINGS)
+from config.config import (TOML_FULL_PATH, DEFAULT_TOML_SETTINGS)
 from ui.BAPD_Settings_GUI import Ui_BAPD_Settings
 
 

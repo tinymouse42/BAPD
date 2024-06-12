@@ -77,7 +77,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):  # QMainWindow <- PS6
     # the following function. Right now it is stub code. ???
     # =====================================================================
     def handle_settings_rejected(self):
-        """Handles the rejected signal from the settings dialog."""
         self.plainTextEdit.appendPlainText("Settings dialog was canceled.")
 
     # =====================================================================
@@ -92,7 +91,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):  # QMainWindow <- PS6
     # Review this code for redundancies. ???
     # =====================================================================
     def compile(self):
-
+        pass
+        '''
         if not self.current_project_path:
             self.plainTextEdit.appendPlainText("No project selected.")
             return
@@ -119,6 +119,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):  # QMainWindow <- PS6
                 self.plainTextEdit.appendPlainText(f"Zmac Error:\n{completed_process.stderr}")
         except FileNotFoundError as e:
             self.plainTextEdit.appendPlainText(f"Error running Zmac: {e}")
+        '''
 
     # =====================================================================
     # Opens the source code using the default editor
