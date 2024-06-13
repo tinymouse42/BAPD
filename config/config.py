@@ -39,7 +39,7 @@ TOML_FULL_PATH = os.path.join(CONFIG_DIR, TOML_FILE_NAME)
 
 # Default Paths (Used if not specified in settings)
 DEFAULT_ZMAC_PATH = os.path.join(PROGRAMS_DIR, "Zmac", "zmac.exe")
-DEFAULT_MAME_PATH = os.path.join(PROGRAMS_DIR, "MAME", "mame64.exe")
+DEFAULT_MAME_PATH = os.path.join(PROGRAMS_DIR, "MAME", "mame.exe")
 
 # *************************************************************************
 # Directory tree structure that will be used to validate
@@ -63,9 +63,23 @@ DIRECTORY_TREE = {
         },
         "Documentation": {},
         "Programs": {
-            "MAME": {},
+            "MAME": {
+                "roms": {
+                    "astrocde": {
+                        "files": ["astrcde.bin", "astro.bin"]
+                    },
+                    "astrocdl": {
+                        "files": ["ballyhlc.bin"]
+                    },
+                    "astrocdw": {
+                        "files": ["bioswhit.bin"]
+                    }
+                }
+            },
             "PSPad": {
-                "files": ["Z80.INI"]
+                "Syntax": {
+                    "files": ["Z80.INI"]
+                }
             },
             "Zmac": {
                 "files": ["zmac.exe"]
@@ -76,6 +90,8 @@ DIRECTORY_TREE = {
         }
     }
 }
+
+
 
 # *************************************************************************
 # Default user settings for a TOML file.

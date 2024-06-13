@@ -6,7 +6,7 @@ from typing import TypeAlias, Dict, Union, List
 
 import toml
 
-from config.config import DIRECTORY_TREE, DEFAULT_TOML_SETTINGS, CONFIG_DIR, TOML_FILE_NAME
+from config.config import DEFAULT_TOML_SETTINGS, CONFIG_DIR, TOML_FILE_NAME
 from src.file_management import FileManager
 
 # *****************************************************************************
@@ -109,6 +109,7 @@ class ProgramInitializer:
         return normalized_settings
 
 
+'''
 def main():
     manager = ProgramInitializer(DIRECTORY_TREE)
 
@@ -121,3 +122,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+'''

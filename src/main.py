@@ -13,8 +13,9 @@ import sys
 from PySide6.QtWidgets import QApplication, QMainWindow
 
 # Local module imports
-from config.config import DEFAULT_MAME_PATH
+from config.config import DEFAULT_MAME_PATH, DIRECTORY_TREE
 from settings import SettingsDialog
+from src.program_initializer import ProgramInitializer
 from ui.BAPD_Main_GUI import Ui_MainWindow
 
 
@@ -34,6 +35,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):  # QMainWindow <- PS6
     def __init__(self):
         super(MainWindow, self).__init__()
         self.setupUi(self)
+
+        # =====================================================================
+        # Initialize the program environment
+        # =====================================================================
+        program_initializer = ProgramInitializer(DIRECTORY_TREE)
+        program_initializer.create_directory_structure()
+        program_initializer.validate_and_normalize_toml_settings()
 
         # =====================================================================
         # This is a standard way to connect the button signals to a function.
