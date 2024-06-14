@@ -84,6 +84,7 @@ class ProgramInitializer:
             return
 
         # Normalize settings by adding any missing keys from the default settings
+        # IMPLEMENT ??? ONLY WRITE IF STRUCTURE CHANGED.
         normalized_settings = self._normalize_settings(settings, DEFAULT_TOML_SETTINGS)
 
         # Write the normalized settings back to the TOML file

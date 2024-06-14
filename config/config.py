@@ -84,14 +84,10 @@ DIRECTORY_TREE = {
             "Zmac": {
                 "files": ["zmac.exe"]
             },
-            "Config": {
-                "files": ["user_settings.toml"]
-            }
+            "Config": {}
         }
     }
 }
-
-
 
 # *************************************************************************
 # Default user settings for a TOML file.
@@ -102,7 +98,7 @@ DEFAULT_TOML_SETTINGS = {
         "source_file_name": DEFAULT_SOURCE_NAME,
     },
     "zmac": {
-        "path": "",
+        "path": DEFAULT_ZMAC_PATH,
         "output_hex_file": False,
         "expand_macros": False,
         "expand_include_files": False,
@@ -111,7 +107,7 @@ DEFAULT_TOML_SETTINGS = {
         "allow_8080_instructions": False,
     },
     "mame": {
-        "path": "",
+        "path": DEFAULT_MAME_PATH,
         "debug_mode": False,
         "window_mode": True,
         "skip_game_info": True,

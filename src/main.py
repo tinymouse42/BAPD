@@ -12,11 +12,12 @@ import sys
 # Third-party library imports
 from PySide6.QtWidgets import QApplication, QMainWindow
 
-# Local module imports
-from config.config import DEFAULT_MAME_PATH, DIRECTORY_TREE
+# Local module importsTOML_FULL_PATH
+from config.config import DEFAULT_MAME_PATH, DIRECTORY_TREE, TOML_FULL_PATH
 from settings import SettingsDialog
 from src.program_initializer import ProgramInitializer
 from ui.BAPD_Main_GUI import Ui_MainWindow
+from src.file_management import FileManager
 
 
 # *****************************************************************************
@@ -42,6 +43,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):  # QMainWindow <- PS6
         program_initializer = ProgramInitializer(DIRECTORY_TREE)
         program_initializer.create_directory_structure()
         program_initializer.validate_and_normalize_toml_settings()
+
+        # Load settings from the TOML file
+        self.settings = FileManager.read_toml(TOML_FULL_PATH)
+
+        # Initialize attributes from the loaded settings
+        self.current_project_path = self.settings.get("project", {}).get("path", None)
 
         # =====================================================================
         # This is a standard way to connect the button signals to a function.
