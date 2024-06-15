@@ -12,7 +12,6 @@ import sys
 # Third-party library imports
 from PySide6.QtWidgets import QApplication, QMainWindow
 
-# Local module importsTOML_FULL_PATH
 from config.config import DEFAULT_MAME_PATH, DIRECTORY_TREE, TOML_FULL_PATH
 from settings import SettingsDialog
 from src.program_initializer import ProgramInitializer
@@ -179,19 +178,36 @@ class MainWindow(QMainWindow, Ui_MainWindow):  # QMainWindow <- PS6
         project_name = os.path.basename(self.current_project_path)
         bin_file_path = os.path.normpath(os.path.join(self.current_project_path, f"{project_name}.bin"))
 
-        mame_path = DEFAULT_MAME_PATH
+        # Get MAME path and settings from TOML
+        mame_settings = self.settings.get("mame", {})
+        mame_path = mame_settings.get("path", DEFAULT_MAME_PATH)
         mame_dir = os.path.dirname(mame_path)
 
-        mame_command = [
-            mame_path,
-            "astrocde",
-            "-cart", bin_file_path,
-            "-filter",
-            "-window"
-        ]
+        # Build MAME command based on TOML settings
+        mame_command = [mame_path]
 
-        if self.mameDebugCheckBox.isChecked():
-            mame_command.append("-debug")
+        # Add system flag based on TOML settings
+        system_flags = {
+            "bally_pro_arcade": "astrocde",
+            "bally_home_library_computer": "astrocdl",
+            "bally_computer_system": "astrocdw",
+        }
+        for flag, system in system_flags.items():
+            if mame_settings.get(flag, False):
+                mame_command.append(system)
+                break  # Only one system flag should be added
+
+        mame_command.extend(["-cart", bin_file_path, "-filter"])
+
+        # Add optional flags based on TOML settings
+        optional_flags = {
+            "debug_mode": "-debug",
+            "window_mode": "-window",
+            "skip_game_info": "-skip_gameinfo",
+        }
+        for flag, arg in optional_flags.items():
+            if mame_settings.get(flag, False):
+                mame_command.append(arg)
 
         os.chdir(mame_dir)
         subprocess.Popen(mame_command)
