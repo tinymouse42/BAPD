@@ -12,7 +12,7 @@ import sys
 # Third-party library imports
 from PySide6.QtWidgets import QApplication, QMainWindow
 
-from config.config import DEFAULT_MAME_PATH, DIRECTORY_TREE, TOML_FULL_PATH
+from config.config import DEFAULT_MAME_PATH, DIRECTORY_TREE, TOML_FULL_PATH, DEFAULT_ZMAC_PATH
 from settings import SettingsDialog
 from src.program_initializer import ProgramInitializer
 from ui.BAPD_Main_GUI import Ui_MainWindow
@@ -95,7 +95,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):  # QMainWindow <- PS6
 
     # =====================================================================
     # Opens a dialog to let the user select an Astrocade project directory.
-    # This needs to be checked to see if this goes in settings.py ???
     # =====================================================================
     def select_project_directory(self):
         pass
@@ -104,36 +103,74 @@ class MainWindow(QMainWindow, Ui_MainWindow):  # QMainWindow <- PS6
     # Compiles the current Astrocade project using Zmac.
     # Review this code for redundancies. ???
     # =====================================================================
+
     def compile(self):
-        pass
-        '''
+        """Compiles the current Astrocade project using Zmac."""
+
+        # Re-read settings to get the latest project path
+        self.settings = FileManager.read_toml(TOML_FULL_PATH)
+        self.current_project_path = self.settings.get("project", {}).get("path", "")
+
         if not self.current_project_path:
             self.plainTextEdit.appendPlainText("No project selected.")
             return
 
-        project_name = os.path.basename(self.current_project_path)
-        source_file = os.path.join(self.current_project_path, f"{project_name}.asm")
-        output_file = os.path.join(self.current_project_path, f"{project_name}.bin")
-        listing_file = os.path.join(self.current_project_path, f"{project_name}.lst")
-
-        os.chdir(self.current_project_path)  # Change to project directory before running zmac
-
-        zmac_path = self.settings.get("zmac", {}).get("path", "")  # Get ZMAC path from settings
-        if not zmac_path or not os.path.isfile(zmac_path):
-            self.plainTextEdit.appendPlainText("Zmac path is not set or invalid. Please check your settings.")
+        # Get ZMAC path from settings, with better error handling
+        zmac_path = self.settings.get("zmac", {}).get("path", DEFAULT_ZMAC_PATH)
+        if not os.path.isfile(zmac_path):
+            self.plainTextEdit.appendPlainText(
+                f"Zmac executable not found at '{zmac_path}'. Please check your settings."
+            )
             return
 
-        zmac_command = [zmac_path, "-i", "-m", "-o", output_file, "-x", listing_file, source_file]
+        try:
+            # Change to the project directory
+            os.chdir(self.current_project_path)
+        except FileNotFoundError:
+            self.plainTextEdit.appendPlainText(f"Project directory not found: {self.current_project_path}")
+            return
+
+        # Build Zmac command based on TOML settings
+        project_name = os.path.basename(self.current_project_path)
+        zmac_command = [
+            zmac_path,
+            "-o",
+            f"{project_name}.bin",  # No need for os.path.join
+            "-x",
+            f"{project_name}.lst",  # No need for os.path.join
+        ]
+
+        # Add options based on TOML settings using match-case
+        match self.settings.get("zmac", {}):
+            case {"expand_macros": True}:
+                zmac_command.append("-m")
+            case {"expand_include_files": False}:
+                zmac_command.append("-i")
+            case {"expand_if": True}:
+                zmac_command.append("-f")
+            case {"omit_symbol_table": False}:
+                zmac_command.append("-s")
+            case {"allow_8080_instructions": False}:
+                zmac_command.append("-z")
+            case {"output_hex_file": True}:
+                zmac_command.append("-o")
+                zmac_command.append(f"{project_name}.hex")  # No need for os.path.join
+
+        # Source file (always included)
+        zmac_command.append(f"{project_name}.asm")  # No need for os.path.join
+
+        # Display the Zmac command (for debugging)
+        self.plainTextEdit.appendPlainText(f"Running Zmac command: {' '.join(zmac_command)}")
 
         try:
             completed_process = subprocess.run(zmac_command, capture_output=True, text=True)
             if completed_process.returncode == 0:
                 self.plainTextEdit.appendPlainText("Zmac Output:\nCompilation Successful!")
+                # ... (potential post-compilation actions)
             else:
                 self.plainTextEdit.appendPlainText(f"Zmac Error:\n{completed_process.stderr}")
         except FileNotFoundError as e:
             self.plainTextEdit.appendPlainText(f"Error running Zmac: {e}")
-        '''
 
     # =====================================================================
     # Opens the source code using the default editor
