@@ -17,6 +17,6 @@ Thumbs.db
 # IDE Specific (Uncomment and Adapt if Necessary)
 .idea/
 
-# Files 
-/config/default_files/A.txt
-/config/default_files/B.txt
+# Files
+/config/default_files/mame0266b_64bit.exe
+/config/default_files/pspad507en_x64.zip
