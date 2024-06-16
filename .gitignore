@@ -16,3 +16,7 @@ Thumbs.db
 
 # IDE Specific (Uncomment and Adapt if Necessary)
 .idea/
+
+# Files 
+/config/default_files/A.txt
+/config/default_files/B.txt
