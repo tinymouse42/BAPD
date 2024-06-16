@@ -84,7 +84,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):  # QMainWindow <- PS6
     # the following function. Right now it is stub code. ???
     # =====================================================================
     def handle_settings_accepted(self):
-        pass
+        self.plainTextEdit.appendPlainText("Settings Accepted (not yet implemented.")
 
     # =====================================================================
     # If the cancel button is pressed in the settings dialog, then do
@@ -97,13 +97,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):  # QMainWindow <- PS6
     # Opens a dialog to let the user select an Astrocade project directory.
     # =====================================================================
     def select_project_directory(self):
-        pass
+        self.plainTextEdit.appendPlainText("Select Project Directory (not yet implemented)")
 
     # =====================================================================
     # Compiles the current Astrocade project using Zmac.
-    # Review this code for redundancies. ???
     # =====================================================================
-
     def compile(self):
         """Compiles the current Astrocade project using Zmac."""
 
@@ -154,7 +152,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):  # QMainWindow <- PS6
                 zmac_command.append("-z")
             case {"output_hex_file": True}:
                 zmac_command.append("-o")
-                zmac_command.append(f"{project_name}.hex")  # No need for os.path.join
+                zmac_command.append(f"{project_name}.hex")
 
         # Source file (always included)
         zmac_command.append(f"{project_name}.asm")  # No need for os.path.join
@@ -171,41 +169,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):  # QMainWindow <- PS6
                 self.plainTextEdit.appendPlainText(f"Zmac Error:\n{completed_process.stderr}")
         except FileNotFoundError as e:
             self.plainTextEdit.appendPlainText(f"Error running Zmac: {e}")
-
-    # =====================================================================
-    # Opens the source code using the default editor
-    # NOT IMPLEMENTED YET. THIS IS STUB CODE ???
-    # =====================================================================
-    def edit_source(self):
-        self.plainTextEdit.appendPlainText("Editing source file (not yet implemented)")
-
-    # =====================================================================
-    # Opens the listing file using the default editor.
-    # NOT IMPLEMENTED YET. THIS IS STUB CODE ???
-    # =====================================================================
-    def view_listing(self):
-        self.plainTextEdit.appendPlainText("Viewing listing file (not yet implemented)")
-
-    # =====================================================================
-    # Runs the standard version of MAME without regard to project.
-    # NOT IMPLEMENTED YET. THIS IS STUB CODE ???
-    # =====================================================================
-    def run_standard_mame(self):
-        self.plainTextEdit.appendPlainText("Running standard MAME (not yet implemented)")
-
-    # =====================================================================
-    # Opens current project folder in Windows Explorer file manager.
-    # =====================================================================
-    def open_project_folder(self):
-        if self.current_project_path:
-            os.startfile(self.current_project_path)
-
-    # =====================================================================
-    # Clears the output window. Self explanatory.
-    # =====================================================================
-    def clear_output_screen(self):
-        self.plainTextEdit.clear()
-        self.plainTextEdit.appendPlainText("[Screen Cleared]")
 
     # =====================================================================
     # Runs the currently compiled program with some standard options and
@@ -232,7 +195,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):  # QMainWindow <- PS6
         for flag, system in system_flags.items():
             if mame_settings.get(flag, False):
                 mame_command.append(system)
-                break  # Only one system flag should be added
+                break
 
         mame_command.extend(["-cart", bin_file_path, "-filter"])
 
@@ -251,18 +214,49 @@ class MainWindow(QMainWindow, Ui_MainWindow):  # QMainWindow <- PS6
         self.plainTextEdit.appendPlainText("MAME has been launched.")
 
     # =====================================================================
+    # Opens the source code using the default editor
+    # =====================================================================
+    def edit_source(self):
+        self.plainTextEdit.appendPlainText("Editing source file (not yet implemented)")
+
+    # =====================================================================
+    # Opens the listing file using the default editor.
+    # =====================================================================
+    def view_listing(self):
+        self.plainTextEdit.appendPlainText("Viewing listing file (not yet implemented)")
+
+    # =====================================================================
+    # Runs the standard version of MAME without regard to project.
+    # =====================================================================
+    def run_standard_mame(self):
+        self.plainTextEdit.appendPlainText("Running standard MAME (not yet implemented)")
+
+    # =====================================================================
+    # Opens current project folder in Windows Explorer file manager.
+    # =====================================================================
+    def open_project_folder(self):
+        if self.current_project_path:
+            os.startfile(self.current_project_path)
+
+    # =====================================================================
+    # Clears the output window. Self explanatory.
+    # =====================================================================
+    def clear_output_screen(self):
+        self.plainTextEdit.clear()
+        self.plainTextEdit.appendPlainText("[Screen Cleared]")
+
+    # =====================================================================
     # While this is a button, I do not have a use for it at this time
     # I am thinking about making it an easter egg or some extra info
     # about zmac or both. This will probably be implemented last.
     # =====================================================================
     def print_version(self):
-        pass
+        self.plainTextEdit.appendPlainText("Editing source file (not yet implemented)")
 
 
 # *****************************************************************************
 # Main program loop.
 # *****************************************************************************
-
 if __name__ == "__main__":
     app = QApplication(sys.argv)  # app is part of PySide6 - Initializes whole program?
     window = MainWindow()  # window: Creates object for class above
