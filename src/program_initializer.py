@@ -74,7 +74,7 @@ class ProgramInitializer:
     # If the TOML file is invalid or missing, a new file is created with the defaults.
     # If the TOML file is valid, missing settings are added from the default settings.
     # *****************************************************************************
-    def validate_and_normalize_toml_settings(self) -> None:
+    def validate_and_normalize_toml_settings(self, main_window):  # Add main_window argument
         try:
             with open(self.toml_file_path, "r") as toml_file:
                 settings = toml.load(toml_file)
@@ -83,12 +83,19 @@ class ProgramInitializer:
             FileManager.write_toml(self.toml_file_path, DEFAULT_TOML_SETTINGS)
             return
 
+        # Update GUI elements based on TOML settings
+        self._update_gui_from_settings(main_window, settings)
+
         # Normalize settings by adding any missing keys from the default settings
-        # IMPLEMENT ??? ONLY WRITE IF STRUCTURE CHANGED.
         normalized_settings = self._normalize_settings(settings, DEFAULT_TOML_SETTINGS)
 
         # Write the normalized settings back to the TOML file
         FileManager.write_toml(self.toml_file_path, normalized_settings)
+
+    @classmethod
+    def _update_gui_from_settings(cls, main_window, settings):
+        # Update MAME debug checkbox
+        main_window.mameDebugCheckBox.setChecked(settings.get("mame", {}).get("debug_mode", False))
 
     # *****************************************************************************
     # Normalizes the provided settings against the default settings.

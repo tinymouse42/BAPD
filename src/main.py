@@ -41,7 +41,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):  # QMainWindow <- PS6
         # =====================================================================
         program_initializer = ProgramInitializer(DIRECTORY_TREE)
         program_initializer.create_directory_structure()
-        program_initializer.validate_and_normalize_toml_settings()
+        program_initializer.validate_and_normalize_toml_settings(self)
 
         # Load settings from the TOML file
         self.settings = FileManager.read_toml(TOML_FULL_PATH)
@@ -64,6 +64,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):  # QMainWindow <- PS6
         self.openProjectFolderButton.clicked.connect(self.open_project_folder)
         self.versionPushButton.clicked.connect(self.print_version)
         self.settingsButton.clicked.connect(self.open_settings_dialog)
+        self.mameDebugCheckBox.stateChanged.connect(self._debug_update)
 
     # =====================================================================
     # Creates an instance of the SettingsDialog which is the class
@@ -209,9 +210,24 @@ class MainWindow(QMainWindow, Ui_MainWindow):  # QMainWindow <- PS6
             if mame_settings.get(flag, False):
                 mame_command.append(arg)
 
+        FileManager.write_toml(TOML_FULL_PATH, self.settings)  # Save settings
+        print(mame_command)
+
         os.chdir(mame_dir)
         subprocess.Popen(mame_command)
         self.plainTextEdit.appendPlainText("MAME has been launched.")
+
+    # =====================================================================
+    # This handles the debug checkbox on the main GUI.
+    # =====================================================================
+    def _debug_update(self):
+        # Update the debug mode setting based on the checkbox
+        if self.mameDebugCheckBox.isChecked():
+            self.settings["mame"]["debug_mode"] = "-debug"
+        else:
+            self.settings["mame"]["debug_mode"] = False  # Or remove the key entirely
+
+        FileManager.write_toml(TOML_FULL_PATH, self.settings)
 
     # =====================================================================
     # Opens the source code using the default editor

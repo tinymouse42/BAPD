@@ -37,8 +37,8 @@ class SettingsDialog(QDialog, Ui_BAPD_Settings):
         self.mameButtonBox.clicked.connect(self.handle_button_click)
         '''
         # Now, set the ZMAC path in the line edit after loading settings
-        zmac_path = self.settings.get("zmac", {}).get("path", "")
-        self.zmacPathLineEdit.setText(zmac_path)
+        zmac_path = cls.settings.get("zmac", {}).get("path", "")
+        cls.zmacPathLineEdit.setText(zmac_path)
         '''
         # ==========================================================================
         # Connect signals to slots (button clicks, etc.)
