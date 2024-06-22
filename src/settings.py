@@ -2,11 +2,9 @@
 
 import os
 
-import toml
-from PySide6.QtWidgets import QDialog, QFileDialog, QMessageBox, QDialogButtonBox
+from PySide6.QtWidgets import QDialog, QFileDialog, QMessageBox
 
-# Import constants defined in the config.py file
-from config.config import (TOML_FULL_PATH, DEFAULT_TOML_SETTINGS)
+from config.config import DEFAULT_TOML_SETTINGS, DEFAULT_ZMAC_PATH, DEFAULT_MAME_PATH
 from ui.BAPD_Settings_GUI import Ui_BAPD_Settings
 
 
@@ -20,42 +18,23 @@ from ui.BAPD_Settings_GUI import Ui_BAPD_Settings
 # *****************************************************************************
 
 class SettingsDialog(QDialog, Ui_BAPD_Settings):
-
     # ==========================================================================
     # Initialization section. This is run when SettingsDialog is instantiated.
     # ==========================================================================
-    def __init__(self, parent=None):
+    def __init__(self, parent, settings):
         super().__init__(parent)
         self.setupUi(self)
 
-        # Load settings from TOML file
-        self.settings = load_settings_from_toml()
-        print(self.settings)
+        self.settings = settings.copy()
 
-        # Connect button box signals to slots
-        self.zmacButtonBox.clicked.connect(self.handle_button_click)
-        self.mameButtonBox.clicked.connect(self.handle_button_click)
-        '''
-        # Now, set the ZMAC path in the line edit after loading settings
-        zmac_path = cls.settings.get("zmac", {}).get("path", "")
-        cls.zmacPathLineEdit.setText(zmac_path)
-        '''
-        # ==========================================================================
-        # Connect signals to slots (button clicks, etc.)
-        # ==========================================================================
-        self.zmacBrowseButton.clicked.connect(self.browse_zmac_path)
-        self.mameButtonBox.clicked.connect(self.handle_button_click)
+        # Load initial settings into the UI elements
+        self.load_settings()
 
-    def handle_button_click(self, button):
-        role = self.zmacButtonBox.buttonRole(button)
-
-        if role == QDialogButtonBox.ButtonRole.ApplyRole:
-            self.save_settings_to_toml()
-        elif role == QDialogButtonBox.ButtonRole.AcceptRole:
-            self.save_settings_to_toml()
-            self.accept()
-        elif role == QDialogButtonBox.ButtonRole.RejectRole:
-            self.reject()
+        # Connect buttons to their respective slots
+        self.zmacButtonBox.accepted.connect(self.save_settings)  # Use zmacButtonBox
+        self.zmacButtonBox.rejected.connect(self.reject)  # Use zmacButtonBox
+        self.mameButtonBox.accepted.connect(self.save_settings)  # Use mameButtonBox
+        self.mameButtonBox.rejected.connect(self.reject)  # Use mameButtonBox
 
     # ==========================================================================
     # Opens a file dialog to select the ZMAC executable path.
@@ -79,56 +58,58 @@ class SettingsDialog(QDialog, Ui_BAPD_Settings):
     # ==========================================================================
     # Saves the current settings to the TOML file
     # ==========================================================================
-    def save_settings_to_toml(self):
-        """Saves the current settings to the TOML file."""
-        try:
-            # Gather settings from the UI elements
-            self.settings["zmac"]["path"] = self.zmacPathLineEdit.text()
-            self.settings["zmac"]["output_hex_file"] = self.outputHexFile.isChecked()
-            self.settings["zmac"]["expand_include_files"] = self.expandIncludeFiles.isChecked()
-            self.settings["zmac"]["expand_macros"] = self.expandMacros.isChecked()
-            self.settings["zmac"]["omit_symbol_table"] = self.omitSymbolTable.isChecked()
+    def load_settings(self):
+        """Loads the settings from the dictionary into the UI elements."""
+        # ZMAC Settings
+        self.zmacPathLineEdit.setText(self.settings.get("zmac", {}).get("path", DEFAULT_ZMAC_PATH))
+        self.outputHexFile.setChecked(self.settings.get("zmac", {}).get("output_hex_file", False))
+        self.expandMacros.setChecked(self.settings.get("zmac", {}).get("expand_macros", False))
+        self.expandIncludeFiles.setChecked(self.settings.get("zmac", {}).get("expand_include_files", False))
+        self.expandIf.setChecked(self.settings.get("zmac", {}).get("expand_if", False))
+        self.omitSymbolTable.setChecked(self.settings.get("zmac", {}).get("omit_symbol_table", False))
+        self.allow8080Instructions.setChecked(self.settings.get("zmac", {}).get("allow_8080_instructions", False))
 
-            # Save to TOML file (using the centralized function)
-            with open(TOML_FULL_PATH, "w") as f:
-                toml.dump(self.settings, f)
+        # MAME Settings
+        self.mamePathLineEdit.setText(self.settings.get("mame", {}).get("path", DEFAULT_MAME_PATH))
+        self.debugModeOn.setChecked(self.settings.get("mame", {}).get("debug_mode", False))
+        self.windowModeOn.setChecked(self.settings.get("mame", {}).get("window_mode", True))
+        self.skipGameInfo.setChecked(self.settings.get("mame", {}).get("skip_game_info", True))
 
-            # Optionally, provide user feedback (e.g., status bar message)
-            print("Settings saved successfully!")  # Or use a logging mechanism
+        # Radio buttons for MAME system
+        if self.settings.get("mame", {}).get("bally_pro_arcade", True):
+            self.ballyProArcade.setChecked(True)
+        elif self.settings.get("mame", {}).get("bally_home_library_computer", False):
+            self.ballyHomeLibraryComputer.setChecked(True)
+        elif self.settings.get("mame", {}).get("bally_computer_system", False):
+            self.ballyComputerSystem.setChecked(True)
 
-        except Exception as e:  # Catch any potential errors during saving
-            # Handle the error (e.g., log it, show an error message to the user)
-            print(f"Error saving settings: {e}")  # Or use a logging mechanism
+    def save_settings(self):
+        """Saves the settings from the UI elements into the dictionary."""
+
+        # ZMAC Settings
+        self.settings["zmac"]["path"] = self.zmacPathLineEdit.text()
+        self.settings["zmac"]["output_hex_file"] = self.outputHexFile.isChecked()
+        self.settings["zmac"]["expand_macros"] = self.expandMacros.isChecked()
+        self.settings["zmac"]["expand_include_files"] = self.expandIncludeFiles.isChecked()
+        self.settings["zmac"]["expand_if"] = self.expandIf.isChecked()
+        self.settings["zmac"]["omit_symbol_table"] = self.omitSymbolTable.isChecked()
+        self.settings["zmac"]["allow_8080_instructions"] = self.allow8080Instructions.isChecked()
+
+        # MAME Settings
+        self.settings["mame"]["path"] = self.mamePathLineEdit.text()
+        self.settings["mame"]["debug_mode"] = self.debugModeOn.isChecked()
+        self.settings["mame"]["window_mode"] = self.windowModeOn.isChecked()
+        self.settings["mame"]["skip_game_info"] = self.skipGameInfo.isChecked()
+
+        # Radio buttons for MAME system
+        self.settings["mame"]["bally_pro_arcade"] = self.ballyProArcade.isChecked()
+        self.settings["mame"]["bally_home_library_computer"] = self.ballyHomeLibraryComputer.isChecked()
+        self.settings["mame"]["bally_computer_system"] = self.ballyComputerSystem.isChecked()
+
+        self.accept()  # Accept the dialog to signal that settings are saved
 
 
 # *****************  End SettingsDialog Class  *****************************
-
-# ==========================================================================
-# Loads settings from the TOML file, creating it with defaults
-# if it doesn't exist.
-# ==========================================================================
-def load_settings_from_toml():
-    pass
-
-
-'''
-    try:
-        with open(TOML_FULL_PATH, "r") as f:
-            settings = toml.load(f)
-    except FileNotFoundError:
-        settings = DEFAULT_SETTINGS.copy()
-        with open(TOML_FULL_PATH, "w") as f:
-            toml.dump(settings, f)
-
-    settings_modified = add_missing_settings(settings)
-
-    if settings_modified:
-        with open(TOML_FULL_PATH, "w") as f:
-            toml.dump(settings, f)
-
-    return settings
-'''
-
 
 # ==========================================================================
 # Adds any missing settings to the given settings dictionary with their default values.
@@ -136,7 +117,7 @@ def load_settings_from_toml():
 # ==========================================================================
 def add_missing_settings(settings):
     modified = False
-    for section, section_defaults in DEFAULT_SETTINGS.items():
+    for section, section_defaults in DEFAULT_TOML_SETTINGS.items():  # Use DEFAULT_TOML_SETTINGS
         if section not in settings:
             settings[section] = section_defaults.copy()
             modified = True

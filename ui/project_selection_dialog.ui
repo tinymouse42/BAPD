@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Dialog</class>
- <widget class="QDialog" name="Dialog">
+ <class>projectSelectionDialog</class>
+ <widget class="QDialog" name="projectSelectionDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>Select or Create Project</string>
   </property>
-  <widget class="QDialogButtonBox" name="buttonBox">
+  <widget class="QDialogButtonBox" name="dialogButtonBox">
    <property name="geometry">
     <rect>
      <x>320</x>
@@ -34,7 +34,7 @@
     <set>QDialogButtonBox::StandardButton::Cancel|QDialogButtonBox::StandardButton::Ok</set>
    </property>
   </widget>
-  <widget class="QGroupBox" name="groupBox">
+  <widget class="QGroupBox" name="existingProjectsGroupBox">
    <property name="geometry">
     <rect>
      <x>10</x>
@@ -48,11 +48,11 @@
    </property>
    <layout class="QFormLayout" name="formLayout">
     <item row="0" column="0" colspan="2">
-     <widget class="QListWidget" name="listWidget"/>
+     <widget class="QListWidget" name="existingProjectsListWidget"/>
     </item>
    </layout>
   </widget>
-  <widget class="QGroupBox" name="groupBox_2">
+  <widget class="QGroupBox" name="newProjectGroupBox">
    <property name="geometry">
     <rect>
      <x>10</x>
@@ -64,7 +64,7 @@
    <property name="title">
     <string>New Project</string>
    </property>
-   <widget class="QRadioButton" name="radioButton">
+   <widget class="QRadioButton" name="createNewProjectRadioButton">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -82,7 +82,7 @@
      <string>Create New Project</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label">
+   <widget class="QLabel" name="projectNameLabel">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -100,7 +100,7 @@
      <string>Project Name:</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="lineEdit">
+   <widget class="QLineEdit" name="projectNameLineEdit">
     <property name="geometry">
      <rect>
       <x>120</x>
@@ -115,9 +115,9 @@
  <resources/>
  <connections>
   <connection>
-   <sender>buttonBox</sender>
+   <sender>dialogButtonBox</sender>
    <signal>accepted()</signal>
-   <receiver>Dialog</receiver>
+   <receiver>projectSelectionDialog</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -131,9 +131,9 @@
    </hints>
   </connection>
   <connection>
-   <sender>buttonBox</sender>
+   <sender>dialogButtonBox</sender>
    <signal>rejected()</signal>
-   <receiver>Dialog</receiver>
+   <receiver>projectSelectionDialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">

@@ -9,14 +9,22 @@ import os
 import subprocess
 import sys
 
-# Third-party library imports
-from PySide6.QtWidgets import QApplication, QMainWindow
+from PySide6 import QtWidgets
+from PySide6.QtWidgets import QApplication, QMainWindow, QMessageBox
 
-from config.config import DEFAULT_MAME_PATH, DIRECTORY_TREE, TOML_FULL_PATH, DEFAULT_ZMAC_PATH
+from config.config import (
+    DEFAULT_MAME_PATH,
+    DIRECTORY_TREE,
+    TOML_FULL_PATH,
+    DEFAULT_ZMAC_PATH,
+    PROJECT_DIR,
+)
+
 from settings import SettingsDialog
+from src.file_management import FileManager
 from src.program_initializer import ProgramInitializer
 from ui.BAPD_Main_GUI import Ui_MainWindow
-from src.file_management import FileManager
+from ui.project_selection_dialog import Ui_projectSelectionDialog
 
 
 # *****************************************************************************
@@ -28,26 +36,20 @@ from src.file_management import FileManager
 #       created by Designer.
 # *****************************************************************************
 
-class MainWindow(QMainWindow, Ui_MainWindow):  # QMainWindow <- PS6
+class MainWindow(QMainWindow, Ui_MainWindow):
     # ==========================================================================
     # Initialization section. This is run when MainWindow is instantiated.
     # ==========================================================================
     def __init__(self):
-        super(MainWindow, self).__init__()
+        super().__init__()
         self.setupUi(self)
 
         # =====================================================================
         # Initialize the program environment
         # =====================================================================
-        program_initializer = ProgramInitializer(DIRECTORY_TREE)
-        program_initializer.create_directory_structure()
-        program_initializer.validate_and_normalize_toml_settings(self)
-
-        # Load settings from the TOML file
-        self.settings = FileManager.read_toml(TOML_FULL_PATH)
-
-        # Initialize attributes from the loaded settings
-        self.current_project_path = self.settings.get("project", {}).get("path", None)
+        ProgramInitializer(DIRECTORY_TREE).create_directory_structure()
+        self.settings = ProgramInitializer(DIRECTORY_TREE).validate_and_normalize_toml_settings(self)
+        self.current_project_path = self.settings.get("project", {}).get("path")
 
         # =====================================================================
         # This is a standard way to connect the button signals to a function.
@@ -60,9 +62,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):  # QMainWindow <- PS6
         self.compileButton.clicked.connect(self.compile)
         self.runCurrentButton.clicked.connect(self.run_current_program)
         self.runStandardMameButton.clicked.connect(self.run_standard_mame)
-        self.clearScreenButton.clicked.connect(self.clear_output_screen)
+        self.clearScreenButton.clicked.connect(self.plainTextEdit.clear)
         self.openProjectFolderButton.clicked.connect(self.open_project_folder)
-        self.versionPushButton.clicked.connect(self.print_version)
         self.settingsButton.clicked.connect(self.open_settings_dialog)
         self.mameDebugCheckBox.stateChanged.connect(self._debug_update)
 
@@ -75,10 +76,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):  # QMainWindow <- PS6
     # in the TOML file.
     # =====================================================================
     def open_settings_dialog(self):
-        settings_dialog = SettingsDialog(self)
-        settings_dialog.accepted.connect(self.handle_settings_accepted)
-        settings_dialog.rejected.connect(self.handle_settings_rejected)
-        settings_dialog.exec()
+        settings_dialog = SettingsDialog(self, self.settings)  # Pass settings to the dialog
+        if settings_dialog.exec_() == QtWidgets.QDialog.DialogCode.Accepted:
+            self.settings = settings_dialog.settings  # Update settings from dialog
+            FileManager.write_toml(TOML_FULL_PATH, self.settings)  # Save settings
+            self.plainTextEdit.appendPlainText("Settings saved successfully.")
+        else:
+            self.plainTextEdit.appendPlainText("Settings dialog was canceled.")
 
     # =====================================================================
     # If the OK or Apply button is pressed in the settings dialog, then do
@@ -98,7 +102,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):  # QMainWindow <- PS6
     # Opens a dialog to let the user select an Astrocade project directory.
     # =====================================================================
     def select_project_directory(self):
-        self.plainTextEdit.appendPlainText("Select Project Directory (not yet implemented)")
+        dialog = ProjectSelectionDialog(self)  # Pass the main window reference
+        if dialog.exec() == QtWidgets.QDialog.DialogCode.Accepted:
+            self.current_project_path = dialog.selected_project_path
+            self.fileNameLabel.setText(os.path.basename(self.current_project_path))
 
     # =====================================================================
     # Compiles the current Astrocade project using Zmac.
@@ -268,6 +275,65 @@ class MainWindow(QMainWindow, Ui_MainWindow):  # QMainWindow <- PS6
     # =====================================================================
     def print_version(self):
         self.plainTextEdit.appendPlainText("Editing source file (not yet implemented)")
+
+
+class ProjectSelectionDialog(QtWidgets.QDialog, Ui_projectSelectionDialog):
+    def __init__(self, main_window):  # Receive main_window reference
+        super().__init__()
+        self.setupUi(self)
+        self.main_window = main_window  # Store the reference
+        self.populate_project_list()
+        self.selected_project_path = None  # Initialize selected_project_path
+
+        # Connect signals to slots
+        self.createNewProjectRadioButton.toggled.connect(self.toggle_project_selection)
+        self.dialogButtonBox.accepted.connect(self.accept_selection)
+        self.dialogButtonBox.rejected.connect(self.reject)
+
+        # Trigger the toggle_project_selection method initially to set the correct state
+        self.toggle_project_selection(self.createNewProjectRadioButton.isChecked())
+
+    def populate_project_list(self):
+        projects_dir = PROJECT_DIR
+        self.existingProjectsListWidget.clear()  # Clear existing items
+
+        all_items = os.listdir(projects_dir)  # List all items in the project directory
+
+        # Populate the list widget with project names
+        for project_name in all_items:
+            project_path = os.path.join(projects_dir, project_name)
+            if os.path.isdir(project_path):
+                item = QtWidgets.QListWidgetItem(project_name)
+                self.existingProjectsListWidget.addItem(item)
+
+    # Slot to handle toggling between existing and new project selection
+    def toggle_project_selection(self, checked):
+        # Enable/disable the project name input field based on the radio button state
+        self.projectNameLineEdit.setEnabled(checked)  # Enable if checked, disable if not checked
+
+    # Slot to handle accepting the selected project
+    def accept_selection(self):
+        if self.createNewProjectRadioButton.isChecked():
+            project_name = self.projectNameLineEdit.text()
+            if not project_name:
+                QMessageBox.warning(self, "No Project Name", "Please enter a name for the new project.")
+                return  # Don't accept the dialog if no name is entered
+        else:
+            selected_item = self.existingProjectsListWidget.currentItem()
+            if selected_item:
+                project_name = selected_item.text()
+            else:
+                QMessageBox.warning(self, "No Project Selected", "Please select a project from the list.")
+                return  # Don't accept the dialog if no project is selected
+
+        # Update the selected_project_path (for use in the dialog)
+        self.selected_project_path = os.path.join(PROJECT_DIR, project_name)
+
+        # Update the main window directly using the stored reference
+        self.main_window.current_project_path = self.selected_project_path
+        self.main_window.fileNameLabel.setText(project_name)
+
+        self.accept()  # Accept the dialog if validation passes
 
 
 # *****************************************************************************
