@@ -9,7 +9,7 @@ ensuring a consistent and organized way to manage configuration
 throughout the application.
 """
 
-import os
+from pathlib import Path
 
 # *************************************************************************
 # Constants for paths and files
@@ -22,24 +22,26 @@ import os
 #
 # *************************************************************************
 
-BASE_DIR = os.path.join(os.environ['USERPROFILE'], "BAPD")
+# Get user profile directory
+user_profile_dir = Path.home()
 
 # Program Directories (Not changeable by user)
-PROGRAMS_DIR = os.path.join(BASE_DIR, "Programs")
-PROJECT_DIR = os.path.join(BASE_DIR, "Projects")
-CONFIG_DIR = os.path.join(PROGRAMS_DIR, "Config")
+BASE_DIR = user_profile_dir / "BAPD"
+PROGRAMS_DIR = BASE_DIR / "Programs"
+PROJECT_DIR = BASE_DIR / "Projects"
+CONFIG_DIR = PROGRAMS_DIR / "Config"
 
-# DEFAULT_ORIGINAL_MAME_ROMS_PATH = os.path.join(PROGRAMS_DIR, "ROMS")
-DEFAULT_PROJECT_PATH = os.path.join(PROJECT_DIR, "Astrocade_Program")
+# DEFAULT_ORIGINAL_MAME_ROMS_PATH = PROGRAMS_DIR / "ROMS"  # Commented out for now
+DEFAULT_PROJECT_PATH = PROJECT_DIR / "Astrocade_Program"
 DEFAULT_SOURCE_NAME = "Astrocade_Program.asm"
 
 # Settings File
 TOML_FILE_NAME = "user_settings.toml"
-TOML_FULL_PATH = os.path.join(CONFIG_DIR, TOML_FILE_NAME)
+TOML_FULL_PATH = CONFIG_DIR / TOML_FILE_NAME
 
 # Default Paths (Used if not specified in settings)
-DEFAULT_ZMAC_PATH = os.path.join(PROGRAMS_DIR, "Zmac", "zmac.exe")
-DEFAULT_MAME_PATH = os.path.join(PROGRAMS_DIR, "MAME", "mame.exe")
+DEFAULT_ZMAC_PATH = PROGRAMS_DIR / "Zmac" / "zmac.exe"
+DEFAULT_MAME_PATH = PROGRAMS_DIR / "MAME" / "mame.exe"
 
 # *************************************************************************
 # Directory tree structure that will be used to validate

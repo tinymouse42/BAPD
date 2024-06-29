@@ -6,6 +6,7 @@
 
 # Standard Library Imports
 import os
+# Standard Library Imports
 import shutil
 import subprocess
 import sys
@@ -21,22 +22,12 @@ from config.config import (
     DEFAULT_ZMAC_PATH,
     PROJECT_DIR, DEFAULT_SOURCE_NAME,
 )
-
 from settings import SettingsDialog
 from src.file_management import FileManager
 from src.program_initializer import ProgramInitializer
 from ui.BAPD_Main_GUI import Ui_MainWindow
 from ui.project_selection_dialog import Ui_projectSelectionDialog
 
-
-# *****************************************************************************
-# MainWindow is the name of OUR class defining our program class.
-#   =>  Inherits from PS6 QMainWindow provides a pre-built framework for
-#       the main window of your application.
-#   =>  Inherits from Ui_MainWindow, which is the name of the OUR class
-#       in a separate file called BAPD_Main_GUI which contains the GUI code
-#       created by Designer.
-# *****************************************************************************
 
 class MainWindow(QMainWindow, Ui_MainWindow):
     # ==========================================================================
@@ -102,17 +93,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     # =====================================================================
     def select_project_directory(self):
         # Create an instance of the project selection dialog class
-        # It runs the init method of this class. The self refers
-        # to this instance of the main window which is passed to the
-        # init function in the ProjectSelectionDialog class. In that code
-        # the parameter is called main_window.
         dialog = ProjectSelectionDialog(self)
 
         # If either Apply or Okay is pressed, then this code executes.
         if dialog.exec() == QtWidgets.QDialog.DialogCode.Accepted:
             print(self.current_project_path)
             self.current_project_path = dialog.selected_project_path
-            self.fileNameLabel.setText(os.path.basename(self.current_project_path))
+            self.fileNameLabel.setText(str(self.current_project_path.name))
 
     # =====================================================================
     # Compiles the current Astrocade project using Zmac.
@@ -122,29 +109,30 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         # Re-read settings to get the latest project path
         self.settings = FileManager.read_toml(TOML_FULL_PATH)
-        self.current_project_path = self.settings.get("project", {}).get("path", "")
+        self.current_project_path = Path(self.settings.get("project", {}).get("path", ""))
 
         if not self.current_project_path:
             self.plainTextEdit.appendPlainText("No project selected.")
             return
 
         # Get ZMAC path from settings, with better error handling
-        zmac_path = self.settings.get("zmac", {}).get("path", DEFAULT_ZMAC_PATH)
-        if not os.path.isfile(zmac_path):
+        zmac_path = Path(self.settings.get("zmac", {}).get("path", DEFAULT_ZMAC_PATH))
+        if not zmac_path.is_file():
             self.plainTextEdit.appendPlainText(
                 f"Zmac executable not found at '{zmac_path}'. Please check your settings."
             )
             return
 
         try:
-            # Change to the project directory
-            os.chdir(self.current_project_path)
+            # Change to the project directory using os.chdir
+            project_dir = self.current_project_path.parent.resolve()
+            os.chdir(project_dir.as_posix())  # Convert to platform-specific path string
         except FileNotFoundError:
             self.plainTextEdit.appendPlainText(f"Project directory not found: {self.current_project_path}")
             return
 
-        # Build Zmac command based on TOML settings
-        project_name = os.path.basename(self.current_project_path)
+            # Build Zmac command based on TOML settings
+        project_name = self.current_project_path.name
         zmac_command = [
             zmac_path,
             "-o",
@@ -170,7 +158,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 zmac_command.append(f"{project_name}.hex")
 
         # Source file (always included)
-        zmac_command.append(f"{project_name}.asm")  # No need for os.path.join
+        zmac_command.append(self.current_project_path)  # Use the Path object directly
 
         # Display the Zmac command (for debugging)
         self.plainTextEdit.appendPlainText(f"Running Zmac command: {' '.join(zmac_command)}")
@@ -190,13 +178,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     # any user specified options from the settings menu.
     # =====================================================================
     def run_current_program(self):
-        project_name = os.path.basename(self.current_project_path)
-        bin_file_path = os.path.normpath(os.path.join(self.current_project_path, f"{project_name}.bin"))
+        project_name = self.current_project_path.name
+        bin_file_path = self.current_project_path / f"{project_name}.bin"  # Use pathlib for path joining
 
         # Get MAME path and settings from TOML
         mame_settings = self.settings.get("mame", {})
-        mame_path = mame_settings.get("path", DEFAULT_MAME_PATH)
-        mame_dir = os.path.dirname(mame_path)
+        mame_path = Path(mame_settings.get("path", DEFAULT_MAME_PATH))
+        mame_dir = mame_path.parent  # Get parent directory of MAME path
 
         # Build MAME command based on TOML settings
         mame_command = [mame_path]
@@ -212,7 +200,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 mame_command.append(system)
                 break
 
-        mame_command.extend(["-cart", bin_file_path, "-filter"])
+        mame_command.extend(["-cart", str(bin_file_path), "-filter"])
 
         # Add optional flags based on TOML settings
         optional_flags = {
@@ -227,7 +215,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         FileManager.write_toml(TOML_FULL_PATH, self.settings)  # Save settings
         print(mame_command)
 
-        os.chdir(mame_dir)
+        # Change directory to MAME's parent using os.chdir
+        os.chdir(mame_dir.resolve().as_posix())  # Convert to platform-specific path string
+
         subprocess.Popen(mame_command)
         self.plainTextEdit.appendPlainText("MAME has been launched.")
 
@@ -262,7 +252,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     # =====================================================================
     def open_project_folder(self):
         if self.current_project_path:
-            os.startfile(self.current_project_path)
+            # Use pathlib to open the project directory
+            self.current_project_path.resolve().open()
 
     # =====================================================================
     # Clears the output window. Self explanatory.
@@ -304,21 +295,20 @@ class ProjectSelectionDialog(QtWidgets.QDialog, Ui_projectSelectionDialog):
         self.toggle_project_selection(self.createNewProjectRadioButton.isChecked())
 
     def populate_project_list(self):
-        # Get the existing projects and display the list
-        project_paths = self.get_project_directories()
+        # This function likely resides elsewhere (potentially moved to ProgramInitializer or a utility class)
+        # ... (implementation to get project paths)
+        # project_paths = self.get_project_directories()  # Placeholder
+
+        projects_dir = Path(PROJECT_DIR)
         self.existingProjectsListWidget.clear()
-        for project_path in project_paths:
-            project_name = os.path.basename(project_path)
-            self.existingProjectsListWidget.addItem(QtWidgets.QListWidgetItem(project_name))
+        for project in projects_dir.iterdir():
+            if project.is_dir():
+                project_name = project.name
+                self.existingProjectsListWidget.addItem(QtWidgets.QListWidgetItem(project_name))
 
     def get_project_directories(self):
-        projects_dir = PROJECT_DIR
-        project_paths = []
-        for item in os.listdir(projects_dir):
-            project_path = os.path.join(projects_dir, item)
-            if os.path.isdir(project_path):
-                project_paths.append(project_path)
-        return project_paths
+        projects_dir = Path(PROJECT_DIR)
+        return [project for project in projects_dir.iterdir() if project.is_dir()]
 
     # Slot to handle toggling between existing and new project selection
     def toggle_project_selection(self, checked):
@@ -333,12 +323,13 @@ class ProjectSelectionDialog(QtWidgets.QDialog, Ui_projectSelectionDialog):
 
     def create_new_project(self):
         project_name = self.projectNameLineEdit.text()
+        print(project_name)
         if not project_name:
             QMessageBox.warning(self, "No Project Name", "Please enter a name for the new project.")
             return
 
         self.create_project_directory(project_name)
-        self.selected_project_path = os.path.join(PROJECT_DIR, project_name)
+        self.selected_project_path = Path(PROJECT_DIR) / project_name
         self.update_main_window(project_name)
         self.update_settings()
         self.refresh_project_list()
@@ -349,7 +340,7 @@ class ProjectSelectionDialog(QtWidgets.QDialog, Ui_projectSelectionDialog):
         selected_item = self.existingProjectsListWidget.currentItem()
         if selected_item:
             project_name = selected_item.text()
-            self.selected_project_path = os.path.join(PROJECT_DIR, project_name)
+            self.selected_project_path = Path(PROJECT_DIR) / project_name  # Use pathlib for path joining
             self.update_main_window(project_name)
             self.update_settings()
             self.accept()
@@ -372,28 +363,31 @@ class ProjectSelectionDialog(QtWidgets.QDialog, Ui_projectSelectionDialog):
     def create_project_directory(self, project_name: str):
         """Creates the project directory, Version_Archive subdirectory, and copies default files."""
         # 1. Construct project path using Path object (pathlib)
-        # project_path = PROJECT_DIR / project_name
-        project_path = os.path.join(PROJECT_DIR, project_name)
+        project_path = Path(PROJECT_DIR) / project_name
 
         # 2. Create the project directory with mkdir (parents=True, exist_ok=True)
         project_path.mkdir(parents=True, exist_ok=True)
 
         # 3. Create Version_Archive subdirectory
-        version_archive_path = os.path.join(project_path, "Version_Archive")
+        version_archive_path = project_path / "Version_Archive"
         version_archive_path.mkdir(parents=True, exist_ok=True)  # Create parent directories if needed
 
         # 4. Define default files and archive file
         default_files = ["HVGLIB.H"]
         archive_file = (version_archive_path, f"{project_name}.asm")  # Rename based on project name
 
-        # 5. Copy archive file first
-        source_path = Path(__file__).parent / "default_files" / "Hello_World.asm"
-        destination_path = archive_file[0] / archive_file[1]
-        shutil.copy2(source_path, destination_path)
+        # Assuming CONFIG_DIR is already defined in your code
+
+        # 5. Copy archive file first (if applicable)
+        if archive_file:  # Check if archive_file exists before accessing it
+            source_path = Path(__file__).parent.parent / "config" / "default_files" / "Hello_World.asm"
+            print(source_path)
+            destination_path = archive_file[0] / archive_file[1]
+            shutil.copy2(source_path, destination_path)
 
         # 6. Loop through each default file and copy to the directory
         for file_name in default_files:
-            source_path = Path(__file__).parent / "default_files" / file_name
+            source_path = Path(__file__).parent.parent / "config" / "default_files" / file_name
             destination_path = project_path / file_name
             shutil.copy2(source_path, destination_path)
 
