@@ -27,10 +27,13 @@ from src.project_selection import ProjectSelectionManager
 from ui.BAPD_Main_GUI import Ui_MainWindow
 
 
+# **************************************************************************
+# MainWindow Class
+# **************************************************************************
 class MainWindow(QMainWindow, Ui_MainWindow):
 
     # ==========================================================================
-    # Initialization section. This is run when MainWindow is instantiated.
+    # Initialization method. This is run when MainWindow is instantiated.
     # ==========================================================================
     def __init__(self):
         super().__init__()

@@ -9,17 +9,12 @@ from ui.BAPD_Settings_GUI import Ui_BAPD_Settings
 
 
 # *****************************************************************************
-# SettingsDialog is the name of OUR class defining our program class.
-#   =>  Inherits from QDialog provides a pre-built framework for
-#       the settings window.
-#   =>  Inherits from Ui_BAPD_Settings, which is the name of the OUR class
-#       in a separate file called BAPD_Settings_GUI which contains the GUI code
-#       created by Designer.
+# SettingsDialog Class
 # *****************************************************************************
-
 class SettingsDialog(QDialog, Ui_BAPD_Settings):
+
     # ==========================================================================
-    # Initialization section. This is run when SettingsDialog is instantiated.
+    # Initialization method. This is run when SettingsDialog is instantiated.
     # ==========================================================================
     def __init__(self, parent, settings):
         super().__init__(parent)

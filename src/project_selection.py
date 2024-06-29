@@ -116,21 +116,21 @@ class ProjectSelectionManager(QtWidgets.QDialog, Ui_projectSelectionDialog):
         version_archive_path = project_path / "Version_Archive"
         version_archive_path.mkdir(parents=True, exist_ok=True)  # Create parent directories if needed
 
-        # 4. Define default files and archive file
-        default_files = ["HVGLIB.H"]
-        archive_file = (version_archive_path, f"{project_name}.asm")  # Rename based on project name
+        # 4. Copy "Hello_World.asm" to Version_Archive (unchanged)
+        source_archive_path = Path(__file__).parent.parent / "config" / "default_files" / "Hello_World.asm"
+        destination_archive_path = Path(project_path) / "Version_Archive" / "Hello_World.asm"
+        shutil.copy2(source_archive_path, destination_archive_path)
 
-        # Assuming CONFIG_DIR is already defined in your code
+        # 5. Copy "Hello_World.asm" to project directory with renaming
+        source_project_path = Path(__file__).parent.parent / "config" / "default_files" / "Hello_World.asm"
+        destination_project_path = project_path / f"{project_name}.asm"
+        shutil.copy2(source_project_path, destination_project_path)
 
-        # 5. Copy archive file first (if applicable)
-        if archive_file:  # Check if archive_file exists before accessing it
-            source_path = Path(__file__).parent.parent / "config" / "default_files" / "Hello_World.asm"
-            print(source_path)
-            destination_path = archive_file[0] / archive_file[1]
-            shutil.copy2(source_path, destination_path)
+        # 6. Define default files for project directory
+        project_files = ["HVGLIB.H"]
 
-        # 6. Loop through each default file and copy to the directory
-        for file_name in default_files:
+        # 7. Loop through project files and copy with project name
+        for file_name in project_files:
             source_path = Path(__file__).parent.parent / "config" / "default_files" / file_name
             destination_path = project_path / file_name
             shutil.copy2(source_path, destination_path)
