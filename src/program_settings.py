@@ -1,4 +1,4 @@
-# settings.py
+# program_settings.py
 
 import os
 
