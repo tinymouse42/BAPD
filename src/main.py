@@ -6,8 +6,10 @@
 
 # Standard Library Imports
 import os
+import shutil
 import subprocess
 import sys
+from pathlib import Path
 
 from PySide6 import QtWidgets
 from PySide6.QtWidgets import QApplication, QMainWindow, QMessageBox
@@ -17,7 +19,7 @@ from config.config import (
     DIRECTORY_TREE,
     TOML_FULL_PATH,
     DEFAULT_ZMAC_PATH,
-    PROJECT_DIR,
+    PROJECT_DIR, DEFAULT_SOURCE_NAME,
 )
 
 from settings import SettingsDialog
@@ -44,9 +46,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         super().__init__()
         self.setupUi(self)
 
-        # =====================================================================
-        # Initialize the program environment
-        # =====================================================================
         ProgramInitializer(DIRECTORY_TREE).create_directory_structure()
         self.settings = ProgramInitializer(DIRECTORY_TREE).validate_and_normalize_toml_settings(self)
         self.current_project_path = self.settings.get("project", {}).get("path")
@@ -102,8 +101,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     # Opens a dialog to let the user select an Astrocade project directory.
     # =====================================================================
     def select_project_directory(self):
-        dialog = ProjectSelectionDialog(self)  # Pass the main window reference
+        # Create an instance of the project selection dialog class
+        # It runs the init method of this class. The self refers
+        # to this instance of the main window which is passed to the
+        # init function in the ProjectSelectionDialog class. In that code
+        # the parameter is called main_window.
+        dialog = ProjectSelectionDialog(self)
+
+        # If either Apply or Okay is pressed, then this code executes.
         if dialog.exec() == QtWidgets.QDialog.DialogCode.Accepted:
+            print(self.current_project_path)
             self.current_project_path = dialog.selected_project_path
             self.fileNameLabel.setText(os.path.basename(self.current_project_path))
 
@@ -229,11 +236,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     # =====================================================================
     def _debug_update(self):
         # Update the debug mode setting based on the checkbox
-        if self.mameDebugCheckBox.isChecked():
-            self.settings["mame"]["debug_mode"] = "-debug"
-        else:
-            self.settings["mame"]["debug_mode"] = False  # Or remove the key entirely
-
+        self.settings["mame"]["debug_mode"] = self.mameDebugCheckBox.isChecked()
         FileManager.write_toml(TOML_FULL_PATH, self.settings)
 
     # =====================================================================
@@ -278,11 +281,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
 
 class ProjectSelectionDialog(QtWidgets.QDialog, Ui_projectSelectionDialog):
-    def __init__(self, main_window):  # Receive main_window reference
+    def __init__(self, main_window):
         super().__init__()
         self.setupUi(self)
-        self.main_window = main_window  # Store the reference
+        # Stores the reference to the main window, so it can interact with it.
+        # In the main dialog, it is passed as "self".
+        self.main_window = main_window
+
+        # The list of existing projects are created and the list widget is populated
+        # with the information so one can be selected.
         self.populate_project_list()
+
+        # Nothing has been selected so far so nothing is in the selected_project_path
         self.selected_project_path = None  # Initialize selected_project_path
 
         # Connect signals to slots
@@ -294,46 +304,98 @@ class ProjectSelectionDialog(QtWidgets.QDialog, Ui_projectSelectionDialog):
         self.toggle_project_selection(self.createNewProjectRadioButton.isChecked())
 
     def populate_project_list(self):
+        # Get the existing projects and display the list
+        project_paths = self.get_project_directories()
+        self.existingProjectsListWidget.clear()
+        for project_path in project_paths:
+            project_name = os.path.basename(project_path)
+            self.existingProjectsListWidget.addItem(QtWidgets.QListWidgetItem(project_name))
+
+    def get_project_directories(self):
         projects_dir = PROJECT_DIR
-        self.existingProjectsListWidget.clear()  # Clear existing items
-
-        all_items = os.listdir(projects_dir)  # List all items in the project directory
-
-        # Populate the list widget with project names
-        for project_name in all_items:
-            project_path = os.path.join(projects_dir, project_name)
+        project_paths = []
+        for item in os.listdir(projects_dir):
+            project_path = os.path.join(projects_dir, item)
             if os.path.isdir(project_path):
-                item = QtWidgets.QListWidgetItem(project_name)
-                self.existingProjectsListWidget.addItem(item)
+                project_paths.append(project_path)
+        return project_paths
 
     # Slot to handle toggling between existing and new project selection
     def toggle_project_selection(self, checked):
         # Enable/disable the project name input field based on the radio button state
         self.projectNameLineEdit.setEnabled(checked)  # Enable if checked, disable if not checked
 
-    # Slot to handle accepting the selected project
     def accept_selection(self):
         if self.createNewProjectRadioButton.isChecked():
-            project_name = self.projectNameLineEdit.text()
-            if not project_name:
-                QMessageBox.warning(self, "No Project Name", "Please enter a name for the new project.")
-                return  # Don't accept the dialog if no name is entered
+            self.create_new_project()
         else:
-            selected_item = self.existingProjectsListWidget.currentItem()
-            if selected_item:
-                project_name = selected_item.text()
-            else:
-                QMessageBox.warning(self, "No Project Selected", "Please select a project from the list.")
-                return  # Don't accept the dialog if no project is selected
+            self.select_existing_project()
 
-        # Update the selected_project_path (for use in the dialog)
+    def create_new_project(self):
+        project_name = self.projectNameLineEdit.text()
+        if not project_name:
+            QMessageBox.warning(self, "No Project Name", "Please enter a name for the new project.")
+            return
+
+        self.create_project_directory(project_name)
         self.selected_project_path = os.path.join(PROJECT_DIR, project_name)
+        self.update_main_window(project_name)
+        self.update_settings()
+        self.refresh_project_list()
+        self.main_window.plainTextEdit.appendPlainText(f"Created new project: {project_name}")
+        self.accept()
 
-        # Update the main window directly using the stored reference
+    def select_existing_project(self):
+        selected_item = self.existingProjectsListWidget.currentItem()
+        if selected_item:
+            project_name = selected_item.text()
+            self.selected_project_path = os.path.join(PROJECT_DIR, project_name)
+            self.update_main_window(project_name)
+            self.update_settings()
+            self.accept()
+        else:
+            QMessageBox.warning(self, "No Project Selected", "Please select a project from the list.")
+
+    def update_main_window(self, project_name):
         self.main_window.current_project_path = self.selected_project_path
         self.main_window.fileNameLabel.setText(project_name)
 
-        self.accept()  # Accept the dialog if validation passes
+    def update_settings(self):
+        self.main_window.settings["project"]["path"] = self.selected_project_path
+        self.main_window.settings["project"]["source_file_name"] = DEFAULT_SOURCE_NAME
+        FileManager.write_toml(TOML_FULL_PATH, self.main_window.settings)
+
+    def refresh_project_list(self):
+        self.existingProjectsListWidget.clear()
+        self.populate_project_list()
+
+    def create_project_directory(self, project_name: str):
+        """Creates the project directory, Version_Archive subdirectory, and copies default files."""
+        # 1. Construct project path using Path object (pathlib)
+        # project_path = PROJECT_DIR / project_name
+        project_path = os.path.join(PROJECT_DIR, project_name)
+
+        # 2. Create the project directory with mkdir (parents=True, exist_ok=True)
+        project_path.mkdir(parents=True, exist_ok=True)
+
+        # 3. Create Version_Archive subdirectory
+        version_archive_path = os.path.join(project_path, "Version_Archive")
+        version_archive_path.mkdir(parents=True, exist_ok=True)  # Create parent directories if needed
+
+        # 4. Define default files and archive file
+        default_files = ["HVGLIB.H"]
+        archive_file = (version_archive_path, f"{project_name}.asm")  # Rename based on project name
+
+        # 5. Copy archive file first
+        source_path = Path(__file__).parent / "default_files" / "Hello_World.asm"
+        destination_path = archive_file[0] / archive_file[1]
+        shutil.copy2(source_path, destination_path)
+
+        # 6. Loop through each default file and copy to the directory
+        for file_name in default_files:
+            source_path = Path(__file__).parent / "default_files" / file_name
+            destination_path = project_path / file_name
+            shutil.copy2(source_path, destination_path)
 
 
 # *****************************************************************************
