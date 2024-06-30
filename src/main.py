@@ -1,10 +1,5 @@
 # main.py
 
-# *****************************************************************************
-# Imports:
-# *****************************************************************************
-
-
 import os
 import subprocess
 import sys
@@ -33,7 +28,7 @@ from ui.BAPD_Main_GUI import Ui_MainWindow
 class MainWindow(QMainWindow, Ui_MainWindow):
 
     # ==========================================================================
-    # Initialization method. This is run when MainWindow is instantiated.
+    #
     # ==========================================================================
     def __init__(self):
         super().__init__()
@@ -41,7 +36,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         ProgramInitializer(DIRECTORY_TREE).create_directory_structure()
         self.settings = ProgramInitializer(DIRECTORY_TREE).validate_and_normalize_toml_settings(self)
-        self.current_project_path = self.settings.get("project", {}).get("path")
+        self.current_project_path = Path(self.settings.get("project", {}).get("path", "")).resolve()
 
         # =====================================================================
         # This is a standard way to connect the button signals to a function.
@@ -99,7 +94,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         # If either Apply or Okay is pressed, then this code executes.
         if dialog.exec() == QtWidgets.QDialog.DialogCode.Accepted:
-            print(self.current_project_path)
             self.current_project_path = dialog.selected_project_path
             self.fileNameLabel.setText(str(self.current_project_path.name))
 
@@ -111,7 +105,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         # Re-read settings to get the latest project path
         self.settings = FileManager.read_toml(TOML_FULL_PATH)
-        self.current_project_path = Path(self.settings.get("project", {}).get("path", ""))
+        self.current_project_path = Path(self.settings.get("project", {}).get("path", "")).resolve()
 
         if not self.current_project_path:
             self.plainTextEdit.appendPlainText("No project selected.")
@@ -254,8 +248,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     # =====================================================================
     def open_project_folder(self):
         if self.current_project_path:
-            # Use pathlib to open the project directory
-            self.current_project_path.resolve().open()
+            print('Print statement right before the resolve method')
+            print(f"Drive: {self.current_project_path.drive}")
+            print(f"Path components: {self.current_project_path.parts}")
+            print(str(self.current_project_path.resolve()))
+
+            # temp.open()
 
     # =====================================================================
     # Clears the output window. Self explanatory.
