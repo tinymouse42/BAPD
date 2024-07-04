@@ -13,6 +13,9 @@ The pathlib library is used throughout the code
 
 from pathlib import Path
 
+# I am converting the whole program to use pathlib.
+# This config.py has been converted.
+
 # *************************************************************************
 # Constants for paths and files
 #
@@ -120,6 +123,9 @@ DEFAULT_TOML_SETTINGS = {
         "bally_computer_system": False,
     },
 }
+
+
+
 
 """
 # *************************************************************************

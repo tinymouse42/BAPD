@@ -1,8 +1,10 @@
 # program_initializer.py
 
+# THIS FILE HAS BEEN UPDATED TO PATHLIB
+
 import shutil
 from pathlib import Path
-from typing import TypeAlias, Dict, Union, List
+from typing import TypeAlias, Dict, Union, List, Any
 
 import toml
 
@@ -24,7 +26,7 @@ class ProgramInitializer:
     def __init__(self, tree_structure: TreeStructure):
         self.tree_structure = tree_structure
         self.base_dir = Path.home()
-        self.toml_file_path = Path(CONFIG_DIR) / TOML_FILE_NAME
+        self.toml_file_path = CONFIG_DIR / TOML_FILE_NAME
 
     # *************************************************************************
     # PUBLIC METHOD:
@@ -59,7 +61,7 @@ class ProgramInitializer:
         # Get the project directory path
         project_dir = Path(__file__).parent.parent
 
-        # Construct the path to the default_files directory
+        # Construct the path to the default_files directory using pathlib
         default_files_dir = project_dir / "config" / "default_files"
 
         for file_name in expected_files:
@@ -74,7 +76,7 @@ class ProgramInitializer:
     # If the TOML file is invalid or missing, a new file is created with the defaults.
     # If the TOML file is valid, missing settings are added from the default settings.
     # *****************************************************************************
-    def validate_and_normalize_toml_settings(self, main_window):
+    def validate_and_normalize_toml_settings(self, main_window: Any) -> Dict:
         try:
             with open(self.toml_file_path, "r") as toml_file:
                 settings = toml.load(toml_file)
@@ -92,7 +94,8 @@ class ProgramInitializer:
         # Write the normalized settings back to the TOML file
         FileManager.write_toml(self.toml_file_path, normalized_settings)
 
-        return settings  # Return the settings dictionary
+        # Returns a complete and validated TOML file dictionary.
+        return settings  # type: Dict[str, Any]
 
     @classmethod
     def _update_gui_from_settings(cls, main_window, settings):
@@ -117,19 +120,3 @@ class ProgramInitializer:
                 normalized_settings.setdefault(key, value)
 
         return normalized_settings
-
-
-'''
-def main():
-    manager = ProgramInitializer(DIRECTORY_TREE)
-
-    # Verify and create the directory structure
-    manager.create_directory_structure()
-
-    # Validate and normalize the TOML file settings
-    manager.validate_and_normalize_toml_settings()
-
-
-if __name__ == "__main__":
-    main()
-'''

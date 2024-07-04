@@ -1,6 +1,5 @@
 # main.py
 
-import os
 import subprocess
 import sys
 from pathlib import Path
@@ -14,7 +13,6 @@ from config.config import (
     TOML_FULL_PATH,
     DEFAULT_ZMAC_PATH,
 )
-
 from program_settings import SettingsDialog
 from src.file_management import FileManager
 from src.program_initializer import ProgramInitializer
@@ -23,20 +21,27 @@ from ui.BAPD_Main_GUI import Ui_MainWindow
 
 
 # **************************************************************************
-# MainWindow Class
+# MainWindow Class - This is where all the magic happens. Usually dark magic.
 # **************************************************************************
 class MainWindow(QMainWindow, Ui_MainWindow):
 
     # ==========================================================================
-    #
+    # Temp comment: The init section is complete and using paths now
     # ==========================================================================
     def __init__(self):
         super().__init__()
         self.setupUi(self)
 
+        # Creates a physical directory structure based on DIRECTORY_TREE constant
         ProgramInitializer(DIRECTORY_TREE).create_directory_structure()
-        self.settings = ProgramInitializer(DIRECTORY_TREE).validate_and_normalize_toml_settings(self)
-        self.current_project_path = Path(self.settings.get("project", {}).get("path", "")).resolve()
+
+        # Validate and normalize TOML settings. After return there is a valid TOML in place.
+        self.settings: dict = ProgramInitializer(DIRECTORY_TREE).validate_and_normalize_toml_settings(self)
+        print("settings: ", self.settings)
+
+        # Retrieves the absolute path to the current project directory from user settings.
+        self.current_project_path: Path = Path(self.settings.get("project", {}).get("path", "")).resolve()
+        print(self.current_project_path)
 
         # =====================================================================
         # This is a standard way to connect the button signals to a function.
@@ -66,6 +71,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         settings_dialog = SettingsDialog(self, self.settings)  # Pass settings to the dialog
         if settings_dialog.exec() == QtWidgets.QDialog.DialogCode.Accepted:
             self.settings = settings_dialog.settings  # Update settings from dialog
+            print("open setting dialog: ", self.settings)
             FileManager.write_toml(TOML_FULL_PATH, self.settings)  # Save settings
             self.plainTextEdit.appendPlainText("Settings saved successfully.")
         else:
@@ -95,6 +101,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # If either Apply or Okay is pressed, then this code executes.
         if dialog.exec() == QtWidgets.QDialog.DialogCode.Accepted:
             self.current_project_path = dialog.selected_project_path
+            print(self.current_project_path)
             self.fileNameLabel.setText(str(self.current_project_path.name))
 
     # =====================================================================
@@ -105,7 +112,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         # Re-read settings to get the latest project path
         self.settings = FileManager.read_toml(TOML_FULL_PATH)
+        print("compile: ", self.settings)
         self.current_project_path = Path(self.settings.get("project", {}).get("path", "")).resolve()
+        print(self.current_project_path)
 
         if not self.current_project_path:
             self.plainTextEdit.appendPlainText("No project selected.")
@@ -122,19 +131,22 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         try:
             # Change to the project directory using os.chdir
             project_dir = self.current_project_path.parent.resolve()
-            os.chdir(project_dir.as_posix())  # Convert to platform-specific path string
+            self.plainTextEdit.appendPlainText(f"Changing directory to: {project_dir}")
         except FileNotFoundError:
             self.plainTextEdit.appendPlainText(f"Project directory not found: {self.current_project_path}")
             return
 
-            # Build Zmac command based on TOML settings
+        # Build Zmac command based on TOML settings
         project_name = self.current_project_path.name
+        output_bin_path = project_dir / f"{project_name}.bin"  # Use pathlib for file paths
+        output_lst_path = project_dir / f"{project_name}.lst"
+
         zmac_command = [
             zmac_path,
             "-o",
-            f"{project_name}.bin",  # No need for os.path.join
+            output_bin_path,
             "-x",
-            f"{project_name}.lst",  # No need for os.path.join
+            output_lst_path,
         ]
 
         # Add options based on TOML settings using match-case
@@ -174,13 +186,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     # any user specified options from the settings menu.
     # =====================================================================
     def run_current_program(self):
+
         project_name = self.current_project_path.name
         bin_file_path = self.current_project_path / f"{project_name}.bin"  # Use pathlib for path joining
 
         # Get MAME path and settings from TOML
         mame_settings = self.settings.get("mame", {})
         mame_path = Path(mame_settings.get("path", DEFAULT_MAME_PATH))
-        mame_dir = mame_path.parent  # Get parent directory of MAME path
+        mame_dir = mame_path.parent.resolve()  # Get parent directory of MAME path
 
         # Build MAME command based on TOML settings
         mame_command = [mame_path]
@@ -211,10 +224,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         FileManager.write_toml(TOML_FULL_PATH, self.settings)  # Save settings
         print(mame_command)
 
-        # Change directory to MAME's parent using os.chdir
-        os.chdir(mame_dir.resolve().as_posix())  # Convert to platform-specific path string
+        # Change directory to MAME's parent directory using pathlib
+        subprocess.Popen(mame_command, cwd=str(mame_dir))  # Launch MAME with correct working directory
 
-        subprocess.Popen(mame_command)
         self.plainTextEdit.appendPlainText("MAME has been launched.")
 
     # =====================================================================
@@ -247,13 +259,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     # Opens current project folder in Windows Explorer file manager.
     # =====================================================================
     def open_project_folder(self):
-        if self.current_project_path:
-            print('Print statement right before the resolve method')
-            print(f"Drive: {self.current_project_path.drive}")
-            print(f"Path components: {self.current_project_path.parts}")
-            print(str(self.current_project_path.resolve()))
-
-            # temp.open()
+        print(self.current_project_path)
+        project_dir = self.current_project_path.resolve()
+        if project_dir.is_dir():  # Check if it's a directory
+            project_dir.open()  # Open the directory using pathlib
+        else:
+            # Handle the case where the path is not a directory
+            print(f"Error: {project_dir} is not a valid directory.")
 
     # =====================================================================
     # Clears the output window. Self explanatory.
