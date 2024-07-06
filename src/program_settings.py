@@ -1,6 +1,7 @@
 # program_settings.py
 
 import os
+from pathlib import Path
 
 from PySide6.QtWidgets import QDialog, QFileDialog, QMessageBox
 
@@ -36,9 +37,9 @@ class SettingsDialog(QDialog, Ui_BAPD_Settings):
     # ==========================================================================
     def browse_zmac_path(self):
 
-        current_path = self.settings.get("zmac", {}).get("path", "")
+        current_path = Path(self.settings.get("zmac", {}).get("path", ""))
         zmac_path, _ = QFileDialog.getOpenFileName(
-            self, "Select ZMAC Executable", os.path.dirname(current_path), "Executable Files (*.exe)"
+            self, "Select ZMAC Executable", current_path.parent, "Executable Files (*.exe)"
         )
         if zmac_path:
             # Validate the selected file (e.g., check if it's a valid Zmac executable)

@@ -95,7 +95,7 @@ class ProgramInitializer:
         FileManager.write_toml(self.toml_file_path, normalized_settings)
 
         # Returns a complete and validated TOML file dictionary.
-        return settings  # type: Dict[str, Any]
+        return normalized_settings  # type: Dict[str, Any]
 
     @classmethod
     def _update_gui_from_settings(cls, main_window, settings):

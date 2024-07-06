@@ -37,11 +37,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         # Validate and normalize TOML settings. After return there is a valid TOML in place.
         self.settings: dict = ProgramInitializer(DIRECTORY_TREE).validate_and_normalize_toml_settings(self)
-        print("settings: ", self.settings)
 
         # Retrieves the absolute path to the current project directory from user settings.
         self.current_project_path: Path = Path(self.settings.get("project", {}).get("path", "")).resolve()
-        print(self.current_project_path)
 
         # =====================================================================
         # This is a standard way to connect the button signals to a function.
@@ -71,7 +69,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         settings_dialog = SettingsDialog(self, self.settings)  # Pass settings to the dialog
         if settings_dialog.exec() == QtWidgets.QDialog.DialogCode.Accepted:
             self.settings = settings_dialog.settings  # Update settings from dialog
-            print("open setting dialog: ", self.settings)
             FileManager.write_toml(TOML_FULL_PATH, self.settings)  # Save settings
             self.plainTextEdit.appendPlainText("Settings saved successfully.")
         else:
@@ -101,7 +98,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # If either Apply or Okay is pressed, then this code executes.
         if dialog.exec() == QtWidgets.QDialog.DialogCode.Accepted:
             self.current_project_path = dialog.selected_project_path
-            print(self.current_project_path)
             self.fileNameLabel.setText(str(self.current_project_path.name))
 
     # =====================================================================
@@ -112,9 +108,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         # Re-read settings to get the latest project path
         self.settings = FileManager.read_toml(TOML_FULL_PATH)
-        print("compile: ", self.settings)
         self.current_project_path = Path(self.settings.get("project", {}).get("path", "")).resolve()
-        print(self.current_project_path)
 
         if not self.current_project_path:
             self.plainTextEdit.appendPlainText("No project selected.")
@@ -222,7 +216,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 mame_command.append(arg)
 
         FileManager.write_toml(TOML_FULL_PATH, self.settings)  # Save settings
-        print(mame_command)
 
         # Change directory to MAME's parent directory using pathlib
         subprocess.Popen(mame_command, cwd=str(mame_dir))  # Launch MAME with correct working directory
@@ -259,10 +252,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     # Opens current project folder in Windows Explorer file manager.
     # =====================================================================
     def open_project_folder(self):
-        print(self.current_project_path)
         project_dir = self.current_project_path.resolve()
         if project_dir.is_dir():  # Check if it's a directory
-            project_dir.open()  # Open the directory using pathlib
+            project_dir.open()
         else:
             # Handle the case where the path is not a directory
             print(f"Error: {project_dir} is not a valid directory.")

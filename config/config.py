@@ -29,6 +29,7 @@ from pathlib import Path
 
 # Get user profile directory
 USER_PROFILE_DIR = Path.home()
+print(USER_PROFILE_DIR, type(USER_PROFILE_DIR))
 
 # Program Directories (Not changeable by user)
 BASE_DIR = USER_PROFILE_DIR / "BAPD"
@@ -97,15 +98,15 @@ DIRECTORY_TREE = {
 }
 
 # *************************************************************************
-# Default user settings for a TOML file.
+# Default user settings for the TOML file.
 # *************************************************************************
 DEFAULT_TOML_SETTINGS = {
     "project": {
-        "path": DEFAULT_PROJECT_PATH,
-        "source_file_name": DEFAULT_SOURCE_NAME,
+        "path": str(DEFAULT_PROJECT_PATH).replace("\\", "/"),
+        "source_file_name": str(DEFAULT_SOURCE_NAME).replace("\\", "/"),
     },
     "zmac": {
-        "path": DEFAULT_ZMAC_PATH,
+        "path": str(DEFAULT_ZMAC_PATH).replace("\\", "/"),
         "output_hex_file": False,
         "expand_macros": False,
         "expand_include_files": False,
@@ -114,7 +115,7 @@ DEFAULT_TOML_SETTINGS = {
         "allow_8080_instructions": False,
     },
     "mame": {
-        "path": DEFAULT_MAME_PATH,
+        "path": str(DEFAULT_MAME_PATH).replace("\\", "/"),
         "debug_mode": False,
         "window_mode": True,
         "skip_game_info": True,
@@ -123,9 +124,7 @@ DEFAULT_TOML_SETTINGS = {
         "bally_computer_system": False,
     },
 }
-
-
-
+print(DEFAULT_TOML_SETTINGS)
 
 """
 # *************************************************************************
