@@ -118,5 +118,4 @@ class ProgramInitializer:
                 )
             else:
                 normalized_settings.setdefault(key, value)
-
         return normalized_settings

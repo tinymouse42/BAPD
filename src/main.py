@@ -1,5 +1,5 @@
 # main.py
-
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -11,7 +11,7 @@ from config.config import (
     DEFAULT_MAME_PATH,
     DIRECTORY_TREE,
     TOML_FULL_PATH,
-    DEFAULT_ZMAC_PATH,
+    DEFAULT_ZMAC_PATH, DEFAULT_TOML_SETTINGS,
 )
 from program_settings import SettingsDialog
 from src.file_management import FileManager
@@ -36,7 +36,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         ProgramInitializer(DIRECTORY_TREE).create_directory_structure()
 
         # Validate and normalize TOML settings. After return there is a valid TOML in place.
-        self.settings: dict = ProgramInitializer(DIRECTORY_TREE).validate_and_normalize_toml_settings(self)
+        self.settings: dict = ProgramInitializer(DEFAULT_TOML_SETTINGS).validate_and_normalize_toml_settings(self)
 
         # Retrieves the absolute path to the current project directory from user settings.
         self.current_project_path: Path = Path(self.settings.get("project", {}).get("path", "")).resolve()
@@ -254,7 +254,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def open_project_folder(self):
         project_dir = self.current_project_path.resolve()
         if project_dir.is_dir():  # Check if it's a directory
-            project_dir.open()
+            os.startfile(str(project_dir))
         else:
             # Handle the case where the path is not a directory
             print(f"Error: {project_dir} is not a valid directory.")

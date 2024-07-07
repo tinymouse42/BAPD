@@ -13,9 +13,6 @@ The pathlib library is used throughout the code
 
 from pathlib import Path
 
-# I am converting the whole program to use pathlib.
-# This config.py has been converted.
-
 # *************************************************************************
 # Constants for paths and files
 #
@@ -29,7 +26,6 @@ from pathlib import Path
 
 # Get user profile directory
 USER_PROFILE_DIR = Path.home()
-print(USER_PROFILE_DIR, type(USER_PROFILE_DIR))
 
 # Program Directories (Not changeable by user)
 BASE_DIR = USER_PROFILE_DIR / "BAPD"
@@ -99,6 +95,10 @@ DIRECTORY_TREE = {
 
 # *************************************************************************
 # Default user settings for the TOML file.
+#
+# Path objects have to be converted to strings because TOML doesn't
+# support objects. Also, when changed to a string it will keep the double
+# forward slashes so those have to be changed to a single back slash.
 # *************************************************************************
 DEFAULT_TOML_SETTINGS = {
     "project": {
@@ -124,7 +124,6 @@ DEFAULT_TOML_SETTINGS = {
         "bally_computer_system": False,
     },
 }
-print(DEFAULT_TOML_SETTINGS)
 
 """
 # *************************************************************************
