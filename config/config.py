@@ -1,5 +1,6 @@
 # config.py
 
+# 7/9/2024: Conversion back to os instead of pathlib complete.
 """
 This module provides configuration settings for the Bally Astrocade
 Program Development (BAPD) tool.
@@ -8,10 +9,8 @@ It defines constants for file paths and default settings,
 ensuring a consistent and organized way to manage configuration
 throughout the application.
 
-The pathlib library is used throughout the code
 """
-
-from pathlib import Path
+import os
 
 # *************************************************************************
 # Constants for paths and files
@@ -24,26 +23,28 @@ from pathlib import Path
 #
 # *************************************************************************
 
-# Get user profile directory
-USER_PROFILE_DIR = Path.home()
+# Get user profile directory (Windows specific)
+USER_PROFILE_DIR = os.environ.get('USERPROFILE')
 
 # Program Directories (Not changeable by user)
-BASE_DIR = USER_PROFILE_DIR / "BAPD"
-PROGRAMS_DIR = BASE_DIR / "Programs"
-PROJECT_DIR = BASE_DIR / "Projects"
-CONFIG_DIR = PROGRAMS_DIR / "Config"
+BASE_DIR = os.path.join(USER_PROFILE_DIR, "BAPD")
+PROGRAMS_DIR = os.path.join(BASE_DIR, "Programs")
+PROJECT_DIR = os.path.join(BASE_DIR, "Projects")
+CONFIG_DIR = os.path.join(PROGRAMS_DIR, "Config")
 
-# DEFAULT_ORIGINAL_MAME_ROMS_PATH = PROGRAMS_DIR / "ROMS" (Commented out for now)
-DEFAULT_PROJECT_PATH = PROJECT_DIR / "Astrocade_Program"
-DEFAULT_SOURCE_NAME = Path("Astrocade_Program.asm")  # relative path
+# DEFAULT_ORIGINAL_MAME_ROMS_PATH = os.path.join(PROGRAMS_DIR, "ROMS")  # Commented out for now
+DEFAULT_PROJECT_PATH = os.path.join(PROJECT_DIR, "Astrocade_Program")
+
+#  Relative paths remain unchanged
+DEFAULT_SOURCE_NAME = "Astrocade_Program.asm"
 
 # Settings File
-TOML_FILE_NAME = Path("user_settings.toml")  # relative path
-TOML_FULL_PATH = CONFIG_DIR / TOML_FILE_NAME
+TOML_FILE_NAME = "user_settings.toml"  # relative path
+TOML_FULL_PATH = os.path.join(CONFIG_DIR, TOML_FILE_NAME)
 
 # Default Paths (Used if not specified in settings)
-DEFAULT_ZMAC_PATH = PROGRAMS_DIR / "Zmac" / "zmac.exe"
-DEFAULT_MAME_PATH = PROGRAMS_DIR / "MAME" / "mame.exe"
+DEFAULT_ZMAC_PATH = os.path.join(PROGRAMS_DIR, "Zmac", "zmac.exe")
+DEFAULT_MAME_PATH = os.path.join(PROGRAMS_DIR, "MAME", "mame.exe")
 
 # *************************************************************************
 # Directory tree structure that will be used to validate
@@ -95,18 +96,14 @@ DIRECTORY_TREE = {
 
 # *************************************************************************
 # Default user settings for the TOML file.
-#
-# Path objects have to be converted to strings because TOML doesn't
-# support objects. Also, when changed to a string it will keep the double
-# forward slashes so those have to be changed to a single back slash.
 # *************************************************************************
 DEFAULT_TOML_SETTINGS = {
     "project": {
-        "path": str(DEFAULT_PROJECT_PATH).replace("\\", "/"),
-        "source_file_name": str(DEFAULT_SOURCE_NAME).replace("\\", "/"),
+        "path": DEFAULT_PROJECT_PATH,
+        "source_file_name": DEFAULT_SOURCE_NAME,
     },
     "zmac": {
-        "path": str(DEFAULT_ZMAC_PATH).replace("\\", "/"),
+        "path": DEFAULT_ZMAC_PATH,
         "output_hex_file": False,
         "expand_macros": False,
         "expand_include_files": False,
@@ -115,7 +112,7 @@ DEFAULT_TOML_SETTINGS = {
         "allow_8080_instructions": False,
     },
     "mame": {
-        "path": str(DEFAULT_MAME_PATH).replace("\\", "/"),
+        "path": DEFAULT_MAME_PATH,
         "debug_mode": False,
         "window_mode": True,
         "skip_game_info": True,
@@ -124,43 +121,3 @@ DEFAULT_TOML_SETTINGS = {
         "bally_computer_system": False,
     },
 }
-
-"""
-# *************************************************************************
-# THIS IS A POSSIBLE FUTURE IMPLEMENTATION
-# *************************************************************************
-def validate_directory_structure(base_dir: Path, directory_tree: dict) -> bool:
- 
-  This function validates the directory structure based on the provided tree.
-
-  Args:
-      base_dir: The base directory to start the validation from.
-      directory_tree: A dictionary representing the expected directory structure.
-
-  Returns:
-      True if the directory structure matches the provided tree, False otherwise.
-  
-  for subdir_name, subdir_contents in directory_tree.items():
-    subdir_path = base_dir / subdir_name
-    if not subdir_path.is_dir():
-      print(f"Error: Directory '{subdir_path}' not found.")
-      return False
-    validate_directory_structure(subdir_path, subdir_contents)
-
-  # Check for expected files within the current directory
-  for filename, file_info in directory_tree.get("files", {}).items():
-    file_path = base_dir / filename
-    if not file_path.is_file():
-      print(f"Error: File '{file_path}' not found.")
-      return False
-  return True
-  
-  
-  # Example usage
-if __name__ == "__main__":
-  if validate_directory_structure(BASE_DIR, DIRECTORY_TREE):
-    print("Directory structure is valid!")
-  else:
-    print("Directory structure validation failed.")
-  
-  """
