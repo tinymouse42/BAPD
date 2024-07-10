@@ -46,6 +46,9 @@ TOML_FULL_PATH = os.path.join(CONFIG_DIR, TOML_FILE_NAME)
 DEFAULT_ZMAC_PATH = os.path.join(PROGRAMS_DIR, "Zmac", "zmac.exe")
 DEFAULT_MAME_PATH = os.path.join(PROGRAMS_DIR, "MAME", "mame.exe")
 
+# This points to the default files directory in the BAPD Python project
+DEFAULT_FILES_DIR = os.path.join(os.path.dirname(__file__), "default_files")
+
 # *************************************************************************
 # Directory tree structure that will be used to validate
 # the default directory and files. Files will be pulled from

@@ -37,6 +37,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         # Validate and normalize TOML settings. After return there is a valid TOML in place.
         self.settings: dict = ProgramInitializer(DEFAULT_TOML_SETTINGS).validate_and_normalize_toml_settings(self)
+        print(self.settings)
         # Retrieves the absolute path to the current project directory from user settings.
         self.current_project_path: Path = Path(self.settings.get("project", {}).get("path", "")).resolve()
 

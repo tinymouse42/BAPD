@@ -1,14 +1,14 @@
 # program_initializer.py
 
-# THIS FILE HAS BEEN UPDATED TO PATHLIB
+# This file converted back to os instead of pathlib.
 
+import os
 import shutil
-from pathlib import Path
 from typing import TypeAlias, Dict, Union, List, Any
 
 import toml
 
-from config.config import DEFAULT_TOML_SETTINGS, CONFIG_DIR, TOML_FILE_NAME
+from config.config import DEFAULT_TOML_SETTINGS, BASE_DIR, DEFAULT_FILES_DIR, TOML_FULL_PATH
 from src.file_management import FileManager
 
 # *****************************************************************************
@@ -25,8 +25,6 @@ TreeStructure: TypeAlias = Dict[str, Union[Dict, List[str]]]
 class ProgramInitializer:
     def __init__(self, tree_structure: TreeStructure):
         self.tree_structure = tree_structure
-        self.base_dir = Path.home()
-        self.toml_file_path = CONFIG_DIR / TOML_FILE_NAME
 
     # *************************************************************************
     # PUBLIC METHOD:
@@ -35,20 +33,24 @@ class ProgramInitializer:
     # Creates any missing items but leaves existing or extra items alone.
     # *************************************************************************
     def create_directory_structure(self) -> None:
-        self._create_directory_structure_recursive(self.base_dir, self.tree_structure)
+        self._create_directory_structure_recursive(BASE_DIR, self.tree_structure)
 
     # *************************************************************************
     # PRIVATE METHOD:
     # Check for a complete directory structure adding any missing items.
     # *************************************************************************
-    def _create_directory_structure_recursive(self, base_path: Path, node: TreeStructure) -> None:
-        for key, value in node.items():
-            new_path: Path = base_path / key
 
+    # ??? Problem is that I am getting BAPD\BAPD. It lies somewhere in this code.
+
+    def _create_directory_structure_recursive(self, base_path: str, node: TreeStructure) -> None:
+        for key, value in node.items():
+            new_path = os.path.join(base_path, key)
             if key == "files":  # If it's a list of files
+
                 self._verify_files(base_path, value)
             else:
-                new_path.mkdir(parents=True, exist_ok=True)
+                # Create directory with parents using os.makedirs
+                os.makedirs(new_path, exist_ok=True)
                 if isinstance(value, dict):  # If it's a subdirectory, recurse
                     self._create_directory_structure_recursive(new_path, value)
 
@@ -56,19 +58,14 @@ class ProgramInitializer:
     # PRIVATE METHOD:
     # Check that all default files exist and add any missing items.
     # *************************************************************************
+
     @classmethod
-    def _verify_files(cls, directory: Path, expected_files: List[str]) -> None:
-        # Get the project directory path
-        project_dir = Path(__file__).parent.parent
-
-        # Construct the path to the default_files directory using pathlib
-        default_files_dir = project_dir / "config" / "default_files"
-
+    def _verify_files(cls, directory: str, expected_files: List[str]) -> None:
         for file_name in expected_files:
-            file_path = directory / file_name
-            source_file = default_files_dir / file_name
+            file_path = os.path.join(directory, file_name)
+            source_file = os.path.join(DEFAULT_FILES_DIR, file_name)
 
-            if not file_path.exists():
+            if not os.path.exists(file_path):
                 shutil.copy(source_file, file_path)
 
     # *****************************************************************************
@@ -78,11 +75,11 @@ class ProgramInitializer:
     # *****************************************************************************
     def validate_and_normalize_toml_settings(self, main_window: Any) -> Dict:
         try:
-            with open(self.toml_file_path, "r") as toml_file:
+            with open(TOML_FULL_PATH, "r") as toml_file:
                 settings = toml.load(toml_file)
         except (FileNotFoundError, toml.TomlDecodeError):
             # TOML file is missing or invalid, create a new file with default settings
-            FileManager.write_toml(self.toml_file_path, DEFAULT_TOML_SETTINGS)
+            FileManager.write_toml(TOML_FULL_PATH, DEFAULT_TOML_SETTINGS)
             settings = DEFAULT_TOML_SETTINGS  # Assign default settings to be returned
 
         # Update GUI elements based on TOML settings
@@ -92,7 +89,7 @@ class ProgramInitializer:
         normalized_settings = self._normalize_settings(settings, DEFAULT_TOML_SETTINGS)
 
         # Write the normalized settings back to the TOML file
-        FileManager.write_toml(self.toml_file_path, normalized_settings)
+        FileManager.write_toml(TOML_FULL_PATH, normalized_settings)
 
         # Returns a complete and validated TOML file dictionary.
         return normalized_settings  # type: Dict[str, Any]
