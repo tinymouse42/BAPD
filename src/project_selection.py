@@ -1,7 +1,7 @@
 # project_selection
 
+import os
 import shutil
-from pathlib import Path
 
 from PySide6 import QtWidgets
 from PySide6.QtWidgets import QMessageBox
@@ -43,16 +43,15 @@ class ProjectSelectionManager(QtWidgets.QDialog, Ui_projectSelectionDialog):
         # ... (implementation to get project paths)
         # project_paths = self.get_project_directories()  # Placeholder
 
-        projects_dir = Path(PROJECT_DIR)
         self.existingProjectsListWidget.clear()
-        for project in projects_dir.iterdir():
-            if project.is_dir():
-                project_name = project.name
+        for project in os.listdir(PROJECT_DIR):
+            if os.path.isdir(os.path.join(PROJECT_DIR, project)):
+                project_name = project
                 self.existingProjectsListWidget.addItem(QtWidgets.QListWidgetItem(project_name))
 
     def get_project_directories(self):
-        projects_dir = Path(PROJECT_DIR)
-        return [project for project in projects_dir.iterdir() if project.is_dir()]
+        return [os.path.join(PROJECT_DIR, project) for project in os.listdir(PROJECT_DIR)
+                if os.path.isdir(os.path.join(PROJECT_DIR, project))]
 
     # Slot to handle toggling between existing and new project selection
     def toggle_project_selection(self, checked):
@@ -73,7 +72,7 @@ class ProjectSelectionManager(QtWidgets.QDialog, Ui_projectSelectionDialog):
             return
 
         self.create_project_directory(project_name)
-        self.selected_project_path = Path(PROJECT_DIR) / project_name
+        self.selected_project_path = os.path.join(PROJECT_DIR, project_name)
         self.update_main_window(project_name)
         self.update_settings()
         self.refresh_project_list()
@@ -84,7 +83,7 @@ class ProjectSelectionManager(QtWidgets.QDialog, Ui_projectSelectionDialog):
         selected_item = self.existingProjectsListWidget.currentItem()
         if selected_item:
             project_name = selected_item.text()
-            self.selected_project_path = Path(PROJECT_DIR) / project_name  # Use pathlib for path joining
+            self.selected_project_path = os.path.join(PROJECT_DIR, project_name)  # Use os.path.join for path joining
             self.update_main_window(project_name)
             self.update_settings()
             self.accept()
@@ -106,24 +105,24 @@ class ProjectSelectionManager(QtWidgets.QDialog, Ui_projectSelectionDialog):
 
     def create_project_directory(self, project_name: str):
         """Creates the project directory, Version_Archive subdirectory, and copies default files."""
-        # 1. Construct project path using Path object (pathlib)
-        project_path = Path(PROJECT_DIR) / project_name
+        # 1. Construct project path using os.path.join
+        project_path = os.path.join(PROJECT_DIR, project_name)
 
-        # 2. Create the project directory with mkdir (parents=True, exist_ok=True)
-        project_path.mkdir(parents=True, exist_ok=True)
+        # 2. Create the project directory with os.makedirs
+        os.makedirs(project_path, exist_ok=True)
 
         # 3. Create Version_Archive subdirectory
-        version_archive_path = project_path / "Version_Archive"
-        version_archive_path.mkdir(parents=True, exist_ok=True)  # Create parent directories if needed
+        version_archive_path = os.path.join(project_path, "Version_Archive")
+        os.makedirs(version_archive_path, exist_ok=True)  # Create parent directories if needed
 
         # 4. Copy "Hello_World.asm" to Version_Archive (unchanged)
-        source_archive_path = Path(__file__).parent.parent / "config" / "default_files" / "Hello_World.asm"
-        destination_archive_path = Path(project_path) / "Version_Archive" / "Hello_World.asm"
+        source_archive_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "config", "default_files", "Hello_World.asm")
+        destination_archive_path = os.path.join(project_path, "Version_Archive", "Hello_World.asm")
         shutil.copy2(source_archive_path, destination_archive_path)
 
         # 5. Copy "Hello_World.asm" to project directory with renaming
-        source_project_path = Path(__file__).parent.parent / "config" / "default_files" / "Hello_World.asm"
-        destination_project_path = project_path / f"{project_name}.asm"
+        source_project_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "config", "default_files", "Hello_World.asm")
+        destination_project_path = os.path.join(project_path, f"{project_name}.asm")
         shutil.copy2(source_project_path, destination_project_path)
 
         # 6. Define default files for project directory
@@ -131,6 +130,6 @@ class ProjectSelectionManager(QtWidgets.QDialog, Ui_projectSelectionDialog):
 
         # 7. Loop through project files and copy with project name
         for file_name in project_files:
-            source_path = Path(__file__).parent.parent / "config" / "default_files" / file_name
-            destination_path = project_path / file_name
+            source_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "config", "default_files", file_name)
+            destination_path = os.path.join(project_path, file_name)
             shutil.copy2(source_path, destination_path)

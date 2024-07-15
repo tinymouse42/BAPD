@@ -1,6 +1,8 @@
 # config.py
 
-# 7/9/2024: Conversion back to os instead of pathlib complete.
+# 7/14/2024 Conversion to os instead of pathlib complete
+# AI checked it over and says it is okay.
+
 """
 This module provides configuration settings for the Bally Astrocade
 Program Development (BAPD) tool.

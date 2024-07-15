@@ -1,4 +1,6 @@
 # main.py
+
+
 import os
 import subprocess
 import sys
@@ -98,11 +100,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # If either Apply or Okay is pressed, then this code executes.
         if dialog.exec() == QtWidgets.QDialog.DialogCode.Accepted:
             self.current_project_path = dialog.selected_project_path
-            self.fileNameLabel.setText(str(self.current_project_path.name))
+            self.fileNameLabel.setText(os.path.basename(self.current_project_path))
 
-    # =====================================================================
-    # Compiles the current Astrocade project using Zmac.
-    # =====================================================================
     def compile(self):
         """Compiles the current Astrocade project using Zmac."""
 
@@ -127,22 +126,20 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             # Change to the project directory using os.chdir
             project_dir = self.current_project_path
             self.plainTextEdit.appendPlainText(f"Changing directory to: {project_dir}")
+            os.chdir(project_dir)  # Make sure to change to the directory
         except FileNotFoundError:
             self.plainTextEdit.appendPlainText(f"Project directory not found: {self.current_project_path}")
             return
 
         # Build Zmac command based on TOML settings
-        project_name = self.current_project_path
+        project_name = os.path.basename(self.current_project_path)
         print("Project Name: ", type(project_name))
-        output_bin_path = project_dir / f"{project_name}.bin"  # Use pathlib for file paths
+        output_bin_path = os.path.join(project_dir, f"{project_name}.bin")
         print("project_dir: ", type(project_dir))
-        # Breaks at this point
 
         print("output_bin_path", type(output_bin_path))
-        output_lst_path = project_dir / f"{project_name}.lst"
+        output_lst_path = os.path.join(project_dir, f"{project_name}.lst")
         print("output_lst_path", output_lst_path)
-
-        # OKAY AT THIS POINT
 
         zmac_command = [
             zmac_path,
@@ -191,15 +188,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     # Runs the currently compiled program with some standard options and
     # any user specified options from the settings menu.
     # =====================================================================
-    def run_current_program(self):
+    import os
+    import subprocess
 
-        project_name = self.current_project_path.name
-        bin_file_path = self.current_project_path / f"{project_name}.bin"  # Use pathlib for path joining
+    def run_current_program(self):
+        project_name = os.path.basename(self.current_project_path)
+        bin_file_path = os.path.join(self.current_project_path, f"{project_name}.bin")
 
         # Get MAME path and settings from TOML
         mame_settings = self.settings.get("mame", {})
-        mame_path = Path(mame_settings.get("path", DEFAULT_MAME_PATH))
-        mame_dir = mame_path.parent.resolve()  # Get parent directory of MAME path
+        mame_path = mame_settings.get("path", DEFAULT_MAME_PATH)
+        mame_dir = os.path.dirname(os.path.abspath(mame_path))  # Get parent directory of MAME path
 
         # Build MAME command based on TOML settings
         mame_command = [mame_path]
@@ -215,7 +214,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 mame_command.append(system)
                 break
 
-        mame_command.extend(["-cart", str(bin_file_path), "-filter"])
+        mame_command.extend(["-cart", bin_file_path, "-filter"])
 
         # Add optional flags based on TOML settings
         optional_flags = {
@@ -229,11 +228,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         FileManager.write_toml(TOML_FULL_PATH, self.settings)  # Save settings
 
-        # Change directory to MAME's parent directory using pathlib
-        subprocess.Popen(mame_command, cwd=str(mame_dir))  # Launch MAME with correct working directory
+        # Change directory to MAME's parent directory using os
+        subprocess.Popen(mame_command, cwd=mame_dir)  # Launch MAME with correct working directory
 
         self.plainTextEdit.appendPlainText("MAME has been launched.")
-
     # =====================================================================
     # This handles the debug checkbox on the main GUI.
     # =====================================================================
@@ -264,13 +262,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     # Opens current project folder in Windows Explorer file manager.
     # =====================================================================
     def open_project_folder(self):
-        project_dir = self.current_project_path.resolve()
-        if project_dir.is_dir():  # Check if it's a directory
-            os.startfile(str(project_dir))
+        project_dir = os.path.abspath(self.current_project_path)
+        if os.path.isdir(project_dir):  # Check if it's a directory
+            os.startfile(project_dir)
         else:
             # Handle the case where the path is not a directory
             print(f"Error: {project_dir} is not a valid directory.")
-
     # =====================================================================
     # Clears the output window. Self explanatory.
     # =====================================================================

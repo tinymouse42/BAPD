@@ -1,15 +1,12 @@
 # program_initializer.py
 
-# This file converted back to os instead of pathlib.
-# test line for github. Delete this later.
-
 import os
 import shutil
 from typing import TypeAlias, Dict, Union, List, Any
 
 import toml
 
-from config.config import DEFAULT_TOML_SETTINGS, BASE_DIR, DEFAULT_FILES_DIR, TOML_FULL_PATH
+from config.config import DEFAULT_TOML_SETTINGS, BASE_DIR, DEFAULT_FILES_DIR, TOML_FULL_PATH, USER_PROFILE_DIR
 from src.file_management import FileManager
 
 # *****************************************************************************
@@ -34,7 +31,7 @@ class ProgramInitializer:
     # Creates any missing items but leaves existing or extra items alone.
     # *************************************************************************
     def create_directory_structure(self) -> None:
-        self._create_directory_structure_recursive(BASE_DIR, self.tree_structure)
+        self._create_directory_structure_recursive(USER_PROFILE_DIR, self.tree_structure)
 
     # *************************************************************************
     # PRIVATE METHOD:
