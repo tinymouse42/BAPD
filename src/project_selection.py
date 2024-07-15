@@ -8,9 +8,7 @@ from PySide6.QtWidgets import QMessageBox
 
 from config.config import (
     TOML_FULL_PATH,
-    PROJECT_DIR, DEFAULT_SOURCE_NAME,
-)
-
+    PROJECT_DIR, )
 from src.file_management import FileManager
 from ui.project_selection_dialog import Ui_projectSelectionDialog
 
@@ -66,7 +64,6 @@ class ProjectSelectionManager(QtWidgets.QDialog, Ui_projectSelectionDialog):
 
     def create_new_project(self):
         project_name = self.projectNameLineEdit.text()
-        print(project_name)
         if not project_name:
             QMessageBox.warning(self, "No Project Name", "Please enter a name for the new project.")
             return
@@ -74,7 +71,7 @@ class ProjectSelectionManager(QtWidgets.QDialog, Ui_projectSelectionDialog):
         self.create_project_directory(project_name)
         self.selected_project_path = os.path.join(PROJECT_DIR, project_name)
         self.update_main_window(project_name)
-        self.update_settings()
+        self.update_settings(project_name)
         self.refresh_project_list()
         self.main_window.plainTextEdit.appendPlainText(f"Created new project: {project_name}")
         self.accept()
@@ -85,7 +82,7 @@ class ProjectSelectionManager(QtWidgets.QDialog, Ui_projectSelectionDialog):
             project_name = selected_item.text()
             self.selected_project_path = os.path.join(PROJECT_DIR, project_name)  # Use os.path.join for path joining
             self.update_main_window(project_name)
-            self.update_settings()
+            self.update_settings(project_name)
             self.accept()
         else:
             QMessageBox.warning(self, "No Project Selected", "Please select a project from the list.")
@@ -94,9 +91,9 @@ class ProjectSelectionManager(QtWidgets.QDialog, Ui_projectSelectionDialog):
         self.main_window.current_project_path = self.selected_project_path
         self.main_window.fileNameLabel.setText(project_name)
 
-    def update_settings(self):
+    def update_settings(self, project_name):
         self.main_window.settings["project"]["path"] = self.selected_project_path
-        self.main_window.settings["project"]["source_file_name"] = DEFAULT_SOURCE_NAME
+        self.main_window.settings["project"]["source_file_name"] = project_name + ".asm"
         FileManager.write_toml(TOML_FULL_PATH, self.main_window.settings)
 
     def refresh_project_list(self):
@@ -116,13 +113,16 @@ class ProjectSelectionManager(QtWidgets.QDialog, Ui_projectSelectionDialog):
         os.makedirs(version_archive_path, exist_ok=True)  # Create parent directories if needed
 
         # 4. Copy "Hello_World.asm" to Version_Archive (unchanged)
-        source_archive_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "config", "default_files", "Hello_World.asm")
+        source_archive_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "config", "default_files",
+                                           "Hello_World.asm")
         destination_archive_path = os.path.join(project_path, "Version_Archive", "Hello_World.asm")
         shutil.copy2(source_archive_path, destination_archive_path)
 
         # 5. Copy "Hello_World.asm" to project directory with renaming
-        source_project_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "config", "default_files", "Hello_World.asm")
+        source_project_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "config", "default_files",
+                                           "Hello_World.asm")
         destination_project_path = os.path.join(project_path, f"{project_name}.asm")
+        print(source_project_path, destination_project_path)
         shutil.copy2(source_project_path, destination_project_path)
 
         # 6. Define default files for project directory

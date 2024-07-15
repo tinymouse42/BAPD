@@ -4,7 +4,7 @@
 import os
 import subprocess
 import sys
-from pathlib import Path
+from pprint import pprint
 
 from PySide6 import QtWidgets
 from PySide6.QtWidgets import QApplication, QMainWindow
@@ -13,7 +13,7 @@ from config.config import (
     DEFAULT_MAME_PATH,
     DIRECTORY_TREE,
     TOML_FULL_PATH,
-    DEFAULT_ZMAC_PATH, DEFAULT_TOML_SETTINGS, DEFAULT_PROJECT_PATH,
+    DEFAULT_TOML_SETTINGS, DEFAULT_PROJECT_PATH,
 )
 from program_settings import SettingsDialog
 from src.file_management import FileManager
@@ -27,21 +27,26 @@ from ui.BAPD_Main_GUI import Ui_MainWindow
 # **************************************************************************
 class MainWindow(QMainWindow, Ui_MainWindow):
 
-    # ==========================================================================
-    # Temp comment: The init section is complete and using paths now
-    # ==========================================================================
     def __init__(self):
         super().__init__()
         self.setupUi(self)
 
-        # Creates a physical directory structure based on DIRECTORY_TREE constant
+        # Verifies the physical directory tree structure and fills in missing items.
+        # if it doesn't exist it creates it from the DIRECTORY_TREE constant
         ProgramInitializer(DIRECTORY_TREE).create_directory_structure()
 
         # Validate and normalize TOML settings. After return there is a valid TOML in place.
         self.settings: dict = ProgramInitializer(DEFAULT_TOML_SETTINGS).validate_and_normalize_toml_settings(self)
-        print(self.settings)
-        # Retrieves the absolute path to the current project directory from user settings.
-        self.current_project_path: Path = Path(self.settings.get("project", {}).get("path", "")).resolve()
+        print("Settings right after PI using defaults in main: ", self.settings)
+
+        # Retrieves the path to the current project directory from user settings.
+        project_path = self.settings.get("project", {}).get("path", "")
+        self.current_project_path = os.path.realpath(project_path)
+        print("cpp right after validate: ", self.current_project_path)
+
+        # Retrieves the source file name in the current project directory from user settings.
+        source_file_name = self.settings.get("project", {}).get("source_file_name", "")
+        print(f"Source File Name: {source_file_name}")
 
         # =====================================================================
         # This is a standard way to connect the button signals to a function.
@@ -188,8 +193,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     # Runs the currently compiled program with some standard options and
     # any user specified options from the settings menu.
     # =====================================================================
-    import os
-    import subprocess
 
     def run_current_program(self):
         project_name = os.path.basename(self.current_project_path)
@@ -232,6 +235,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         subprocess.Popen(mame_command, cwd=mame_dir)  # Launch MAME with correct working directory
 
         self.plainTextEdit.appendPlainText("MAME has been launched.")
+
     # =====================================================================
     # This handles the debug checkbox on the main GUI.
     # =====================================================================
@@ -268,6 +272,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         else:
             # Handle the case where the path is not a directory
             print(f"Error: {project_dir} is not a valid directory.")
+
     # =====================================================================
     # Clears the output window. Self explanatory.
     # =====================================================================
