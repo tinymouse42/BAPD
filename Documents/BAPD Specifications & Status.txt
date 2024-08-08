@@ -1,1 +1,95 @@
 Current Specifications and current status
+
+08/07/2024 TO DO:
+1. Compile not working correctly
+2. Run Current not working correctly
+3.
+
+
+
+
+
+
+
+OVERVIEW OF CODE BY CHATGPT AI 08/07/2024
+
+
+Bally Astrocade Program Development (BAPD) Tool
+
+This project is a Bally Astrocade Program Development (BAPD) tool built using Python and PySide6 for the GUI. The application allows users to manage Astrocade projects, compile source code, run the compiled programs using MAME, and configure various settings.
+
+Key Components
+--------------
+1. main.py:
+   - MainWindow Class: This is the main application window where the core functionalities are implemented. It initializes the directory structure, validates and normalizes settings, handles various GUI interactions (like selecting a project, editing source files, compiling, running MAME, etc.).
+   - Program Execution: The main program loop initializes the application and starts the main window.
+
+2. program_initializer.py:
+   - ProgramInitializer Class: This class manages the creation and verification of the directory structure, ensures that the default files are in place, and validates the TOML settings file.
+   - Methods:
+     - create_directory_structure(): Ensures the required directory structure exists.
+     - validate_and_normalize_toml_settings(): Validates and normalizes the settings against defaults, updating the GUI and saving any changes.
+
+3. program_settings.py:
+   - SettingsDialog Class: This class provides a dialog for the user to configure settings related to ZMAC and MAME. It loads the current settings into the GUI elements and saves any changes made by the user.
+   - Methods:
+     - browse_zmac_path(): Allows the user to browse and select the ZMAC executable path.
+     - load_settings(): Loads settings from the dictionary into the GUI elements.
+     - save_settings(): Saves the settings from the GUI elements back into the dictionary.
+
+4. project_selection.py:
+   - ProjectSelectionManager Class: This class handles the selection and creation of Astrocade projects. It provides a dialog for the user to select an existing project or create a new one.
+   - Methods:
+     - populate_project_list(): Populates the list of existing projects.
+     - toggle_project_selection(): Toggles between creating a new project and selecting an existing one.
+     - accept_selection(): Handles the selection or creation of a project.
+     - create_new_project(): Creates a new project directory with the necessary subdirectories and files.
+     - select_existing_project(): Selects an existing project and updates the main window.
+
+5. config.py:
+   - Constants and Settings: This file defines the directory paths, default settings, and the directory tree structure. It ensures consistency and organization across the application.
+
+6. file_management.py:
+   - FileManager Class: This class handles reading and writing TOML files and saving content to files.
+   - Methods:
+     - read_toml(): Reads the contents of a TOML file and returns them as a dictionary.
+     - write_toml(): Writes the provided settings to a TOML file.
+     - open_file(): Placeholder for opening a file in the user's preferred editor.
+     - save_file(): Saves the provided content to a file.
+
+Key Functionalities
+-------------------
+1. Directory and File Management:
+   - Ensures that the required directory structure and default files are present.
+   - Provides methods to create new projects and verify existing ones.
+
+2. Settings Management:
+   - Loads and saves user settings using TOML files.
+   - Provides a dialog for users to configure settings related to ZMAC and MAME.
+
+3. Project Compilation and Execution:
+   - Compiles the current project using ZMAC.
+   - Runs the compiled program using MAME, with various options configured through the settings.
+
+4. User Interface:
+   - Provides a main window with buttons to select projects, edit source files, compile projects, and run MAME.
+   - Displays messages and statuses to the user through a plain text edit widget.
+
+How It Works
+------------
+1. Initialization:
+   - The application starts by initializing the main window and setting up the required directory structure and settings.
+
+2. Project Management:
+   - Users can select an existing project or create a new one through a dialog.
+   - The selected project is updated in the main window and saved in the settings.
+
+3. Compilation:
+   - Users can compile the current project using ZMAC, with options configured through the settings.
+
+4. Execution:
+   - Users can run the compiled program using MAME, with various runtime options configured through the settings.
+
+5. Settings Configuration:
+   - Users can configure settings related to ZMAC and MAME through a settings dialog, which loads and saves the settings to a TOML file.
+

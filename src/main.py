@@ -111,12 +111,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         # Re-read settings to get the latest project path
         self.settings = FileManager.read_toml(TOML_FULL_PATH)
-        print("settings: ", type(self.settings))
-        print("settings: ", self.settings)
+        # print("Settings after reading TOML:", self.settings)
 
         self.current_project_path = self.settings.get("project", {}).get("path", "")
-        print("current_project_path: ", type(self.current_project_path))
-        print("current_project_path: ", self.current_project_path)
+        # print("Current project path:", self.current_project_path)
 
         if not self.current_project_path:
             self.plainTextEdit.appendPlainText("No project selected.")
@@ -124,7 +122,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         # Get ZMAC path from settings, with better error handling
         zmac_path = self.settings.get("zmac", {}).get("path", str(DEFAULT_PROJECT_PATH).replace("\\", "/"))
-        print("zmac_path: ", zmac_path, type(zmac_path))
+        print("ZMAC path:", zmac_path)
 
         try:
             # Change to the project directory using os.chdir
@@ -137,13 +135,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         # Build Zmac command based on TOML settings
         project_name = os.path.basename(self.current_project_path)
-        print("Project Name: ", type(project_name))
-        output_bin_path = os.path.join(project_dir, f"{project_name}.bin")
-        print("project_dir: ", type(project_dir))
+        print("Project Name:", project_name)
 
-        print("output_bin_path", type(output_bin_path))
+        output_bin_path = os.path.join(project_dir, f"{project_name}.bin")
         output_lst_path = os.path.join(project_dir, f"{project_name}.lst")
-        print("output_lst_path", output_lst_path)
 
         zmac_command = [
             zmac_path,
@@ -152,9 +147,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             "-x",
             output_lst_path,
         ]
-
-        print("zmac_path: ", zmac_path)
-        print("zmac_command: ", zmac_command)
 
         # Add options based on TOML settings using match-case
         match self.settings.get("zmac", {}):
@@ -173,9 +165,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 zmac_command.append(f"{project_name}.hex")
 
         # Source file (always included)
-        # ??? FIX SO THAT IT POINTS TO SOURCE PATH AND NAME. I THINK IT ONLY DOES THE PATH.
-        zmac_command.append(self.current_project_path)  # Use the Path object directly
-        print("zmac source path: ", self.current_project_path)
+        source_file_name = self.settings.get("project", {}).get("source_file_name", f"{project_name}.asm")
+
+        source_file_path = os.path.join(self.current_project_path, source_file_name)
+        zmac_command.append(source_file_path)  # Append the full source file path
 
         # Display the Zmac command (for debugging)
         self.plainTextEdit.appendPlainText(f"Running Zmac command: {' '.join(zmac_command)}")
