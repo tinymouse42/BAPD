@@ -4,7 +4,6 @@
 import os
 import subprocess
 import sys
-from pprint import pprint
 
 from PySide6 import QtWidgets
 from PySide6.QtWidgets import QApplication, QMainWindow
@@ -174,7 +173,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 zmac_command.append(f"{project_name}.hex")
 
         # Source file (always included)
+        # ??? FIX SO THAT IT POINTS TO SOURCE PATH AND NAME. I THINK IT ONLY DOES THE PATH.
         zmac_command.append(self.current_project_path)  # Use the Path object directly
+        print("zmac source path: ", self.current_project_path)
 
         # Display the Zmac command (for debugging)
         self.plainTextEdit.appendPlainText(f"Running Zmac command: {' '.join(zmac_command)}")
