@@ -36,16 +36,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         # Validate and normalize TOML settings. After return there is a valid TOML in place.
         self.settings: dict = ProgramInitializer(DEFAULT_TOML_SETTINGS).validate_and_normalize_toml_settings(self)
-        print("Settings right after PI using defaults in main: ", self.settings)
 
         # Retrieves the path to the current project directory from user settings.
         project_path = self.settings.get("project", {}).get("path", "")
         self.current_project_path = os.path.realpath(project_path)
-        print("cpp right after validate: ", self.current_project_path)
 
         # Retrieves the source file name in the current project directory from user settings.
-        source_file_name = self.settings.get("project", {}).get("source_file_name", "")
-        print(f"Source File Name: {source_file_name}")
+        # source_file_name = self.settings.get("project", {}).get("source_file_name", "")
+
 
         # =====================================================================
         # This is a standard way to connect the button signals to a function.

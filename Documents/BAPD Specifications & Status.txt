@@ -1,14 +1,32 @@
 Current Specifications and current status
 
-08/07/2024 TO DO:
-1. Compile not working correctly
-2. Run Current not working correctly
-3.
+WE ARE USING CHATGPT PYTHON
+
+08/08/2024: STATUS
+
+* To install MAME, copy .exe into the directory and run.
+*
+
+The following is working:
+1. Compile
+2. Run Current
+3. MAME Debug
+4. Open Project Folder
+5. Clear Screen
 
 
+08/08/2024 TO DO:
 
-
-
+1. Edit Source
+2. View Listing
+3. Run Standard MAME
+4. Settings - Partially done, need to evaluate functionality.
+5. Select Project - Tweak new project screen
+6. Possibly install MAME and PSPad (unlikely)
+7. Switch MAME and ZMAC Tabs, default will be MAME
+8. MAME version in MAME settings
+9. Gray out all unimplemented widgets
+10.
 
 
 OVERVIEW OF CODE BY CHATGPT AI 08/07/2024
