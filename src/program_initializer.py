@@ -96,6 +96,9 @@ class ProgramInitializer:
     def _update_gui_from_settings(cls, main_window, settings):
         # Update MAME debug checkbox
         main_window.mameDebugCheckBox.setChecked(settings.get("mame", {}).get("debug_mode", False))
+        # Update fileNameLabel with the current project name
+        project_path = settings.get("project", {}).get("path", "")
+        main_window.fileNameLabel.setText(os.path.basename(project_path))
 
     # *****************************************************************************
     # Normalizes the provided settings against the default settings.
