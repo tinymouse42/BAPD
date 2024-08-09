@@ -44,7 +44,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # Retrieves the source file name in the current project directory from user settings.
         # source_file_name = self.settings.get("project", {}).get("source_file_name", "")
 
-
         # =====================================================================
         # This is a standard way to connect the button signals to a function.
         # In this case, the locations are pulled from the Ui_MainWindow inherited
@@ -240,7 +239,22 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     # Opens the source code using the default editor
     # =====================================================================
     def edit_source(self):
-        self.plainTextEdit.appendPlainText("Editing source file (not yet implemented)")
+        #    self.plainTextEdit.appendPlainText("Editing source file (not yet implemented)")
+
+        # Step 1: Retrieve the path to PSPad.exe
+        user_profile_dir = os.environ.get('USERPROFILE')
+        pspad_path = os.path.join(user_profile_dir, "BAPD", "Programs", "PSPad", "PSPad.exe")
+
+        # Step 2: Determine the .asm file path of the current project
+        project_path = self.settings["project"]["path"]
+        asm_file_name = self.settings["project"]["source_file_name"]
+        asm_file_path = os.path.join(project_path, asm_file_name)
+
+        # Step 3: Construct the command to open the .asm file in PSPad
+        command = f'"{pspad_path}" "{asm_file_path}"'
+
+        # Step 4: Execute the command
+        subprocess.run(command, shell=True)
 
     # =====================================================================
     # Opens the listing file using the default editor.
@@ -271,14 +285,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def clear_output_screen(self):
         self.plainTextEdit.clear()
         self.plainTextEdit.appendPlainText("[Screen Cleared]")
-
-    # =====================================================================
-    # While this is a button, I do not have a use for it at this time
-    # I am thinking about making it an easter egg or some extra info
-    # about zmac or both. This will probably be implemented last.
-    # =====================================================================
-    def print_version(self):
-        self.plainTextEdit.appendPlainText("Editing source file (not yet implemented)")
 
 
 # *****************************************************************************

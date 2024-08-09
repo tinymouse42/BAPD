@@ -1,22 +1,18 @@
-Current Specifications and current status
+Bally Astrocade Program Development (BAPD) Tool
 
-WE ARE USING CHATGPT PYTHON
+This project is a Bally Astrocade Program Development (BAPD) tool built using Python and PySide6 for the GUI. The application allows users to manage Astrocade projects, compile source code, run the compiled programs using MAME, and configure various settings.
 
-08/08/2024: STATUS
+Current Specifications and Status (as of 08/08/2024)
+----------------------------------------------------
 
-* To install MAME, copy .exe into the directory and run.
-*
-
-The following is working:
+The following functionalities are working:
 1. Compile
 2. Run Current
 3. MAME Debug
 4. Open Project Folder
 5. Clear Screen
 
-
-08/08/2024 TO DO:
-
+Tasks to be completed:
 1. Edit Source
 2. View Listing
 3. Run Standard MAME
@@ -26,15 +22,6 @@ The following is working:
 7. Switch MAME and ZMAC Tabs, default will be MAME
 8. MAME version in MAME settings
 9. Gray out all unimplemented widgets
-10.
-
-
-OVERVIEW OF CODE BY CHATGPT AI 08/07/2024
-
-
-Bally Astrocade Program Development (BAPD) Tool
-
-This project is a Bally Astrocade Program Development (BAPD) tool built using Python and PySide6 for the GUI. The application allows users to manage Astrocade projects, compile source code, run the compiled programs using MAME, and configure various settings.
 
 Key Components
 --------------
@@ -47,6 +34,7 @@ Key Components
    - Methods:
      - create_directory_structure(): Ensures the required directory structure exists.
      - validate_and_normalize_toml_settings(): Validates and normalizes the settings against defaults, updating the GUI and saving any changes.
+     - _update_gui_from_settings(): Updates GUI elements based on the TOML settings.
 
 3. program_settings.py:
    - SettingsDialog Class: This class provides a dialog for the user to configure settings related to ZMAC and MAME. It loads the current settings into the GUI elements and saves any changes made by the user.
@@ -59,7 +47,6 @@ Key Components
    - ProjectSelectionManager Class: This class handles the selection and creation of Astrocade projects. It provides a dialog for the user to select an existing project or create a new one.
    - Methods:
      - populate_project_list(): Populates the list of existing projects.
-     - toggle_project_selection(): Toggles between creating a new project and selecting an existing one.
      - accept_selection(): Handles the selection or creation of a project.
      - create_new_project(): Creates a new project directory with the necessary subdirectories and files.
      - select_existing_project(): Selects an existing project and updates the main window.

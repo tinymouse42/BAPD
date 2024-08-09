@@ -58,7 +58,7 @@ COLTAB: DB     $00        ; Color 3 Left  - Black
         DB     $77        ; Color 1 Right - Yellow
         DB     $07        ; Color 0 Right - White
 
-PRGNAM: DB     "DISPLAY STRING"
+PRGNAM: DB     "HELLO WORLD!"
         DB     $00        ; End String
 
 STRING: DB     "HELLO, WORLD!"
