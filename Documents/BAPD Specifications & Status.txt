@@ -1,8 +1,9 @@
+
 Bally Astrocade Program Development (BAPD) Tool
 
 This project is a Bally Astrocade Program Development (BAPD) tool built using Python and PySide6 for the GUI. The application allows users to manage Astrocade projects, compile source code, run the compiled programs using MAME, and configure various settings.
 
-Current Specifications and Status (as of 08/08/2024)
+Current Specifications and Status (as of 08/09/2024)
 ----------------------------------------------------
 
 The following functionalities are working:
@@ -11,22 +12,23 @@ The following functionalities are working:
 3. MAME Debug
 4. Open Project Folder
 5. Clear Screen
+6. Edit Source
+7. View Listing
 
 Tasks to be completed:
-1. Edit Source
-2. View Listing
-3. Run Standard MAME
-4. Settings - Partially done, need to evaluate functionality.
-5. Select Project - Tweak new project screen
-6. Possibly install MAME and PSPad (unlikely)
-7. Switch MAME and ZMAC Tabs, default will be MAME
-8. MAME version in MAME settings
-9. Gray out all unimplemented widgets
+1. Gray out all unimplemented widgets
+2. Run Standard MAME
+3. Settings - Partially done, need to evaluate functionality.
+4. Select Project - Tweak new project screen
+5. Possibly install MAME and PSPad (unlikely)
+6. Switch MAME and ZMAC Tabs, default will be MAME
+7. MAME version in MAME settings
 
 Key Components
 --------------
+
 1. main.py:
-   - MainWindow Class: This is the main application window where the core functionalities are implemented. It initializes the directory structure, validates and normalizes settings, handles various GUI interactions (like selecting a project, editing source files, compiling, running MAME, etc.).
+   - MainWindow Class: This is the main application window where the core functionalities are implemented. It initializes the directory structure, validates and normalizes settings, handles various GUI interactions (like selecting a project, editing source files, viewing listing files, compiling, running MAME, etc.).
    - Program Execution: The main program loop initializes the application and starts the main window.
 
 2. program_initializer.py:
@@ -64,6 +66,7 @@ Key Components
 
 Key Functionalities
 -------------------
+
 1. Directory and File Management:
    - Ensures that the required directory structure and default files are present.
    - Provides methods to create new projects and verify existing ones.
@@ -77,11 +80,12 @@ Key Functionalities
    - Runs the compiled program using MAME, with various options configured through the settings.
 
 4. User Interface:
-   - Provides a main window with buttons to select projects, edit source files, compile projects, and run MAME.
+   - Provides a main window with buttons to select projects, edit source files, view listing files, compile projects, and run MAME.
    - Displays messages and statuses to the user through a plain text edit widget.
 
 How It Works
 ------------
+
 1. Initialization:
    - The application starts by initializing the main window and setting up the required directory structure and settings.
 
@@ -97,4 +101,10 @@ How It Works
 
 5. Settings Configuration:
    - Users can configure settings related to ZMAC and MAME through a settings dialog, which loads and saves the settings to a TOML file.
+
+6. Editing Source Files:
+   - Users can open the source file of the current project in PSPad by clicking the "Edit Source" button. This will launch PSPad and open the file in a new tab if PSPad is already running.
+
+7. Viewing Listing Files:
+   - Users can open the listing (.lst) file of the current project in PSPad by clicking the "View Listing" button. This will launch PSPad and open the file in a new tab if PSPad is already running.
 

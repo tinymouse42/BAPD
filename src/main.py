@@ -239,8 +239,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     # Opens the source code using the default editor
     # =====================================================================
     def edit_source(self):
-        #    self.plainTextEdit.appendPlainText("Editing source file (not yet implemented)")
-
         # Step 1: Retrieve the path to PSPad.exe
         user_profile_dir = os.environ.get('USERPROFILE')
         pspad_path = os.path.join(user_profile_dir, "BAPD", "Programs", "PSPad", "PSPad.exe")
@@ -251,16 +249,32 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         asm_file_path = os.path.join(project_path, asm_file_name)
 
         # Step 3: Construct the command to open the .asm file in PSPad
-        command = f'"{pspad_path}" "{asm_file_path}"'
+        command = [pspad_path, asm_file_path]
 
-        # Step 4: Execute the command
-        subprocess.run(command, shell=True)
+        # Step 4: Execute the command without blocking
+        subprocess.Popen(command)
 
     # =====================================================================
-    # Opens the listing file using the default editor.
+    # Opens the listing file using PSPad.
     # =====================================================================
     def view_listing(self):
-        self.plainTextEdit.appendPlainText("Viewing listing file (not yet implemented)")
+        # Step 1: Retrieve the path to PSPad.exe
+        user_profile_dir = os.environ.get('USERPROFILE')
+        pspad_path = os.path.join(user_profile_dir, "BAPD", "Programs", "PSPad", "PSPad.exe")
+
+        # Step 2: Determine the .lst file path of the current project
+        project_path = self.settings["project"]["path"]
+        lst_file_name = self.settings["project"]["source_file_name"].replace(".asm", ".lst")
+        lst_file_path = os.path.join(project_path, lst_file_name)
+
+        # Step 3: Construct the command to open the .lst file in PSPad
+        command = [pspad_path, lst_file_path]
+
+        # Step 4: Execute the command without blocking
+        subprocess.Popen(command)
+
+        # Log the action (optional)
+        self.plainTextEdit.appendPlainText(f"Viewing listing file: {lst_file_name}")
 
     # =====================================================================
     # Runs the standard version of MAME without regard to project.
