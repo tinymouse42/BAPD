@@ -280,7 +280,36 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     # Runs the standard version of MAME without regard to project.
     # =====================================================================
     def run_standard_mame(self):
-        self.plainTextEdit.appendPlainText("Running standard MAME (not yet implemented)")
+
+        """
+        Runs the standard version of MAME without regard to the project.
+        """
+        # Get MAME path from settings
+        mame_path = self.settings.get("mame", {}).get("path", DEFAULT_MAME_PATH)
+
+        if not mame_path or not os.path.exists(mame_path):
+            self.plainTextEdit.appendPlainText("MAME path is not set or does not exist in settings.")
+            return
+
+        # Build the MAME command
+        mame_command = [mame_path]
+        mame_dir = os.path.dirname(os.path.abspath(mame_path))
+
+        # Example: Add default system flag (e.g., 'astrocde' for Bally Professional Arcade)
+        # mame_command.append("astrocde")
+
+        # Optional: Add other default flags if necessary (e.g., window mode)
+        mame_command.append("-window")
+
+        # Log the command being run for debugging purposes
+        self.plainTextEdit.appendPlainText(f"Running standard MAME command: {' '.join(mame_command)}")
+
+        try:
+            # Run the MAME command
+            subprocess.Popen(mame_command, cwd=mame_dir)
+            self.plainTextEdit.appendPlainText("Standard MAME has been launched.")
+        except Exception as e:
+            self.plainTextEdit.appendPlainText(f"Failed to run standard MAME: {e}")
 
     # =====================================================================
     # Opens current project folder in Windows Explorer file manager.
