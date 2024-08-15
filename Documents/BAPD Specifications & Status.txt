@@ -14,15 +14,15 @@ The following functionalities are working:
 5. Clear Screen
 6. Edit Source
 7. View Listing
+8. Run Standard MAME (needs tweaking)
+9. Select Project - (needs tweaking)
 
 Tasks to be completed:
 1. Gray out all unimplemented widgets
-2. Run Standard MAME
+2. MAME version in MAME settings
 3. Settings - Partially done, need to evaluate functionality.
-4. Select Project - Tweak new project screen
+4. Switch MAME and ZMAC Tabs, default will be MAME
 5. Possibly install MAME and PSPad (unlikely)
-6. Switch MAME and ZMAC Tabs, default will be MAME
-7. MAME version in MAME settings
 
 Key Components
 --------------

@@ -108,10 +108,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         # Re-read settings to get the latest project path
         self.settings = FileManager.read_toml(TOML_FULL_PATH)
-        # print("Settings after reading TOML:", self.settings)
 
         self.current_project_path = self.settings.get("project", {}).get("path", "")
-        # print("Current project path:", self.current_project_path)
 
         if not self.current_project_path:
             self.plainTextEdit.appendPlainText("No project selected.")
@@ -119,12 +117,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         # Get ZMAC path from settings, with better error handling
         zmac_path = self.settings.get("zmac", {}).get("path", str(DEFAULT_PROJECT_PATH).replace("\\", "/"))
-        print("ZMAC path:", zmac_path)
 
         try:
             # Change to the project directory using os.chdir
             project_dir = self.current_project_path
-            self.plainTextEdit.appendPlainText(f"Changing directory to: {project_dir}")
             os.chdir(project_dir)  # Make sure to change to the directory
         except FileNotFoundError:
             self.plainTextEdit.appendPlainText(f"Project directory not found: {self.current_project_path}")
@@ -132,8 +128,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         # Build Zmac command based on TOML settings
         project_name = os.path.basename(self.current_project_path)
-        print("Project Name:", project_name)
-
         output_bin_path = os.path.join(project_dir, f"{project_name}.bin")
         output_lst_path = os.path.join(project_dir, f"{project_name}.lst")
 
@@ -163,20 +157,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         # Source file (always included)
         source_file_name = self.settings.get("project", {}).get("source_file_name", f"{project_name}.asm")
-
         source_file_path = os.path.join(self.current_project_path, source_file_name)
         zmac_command.append(source_file_path)  # Append the full source file path
 
-        # Display the Zmac command (for debugging)
-        self.plainTextEdit.appendPlainText(f"Running Zmac command: {' '.join(zmac_command)}")
+        self.plainTextEdit.appendPlainText(f"ZMAC\nCompiling {source_file_name}\n")
 
         try:
             completed_process = subprocess.run(zmac_command, capture_output=True, text=True)
             if completed_process.returncode == 0:
-                self.plainTextEdit.appendPlainText("Zmac Output:\nCompilation Successful!")
-                # ... (potential post-compilation actions)
+                self.plainTextEdit.appendPlainText("Compilation complete!\n")
             else:
-                self.plainTextEdit.appendPlainText(f"Zmac Error:\n{completed_process.stderr}")
+                self.plainTextEdit.appendPlainText(f"Zmac Compilation Error:\n{completed_process.stderr}")
         except FileNotFoundError as e:
             self.plainTextEdit.appendPlainText(f"Error running Zmac: {e}")
 
@@ -186,6 +177,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     # =====================================================================
 
     def run_current_program(self):
+
+        # subprocess.Popen(mame_command, cwd=mame_dir, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         project_name = os.path.basename(self.current_project_path)
         bin_file_path = os.path.join(self.current_project_path, f"{project_name}.bin")
 
@@ -222,9 +215,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         FileManager.write_toml(TOML_FULL_PATH, self.settings)  # Save settings
 
-        # Change directory to MAME's parent directory using os
-        subprocess.Popen(mame_command, cwd=mame_dir)  # Launch MAME with correct working directory
-
+        # Redirect MAME's standard output and error to null
+        subprocess.Popen(mame_command, cwd=mame_dir, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         self.plainTextEdit.appendPlainText("MAME has been launched.")
 
     # =====================================================================
