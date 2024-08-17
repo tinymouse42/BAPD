@@ -14,7 +14,7 @@ from config.config import (
     TOML_FULL_PATH,
     DEFAULT_TOML_SETTINGS, DEFAULT_PROJECT_PATH,
 )
-from program_settings import SettingsDialog
+from src.program_settings import SettingsDialog
 from src.file_management import FileManager
 from src.program_initializer import ProgramInitializer
 from src.project_selection import ProjectSelectionManager

@@ -6,7 +6,7 @@ from typing import TypeAlias, Dict, Union, List, Any
 
 import toml
 
-from config.config import DEFAULT_TOML_SETTINGS, BASE_DIR, DEFAULT_FILES_DIR, TOML_FULL_PATH, USER_PROFILE_DIR
+from config.config import DEFAULT_TOML_SETTINGS, DEFAULT_FILES_DIR, TOML_FULL_PATH, USER_PROFILE_DIR
 from src.file_management import FileManager
 
 # *****************************************************************************

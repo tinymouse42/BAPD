@@ -1,6 +1,5 @@
 # program_settings.py
 
-import os
 from pathlib import Path
 
 from PySide6.QtWidgets import QDialog, QFileDialog, QMessageBox

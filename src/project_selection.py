@@ -86,11 +86,13 @@ class ProjectSelectionManager(QtWidgets.QDialog, Ui_projectSelectionDialog):
         version_archive_path = os.path.join(project_path, "Version_Archive")
         os.makedirs(version_archive_path, exist_ok=True)
 
-        source_archive_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "config", "default_files", "Hello_World.asm")
+        source_archive_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "config", "default_files",
+                                           "Hello_World.asm")
         destination_archive_path = os.path.join(project_path, "Version_Archive", "Hello_World.asm")
         shutil.copy2(source_archive_path, destination_archive_path)
 
-        source_project_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "config", "default_files", "Hello_World.asm")
+        source_project_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "config", "default_files",
+                                           "Hello_World.asm")
         destination_project_path = os.path.join(project_path, f"{project_name}.asm")
         shutil.copy2(source_project_path, destination_project_path)
 

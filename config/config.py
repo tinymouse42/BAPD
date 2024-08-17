@@ -46,7 +46,7 @@ DEFAULT_ZMAC_PATH = os.path.join(PROGRAMS_DIR, "Zmac", "zmac.exe")
 DEFAULT_MAME_PATH = os.path.join(PROGRAMS_DIR, "MAME", "mame.exe")
 
 # This points to the default files directory in the BAPD Python project
-DEFAULT_FILES_DIR = os.path.join(os.path.dirname(__file__), "default_files")
+DEFAULT_FILES_DIR = os.path.join(os.path.dirname(__file__), "..", "config", "default_files")
 
 # *************************************************************************
 # Directory tree structure that will be used to validate
