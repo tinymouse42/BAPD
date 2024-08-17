@@ -3,19 +3,17 @@ Bally Astrocade Program Development (BAPD) Tool
 
 This project is a Bally Astrocade Program Development (BAPD) tool built using Python and PySide6 for the GUI. The application allows users to manage Astrocade projects, compile source code, run the compiled programs using MAME, and configure various settings.
 
-Current Specifications and Status (as of 08/09/2024)
+Current Specifications and Status (as of 08/17/2024)
 ----------------------------------------------------
 
 The following functionalities are working:
-1. Compile
+1. View Listing
 2. Run Current
 3. MAME Debug
 4. Open Project Folder
 5. Clear Screen
 6. Edit Source
-7. View Listing
-8. Run Standard MAME (needs tweaking)
-9. Select Project - (needs tweaking)
+7.
 
 Tasks to be completed:
 1. Gray out all unimplemented widgets
@@ -23,6 +21,13 @@ Tasks to be completed:
 3. Settings - Partially done, need to evaluate functionality.
 4. Switch MAME and ZMAC Tabs, default will be MAME
 5. Possibly install MAME and PSPad (unlikely)
+6. Put in a delete project function with safeguards.
+
+Tasks for polishing project:
+1. Compile (needs tweaking)
+2. Run Standard MAME (needs tweaking)
+3. Select Project - (needs tweaking)
+
 
 Key Components
 --------------

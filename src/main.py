@@ -160,14 +160,20 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         source_file_path = os.path.join(self.current_project_path, source_file_name)
         zmac_command.append(source_file_path)  # Append the full source file path
 
-        self.plainTextEdit.appendPlainText(f"ZMAC\nCompiling {source_file_name}\n")
+        self.plainTextEdit.appendPlainText(f"ZMAC\nCompiling {source_file_name}")
 
         try:
             completed_process = subprocess.run(zmac_command, capture_output=True, text=True)
             if completed_process.returncode == 0:
-                self.plainTextEdit.appendPlainText("Compilation complete!\n")
+                self.plainTextEdit.appendPlainText("Compilation successful!\n")
             else:
-                self.plainTextEdit.appendPlainText(f"Zmac Compilation Error:\n{completed_process.stderr}")
+                error_message = completed_process.stderr.strip()  # Remove leading/trailing whitespace
+                project_name = os.path.basename(self.current_project_path)
+                error_message = error_message.replace(f"{self.current_project_path}\\",
+                                                      "")  # Remove path using project_name
+                error_message = error_message.replace(f"{self.current_project_path}/",
+                                                      "")  # Remove path using project_name
+                self.plainTextEdit.appendPlainText(f"Zmac Compilation Error:\n{error_message}\n")
         except FileNotFoundError as e:
             self.plainTextEdit.appendPlainText(f"Error running Zmac: {e}")
 
@@ -246,6 +252,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # Step 4: Execute the command without blocking
         subprocess.Popen(command)
 
+        self.plainTextEdit.appendPlainText(f"Viewing Source file: {asm_file_name}\n")
+
     # =====================================================================
     # Opens the listing file using PSPad.
     # =====================================================================
@@ -266,7 +274,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         subprocess.Popen(command)
 
         # Log the action (optional)
-        self.plainTextEdit.appendPlainText(f"Viewing listing file: {lst_file_name}")
+        self.plainTextEdit.appendPlainText(f"Viewing listing file: {lst_file_name}\n")
 
     # =====================================================================
     # Runs the standard version of MAME without regard to project.
