@@ -39,7 +39,7 @@
 </string>
      </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <property name="usesScrollButtons">
       <bool>false</bool>
@@ -91,6 +91,9 @@
              </property>
              <item>
               <widget class="QCheckBox" name="outputHexFile">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
                <property name="font">
                 <font>
                  <pointsize>12</pointsize>
@@ -103,6 +106,9 @@
              </item>
              <item>
               <widget class="QCheckBox" name="expandMacros">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
                <property name="font">
                 <font>
                  <pointsize>12</pointsize>
@@ -115,6 +121,9 @@
              </item>
              <item>
               <widget class="QCheckBox" name="expandIncludeFiles">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
                <property name="font">
                 <font>
                  <pointsize>12</pointsize>
@@ -127,6 +136,9 @@
              </item>
              <item>
               <widget class="QCheckBox" name="expandIf">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
                <property name="font">
                 <font>
                  <pointsize>12</pointsize>
@@ -139,6 +151,9 @@
              </item>
              <item>
               <widget class="QCheckBox" name="omitSymbolTable">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
                <property name="font">
                 <font>
                  <pointsize>12</pointsize>
@@ -151,6 +166,9 @@
              </item>
              <item>
               <widget class="QCheckBox" name="allow8080Instructions">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
                <property name="font">
                 <font>
                  <pointsize>12</pointsize>
@@ -227,10 +245,17 @@
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="zmacPathLineEdit"/>
+              <widget class="QLineEdit" name="zmacPathLineEdit">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+              </widget>
              </item>
              <item>
               <widget class="QPushButton" name="zmacBrowseButton">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
                <property name="font">
                 <font>
                  <pointsize>12</pointsize>
@@ -249,6 +274,9 @@
           </layout>
          </widget>
          <widget class="QDialogButtonBox" name="zmacButtonBox">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="geometry">
            <rect>
             <x>620</x>
@@ -302,7 +330,7 @@
                <enum>QFrame::Shape::StyledPanel</enum>
               </property>
               <property name="text">
-               <string/>
+               <string>Coming Soon...</string>
               </property>
              </widget>
             </item>
@@ -365,10 +393,17 @@
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="mamePathLineEdit"/>
+              <widget class="QLineEdit" name="mamePathLineEdit">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+              </widget>
              </item>
              <item>
               <widget class="QPushButton" name="mameBrowseButton">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
                <property name="font">
                 <font>
                  <pointsize>12</pointsize>
@@ -440,7 +475,7 @@
                <enum>QFrame::Shape::StyledPanel</enum>
               </property>
               <property name="text">
-               <string/>
+               <string>Coming soon...</string>
               </property>
              </widget>
             </item>

@@ -61,6 +61,7 @@ class Ui_BAPD_Settings(object):
         self.zmacOptionsVerticalLayout.setObjectName(u"zmacOptionsVerticalLayout")
         self.outputHexFile = QCheckBox(self.zmacOptionsGroupBox)
         self.outputHexFile.setObjectName(u"outputHexFile")
+        self.outputHexFile.setEnabled(False)
         font1 = QFont()
         font1.setPointSize(12)
         self.outputHexFile.setFont(font1)
@@ -69,30 +70,35 @@ class Ui_BAPD_Settings(object):
 
         self.expandMacros = QCheckBox(self.zmacOptionsGroupBox)
         self.expandMacros.setObjectName(u"expandMacros")
+        self.expandMacros.setEnabled(False)
         self.expandMacros.setFont(font1)
 
         self.zmacOptionsVerticalLayout.addWidget(self.expandMacros)
 
         self.expandIncludeFiles = QCheckBox(self.zmacOptionsGroupBox)
         self.expandIncludeFiles.setObjectName(u"expandIncludeFiles")
+        self.expandIncludeFiles.setEnabled(False)
         self.expandIncludeFiles.setFont(font1)
 
         self.zmacOptionsVerticalLayout.addWidget(self.expandIncludeFiles)
 
         self.expandIf = QCheckBox(self.zmacOptionsGroupBox)
         self.expandIf.setObjectName(u"expandIf")
+        self.expandIf.setEnabled(False)
         self.expandIf.setFont(font1)
 
         self.zmacOptionsVerticalLayout.addWidget(self.expandIf)
 
         self.omitSymbolTable = QCheckBox(self.zmacOptionsGroupBox)
         self.omitSymbolTable.setObjectName(u"omitSymbolTable")
+        self.omitSymbolTable.setEnabled(False)
         self.omitSymbolTable.setFont(font1)
 
         self.zmacOptionsVerticalLayout.addWidget(self.omitSymbolTable)
 
         self.allow8080Instructions = QCheckBox(self.zmacOptionsGroupBox)
         self.allow8080Instructions.setObjectName(u"allow8080Instructions")
+        self.allow8080Instructions.setEnabled(False)
         self.allow8080Instructions.setFont(font1)
 
         self.zmacOptionsVerticalLayout.addWidget(self.allow8080Instructions)
@@ -130,11 +136,13 @@ class Ui_BAPD_Settings(object):
 
         self.zmacPathLineEdit = QLineEdit(self.zmacFilePathLayout)
         self.zmacPathLineEdit.setObjectName(u"zmacPathLineEdit")
+        self.zmacPathLineEdit.setEnabled(False)
 
         self.zmacPathInputLayout.addWidget(self.zmacPathLineEdit)
 
         self.zmacBrowseButton = QPushButton(self.zmacFilePathLayout)
         self.zmacBrowseButton.setObjectName(u"zmacBrowseButton")
+        self.zmacBrowseButton.setEnabled(False)
         self.zmacBrowseButton.setFont(font1)
         self.zmacBrowseButton.setAutoDefault(True)
 
@@ -145,6 +153,7 @@ class Ui_BAPD_Settings(object):
 
         self.zmacButtonBox = QDialogButtonBox(self.zmacSettingsLayout)
         self.zmacButtonBox.setObjectName(u"zmacButtonBox")
+        self.zmacButtonBox.setEnabled(False)
         self.zmacButtonBox.setGeometry(QRect(620, 510, 241, 31))
         font3 = QFont()
         font3.setPointSize(13)
@@ -196,11 +205,13 @@ class Ui_BAPD_Settings(object):
 
         self.mamePathLineEdit = QLineEdit(self.mameFilePathLayout)
         self.mamePathLineEdit.setObjectName(u"mamePathLineEdit")
+        self.mamePathLineEdit.setEnabled(False)
 
         self.mamePathInputLayout.addWidget(self.mamePathLineEdit)
 
         self.mameBrowseButton = QPushButton(self.mameFilePathLayout)
         self.mameBrowseButton.setObjectName(u"mameBrowseButton")
+        self.mameBrowseButton.setEnabled(False)
         self.mameBrowseButton.setFont(font1)
         self.mameBrowseButton.setAutoDefault(True)
 
@@ -303,7 +314,7 @@ class Ui_BAPD_Settings(object):
 
         self.retranslateUi(BAPD_Settings)
 
-        self.settingsTabWidget.setCurrentIndex(1)
+        self.settingsTabWidget.setCurrentIndex(0)
 
 
         QMetaObject.connectSlotsByName(BAPD_Settings)
@@ -324,14 +335,14 @@ class Ui_BAPD_Settings(object):
         self.zmacPathLabel.setText(QCoreApplication.translate("BAPD_Settings", u"ZMAC Path:", None))
         self.zmacBrowseButton.setText(QCoreApplication.translate("BAPD_Settings", u"Browse...", None))
         self.zmacCommandLineGroupBox.setTitle(QCoreApplication.translate("BAPD_Settings", u"Command Line", None))
-        self.zmacCommandLineDisplayLabel.setText("")
+        self.zmacCommandLineDisplayLabel.setText(QCoreApplication.translate("BAPD_Settings", u"Coming Soon...", None))
         self.settingsTabWidget.setTabText(self.settingsTabWidget.indexOf(self.zmacTab), QCoreApplication.translate("BAPD_Settings", u"ZMAC", None))
         self.mameSettingsLayout.setTitle(QCoreApplication.translate("BAPD_Settings", u"MAME Settings", None))
         self.mameFilePathLayout.setTitle(QCoreApplication.translate("BAPD_Settings", u"File Locations", None))
         self.mamePathLabel.setText(QCoreApplication.translate("BAPD_Settings", u"MAME Path:", None))
         self.mameBrowseButton.setText(QCoreApplication.translate("BAPD_Settings", u"Browse...", None))
         self.mameCommandLineGroupBox.setTitle(QCoreApplication.translate("BAPD_Settings", u"Command Line", None))
-        self.mameCommandLineDisplayLabel.setText("")
+        self.mameCommandLineDisplayLabel.setText(QCoreApplication.translate("BAPD_Settings", u"Coming soon...", None))
         self.mameOptionsGroupBox.setTitle(QCoreApplication.translate("BAPD_Settings", u"Options", None))
         self.debugModeOn.setText(QCoreApplication.translate("BAPD_Settings", u"Debug Mode ON", None))
         self.windowModeOn.setText(QCoreApplication.translate("BAPD_Settings", u"Start in Window Mode", None))
