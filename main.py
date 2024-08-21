@@ -168,7 +168,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.plainTextEdit.appendPlainText("Compilation successful!\n")
             else:
                 error_message = completed_process.stderr.strip()  # Remove leading/trailing whitespace
-                project_name = os.path.basename(self.current_project_path)
+                # GNDN? project_name = os.path.basename(self.current_project_path)
                 error_message = error_message.replace(f"{self.current_project_path}\\",
                                                       "")  # Remove path using project_name
                 error_message = error_message.replace(f"{self.current_project_path}/",
