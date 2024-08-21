@@ -1,6 +1,10 @@
 ## Bally Astrocade Program Development Tool (BAPD)
 
-**Status:** Alpha version 1.0
+**Status:** Alpha version 1.0 
+
+**Author:** Dave Turner aka Commander Dave
+
+<img src="BAPDScreenshot.png" alt="BAPD Main Window" width="50%" height="50%">
 
 **Overview**
 
