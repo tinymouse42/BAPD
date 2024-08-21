@@ -13,7 +13,7 @@ The Bally Astrocade Program Development Tool (BAPD) is a Python-based applicatio
 * **Execution:** Run compiled programs in MAME in normal or debug mode.
 * **Settings Configuration:** Configure settings for ZMAC and MAME.
 * **User Interface:** Intuitive interface for interacting with the tool.
-* **Non-Invasive:** The program will not change anything on your computer except for creating a BAPD directory under your user profile directory. Everything is contained in the BAPD directory.
+* **Non-Invasive:** The BAPD program is designed to be non-invasive and self-contained. It will not make any changes to your computer beyond creating a dedicated "BAPD" directory under your user profile directory. All of the program's files and data will be stored within this BAPD directory, ensuring that it does not interfere with or modify anything else on your system.
 
 ## Installation
 
@@ -22,7 +22,7 @@ The Bally Astrocade Program Development Tool (BAPD) is a Python-based applicatio
 1. **Download and Run BAPD:**
    * Download the BAPD executable from this repository. Note that it is not an installer, the .exe file is the program. It does not matter from where the program runs.
    * Run the BAPD executable file. The main program window will open.
-   * [Important] Close the BAPD program. This allows the program to create the project directory.
+   * **[Important]** Close the BAPD program. This allows the program to create the project directory.
    * The BAPD tool will create a directory named "BAPD" in your user directory (e.g., `C:\Users\<your_username>\BAPD`).
 
 3. **Install MAME:**
@@ -30,7 +30,7 @@ The Bally Astrocade Program Development Tool (BAPD) is a Python-based applicatio
    * Extract the downloaded MAME files into the `BAPD\Programs\MAME` directory.
 
 4. **Install PSPad PORTABLE:**
-   * [IMPORTANT!] You must get the PORTABLE version for this Alpha build.
+   * **[IMPORTANT!]** You must get the PORTABLE version for this Alpha build.
    * Download PSPad PORTABLE which is included in this repository for convenience. If you download it from the PSPad website you will need the 64 bit version.
    * Extract the downloaded PSPad files into the `BAPD\Programs\PSPad` directory.
 
