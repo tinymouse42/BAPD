@@ -23,6 +23,7 @@ The Bally Astrocade Program Development Tool (BAPD) is a Python-based applicatio
 
 After installing the BAPD tool, you'll find a new directory named "BAPD" within your user directory (e.g., `C:\Users\<your_username>`). This directory contains the following structure:
 
+```
 BAPD
 ├── Projects
 │   └── Astrocade_Program
@@ -30,7 +31,7 @@ BAPD
 │       │   └── Astrocade_Demo_Cartridge.asm
 │       ├── Astrocade_Program.asm
 │       └── HVGLIB.H
-
+```
 
 **Breakdown:**
 
