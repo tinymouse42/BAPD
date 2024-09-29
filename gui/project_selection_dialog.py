@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'project_selection_dialog.ui'
+## Form generated from reading UI file 'project_selection_dialog.gui'
 ##
 ## Created by: Qt User Interface Compiler version 6.7.0
 ##
@@ -66,7 +66,7 @@ class Ui_projectSelectionDialog(object):
         self.dialogButtonBox.rejected.connect(projectSelectionDialog.reject)
 
         QMetaObject.connectSlotsByName(projectSelectionDialog)
-    # setupUi
+    # setup_ui
 
     def retranslateUi(self, projectSelectionDialog):
         projectSelectionDialog.setWindowTitle(QCoreApplication.translate("projectSelectionDialog", u"Select or Create Project", None))

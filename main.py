@@ -18,17 +18,17 @@ from src.program_settings import SettingsDialog
 from src.file_management import FileManager
 from src.program_initializer import ProgramInitializer
 from src.project_selection import ProjectSelectionManager
-from ui.BAPD_Main_GUI import Ui_MainWindow
+from gui.BAPD_Main_GUI import MainWindowGUI
 
 
 # **************************************************************************
-# MainWindow Class - This is where all the magic happens. Usually dark magic.
+# MainWindowGUI Class - This is where all the magic happens. Usually dark magic.
 # **************************************************************************
-class MainWindow(QMainWindow, Ui_MainWindow):
+class MainWindowGUI(QMainWindow, MainWindowGUI):
 
     def __init__(self):
         super().__init__()
-        self.setupUi(self)
+        self.setup_ui(self)
 
         # Verifies the physical directory tree structure and fills in missing items.
         # if it doesn't exist it creates it from the DIRECTORY_TREE constant
@@ -46,7 +46,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         # =====================================================================
         # This is a standard way to connect the button signals to a function.
-        # In this case, the locations are pulled from the Ui_MainWindow inherited
+        # In this case, the locations are pulled from the MainWindowGUI inherited
         # class which hold the GUI code.
         # =====================================================================
         self.selectProjectButton.clicked.connect(self.select_project_directory)
@@ -335,6 +335,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 # *****************************************************************************
 if __name__ == "__main__":
     app = QApplication(sys.argv)  # app is part of PySide6 - Initializes whole program?
-    window = MainWindow()  # window: Creates object for class above
+    window = MainWindowGUI()  # window: Creates object for class above
     window.show()  # show is a PySid6 method. How did it get into our class?
     sys.exit(app.exec())  # Explain this?

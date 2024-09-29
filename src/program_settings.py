@@ -5,7 +5,7 @@ from pathlib import Path
 from PySide6.QtWidgets import QDialog, QFileDialog, QMessageBox
 
 from config.config import DEFAULT_TOML_SETTINGS, DEFAULT_ZMAC_PATH, DEFAULT_MAME_PATH
-from ui.BAPD_Settings_GUI import Ui_BAPD_Settings
+from gui.BAPD_Settings_GUI import Ui_BAPD_Settings
 
 
 # *****************************************************************************

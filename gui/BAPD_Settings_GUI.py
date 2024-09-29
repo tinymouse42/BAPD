@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'BAPD_Settings_GUI.ui'
+## Form generated from reading UI file 'BAPD_Settings_GUI.gui'
 ##
 ## Created by: Qt User Interface Compiler version 6.7.0
 ##
@@ -318,7 +318,7 @@ class Ui_BAPD_Settings(object):
 
 
         QMetaObject.connectSlotsByName(BAPD_Settings)
-    # setupUi
+    # setup_ui
 
     def retranslateUi(self, BAPD_Settings):
         BAPD_Settings.setWindowTitle(QCoreApplication.translate("BAPD_Settings", u"Settings", None))

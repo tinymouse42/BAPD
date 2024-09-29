@@ -8,7 +8,7 @@ from config.config import (
     TOML_FULL_PATH,
     PROJECT_DIR, )
 from src.file_management import FileManager
-from ui.project_selection_dialog import Ui_projectSelectionDialog
+from gui.project_selection_dialog import Ui_projectSelectionDialog
 
 
 class ProjectSelectionManager(QtWidgets.QDialog, Ui_projectSelectionDialog):
